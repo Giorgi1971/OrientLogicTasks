@@ -7,6 +7,7 @@ namespace MyApplication
 
         static int[] getData()
         {
+
             while (true)
             {
                 try
@@ -35,14 +36,23 @@ namespace MyApplication
 
         static string Oper()
         {
-            Console.WriteLine("Enter Operator: + - * / ");
-            //string y = Console.ReadLine();
-            string y = "/";
-            if (y == null)
+            string[] operators = { "+", "-", "*", "/" };
+            Console.WriteLine(operators);
+            while (true)
             {
-                y = "p";
+                Console.WriteLine("Enter Operator: + - * / ");
+                string? y = Console.ReadLine();
+                if (y == null)
+                {
+                    Console.WriteLine(y);
+                    continue;
+                }
+                if (Array.Exists(operators, Predicate y)
+                {
+                    return y;
+                }
+
             }
-            return y;
         }
 
         static void Main(string[] args)
