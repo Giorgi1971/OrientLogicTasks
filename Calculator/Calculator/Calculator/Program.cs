@@ -28,13 +28,8 @@ namespace MyApplication
 
         }
 
-        //static Decimal calculate(int x, int y)
-        //{
-        //    Decimal z = x + y;
-        //    return z;
-        //}
 
-        static string Oper()
+        static string Operator()
         {
             string[] operators = { "+", "-", "*", "/" };
             Console.WriteLine(operators);
@@ -60,7 +55,7 @@ namespace MyApplication
             int[] nums = getData();
             int a = nums[0];
             int b = nums[1];
-            string ope = Oper();
+            string ope = Operator();
             decimal result = 0;
             switch (ope)
             {
@@ -84,9 +79,6 @@ namespace MyApplication
                     result = a * b;
                     break;
             }
-            //string c = "+";
-            //decimal sum = 3.5m;
-            //Decimal result = calculate(a, b);
             if (b != 0 || ope != "/")
             {
                 Console.WriteLine("result: " + result);
