@@ -56,16 +56,16 @@ while (true)
         Console.WriteLine($"{opera} is not in \"+ - * / \"\n");
     }
 
-if (oper == '/' && number2 == 0)
-    {
-        Console.WriteLine("Cannot divide by zero.\n");
-    }
-else
-    {
-        Console.Write(number1 + number2);
-    }
 }
 
-double result = Convert.ToDouble(new DataTable().Compute($"{number1} {oper} {number2}", null));
-
-Console.WriteLine($"{number1} {oper} {number2} = {result}");
+if ((oper == '/') && (number2 == 0))
+{
+    Console.WriteLine("Cannot divide by zero.\n");
+}
+else
+{
+    double result = Convert.ToDouble(
+        new DataTable().Compute($"{number1} {oper} {number2}", null)
+        );
+    Console.WriteLine($"{number1} {oper} {number2} = {result}");
+}
