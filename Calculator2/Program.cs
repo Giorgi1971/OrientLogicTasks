@@ -50,12 +50,16 @@ while (true)
         {
             break;
         }
+        // ქვედა ორი ხაზი მეორდება....
+        else
+        {
+            Console.WriteLine($"{opera} is not in \"+ - * / \"\n");
+        }
     }
     else
     {
         Console.WriteLine($"{opera} is not in \"+ - * / \"\n");
     }
-
 }
 
 if ((oper == '/') && (number2 == 0))
