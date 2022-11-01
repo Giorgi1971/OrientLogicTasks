@@ -4,6 +4,9 @@
 }
 
 
+
+// tests
+
 var array = new int[] { 0, 1, 5, 76, 234, 678 };
 
 var target = 76;
