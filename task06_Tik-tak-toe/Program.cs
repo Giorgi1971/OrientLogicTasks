@@ -1,7 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Internal;
-using System;
+﻿using System;
 
 Console.WriteLine("Enter Player2 name: ");
 string player1 = Console.ReadLine();
@@ -19,6 +16,7 @@ string mark = "X";
 // არ მუშაობს, იქნებ გავარკვიო.
 bool move = (cells[0, 0] == cells[0, 1] && cells[0, 0] != "-" && cells[0, 1] == cells[0, 2]);
 //Console.WriteLine(move);
+int counter = 0;
 
 while (true)
 {
@@ -36,6 +34,7 @@ while (true)
         Console.WriteLine($"Congratulation You Winner!");
         break;
     }
+    
     if (currentPlayer != player1)
     {
         currentPlayer = player1;
@@ -48,9 +47,22 @@ while (true)
     }
     Console.Write("\n");
 
-    Console.Write($"{currentPlayer.ToUpper()} enter position (x,y) or (x y): ");
+    counter++;
+    Console.WriteLine(counter);
+    if (counter == 10)
+    {
+        Console.WriteLine("Congratulation Play Draw!");
 
-    int[] coordinate = getCoordinate();
+        break;
+    }
+
+
+    int[] coordinate = getCoordinate(currentPlayer, cells);
+    if (coordinate[0] == 77 )
+    {
+        Console.WriteLine($"Game played Draw!");
+        break;
+    }
 
     cells[coordinate[0], coordinate[1]] = mark;
 
@@ -60,17 +72,25 @@ while (true)
 
 Console.WriteLine($"Congratulation {currentPlayer.ToUpper()}, You Wiiiiin!");
 
-static int[] getCoordinate()
+static int[] getCoordinate(string currentPlayer, string[,] cells)
 {
+
     while (true)
     {
+
         try
         {
+            Console.Write($"{currentPlayer.ToUpper()} enter position (x,y) or (x y): ");
             string text = Console.ReadLine();
             string[] subs = text.Trim().Split(' ', ',');
             int x = Convert.ToInt16(subs[0]);
             int y = Convert.ToInt16(subs[1]);
-            //var coordinate = new int[x, y];
+            if ((x < 0 || x > 2) || (y < 0 || y > 2))
+                throw new Exception("Range is 0 - 2.");
+            if (cells[x,y] != "-")
+            {
+                throw new Exception("This place is occupied.");
+            }
             int[] coordinate = { x, y };
             return coordinate;
         }
