@@ -4,10 +4,8 @@ namespace MyApplication
 {
     class Program
     {
-
         static int[] getData()
         {
-
             while (true)
             {
                 try
@@ -23,9 +21,7 @@ namespace MyApplication
                 {
                     Console.WriteLine("text is not number.");
                 }
-                
             }
-
         }
 
 
@@ -36,17 +32,19 @@ namespace MyApplication
             while (true)
             {
                 Console.WriteLine("Enter Operator: + - * / ");
-                string? y = Console.ReadLine();
-                if (y == null)
+                string? oper = Console.ReadLine();
+                if (oper == null)
                 {
-                    Console.WriteLine(y);
+                    Console.WriteLine($"Y is  {oper} here, Enter valid operator.");
                     continue;
                 }
-                if (Array.Exists(operators, Predicate y)
-                {
-                    return y;
-                }
 
+                bool exists = Array.Exists( operators, element => element == oper );
+                if (exists) {
+                    return oper;
+                } else {
+                    continue;
+                }
             }
         }
 

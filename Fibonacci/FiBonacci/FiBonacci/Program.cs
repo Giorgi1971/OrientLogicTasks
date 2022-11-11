@@ -6,7 +6,7 @@ int n = 0;
 while (true)
 {
     Console.Write("Enter number for calculate Fibonachi number: ");
-    string inputString = Console.ReadLine();
+    string inputString = Console.ReadLine() ?? "";
     if (Int32.TryParse(inputString, out n))
     {
         break;
@@ -30,7 +30,7 @@ else
     int a = 0;
     int b = 1;
     int c = 0;
-    for (int i = 2; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
         c = a + b;
         a = b;
