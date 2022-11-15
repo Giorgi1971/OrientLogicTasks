@@ -20,7 +20,10 @@ void PrintMenu()
     Console.Write("\nChoose one of from menu: ");
 }
 
-while(!endWork)
+var wh1 = new WareHouse();
+
+
+while (!endWork)
 {
     PrintMenu();
     byte begin = 7;
@@ -43,7 +46,7 @@ while(!endWork)
     }
     else if (begin == 4)
     {
-
+        wh1.DisplayAllProducts();
     }
     else if (begin == 3)
     {
