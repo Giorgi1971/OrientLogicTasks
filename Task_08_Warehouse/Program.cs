@@ -3,12 +3,19 @@ using System.Linq;
 using Task_08_Warehouse;
 using System;
 
-
+var wh1 = new WareHouse();
 
 var endWork = false;
 
+Product product1 = new Product("bread", 3.5m, 400);
+Product product2 = new Product("Cheese", 12.5m, 200);
+
+wh1.Products.Add(product1);
+wh1.Products.Add(product2);
+
 Console.WriteLine($"Hello in warehouse \"{WareHouse.NameWareHose}\".");
 Console.WriteLine("We are Begin working.\n");
+
 
 void PrintMenu()
 {
@@ -19,8 +26,6 @@ void PrintMenu()
     Console.WriteLine("5. Exit.");
     Console.Write("\nChoose one of from menu: ");
 }
-
-var wh1 = new WareHouse();
 
 
 while (!endWork)
@@ -38,11 +43,11 @@ while (!endWork)
     }
     if (begin == 2)
     {
-
+        wh1.UpdateProducts();
     }
     else if (begin == 1)
     {
-
+        wh1.CreateProduct();
     }
     else if (begin == 4)
     {
@@ -50,7 +55,7 @@ while (!endWork)
     }
     else if (begin == 3)
     {
-
+        wh1.RemoveProducts();
     }
     else if(begin == 5)
     {
@@ -60,5 +65,4 @@ while (!endWork)
     {
         Console.WriteLine("Please enter from 1 to 5!");
     }
-
 }
