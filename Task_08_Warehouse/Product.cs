@@ -9,8 +9,10 @@ namespace Task_08_Warehouse
             get { return name; }
             set
             {
-                if(value.Length < 1 || value.Length > 50 || Char.IsDigit(value[0]))
+                if (value.Length > 1 && value.Length < 50) //  || !Char.IsDigit(value[0])
                     name = value;
+                else
+                    Console.WriteLine("NAME NOt Value"); ;
             }
         }
 
@@ -27,7 +29,7 @@ namespace Task_08_Warehouse
                 }
                 else
                 {
-                    Console.WriteLine("Price must not be negative!");
+                    Console.WriteLine("Number is NOOOT Positive!");
                 }
             }
         }

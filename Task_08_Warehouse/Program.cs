@@ -9,7 +9,9 @@ var ll = 3.3m;
 
 
 Product product1 = new Product("Bread", (decimal)2.0, 300);
+product1.DisplayProduct();
 Product product2 = new Product("Cup", (decimal)2.7, 300);
+product2.DisplayProduct();
 Product product3 = new Product("Butter", (decimal)-2.0m, 300);
 product3.DisplayProduct();
 Product product4 = new Product("Cherry", 3.9m, 900);
