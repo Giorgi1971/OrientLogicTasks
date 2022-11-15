@@ -1,30 +1,61 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Linq;
 using Task_08_Warehouse;
+using System;
 
 
-Console.WriteLine("Hello, World!");
 
-var ll = 3.3m;
+var endWork = false;
 
+Console.WriteLine($"Hello in warehouse \"{WareHouse.NameWareHose}\".");
+Console.WriteLine("We are Begin working.\n");
 
-Product product1 = new Product("Bread", (decimal)2.0, 300);
-product1.DisplayProduct();
-Product product2 = new Product("Cup", (decimal)2.7, 300);
-product2.DisplayProduct();
-Product product3 = new Product("Butter", (decimal)-2.0m, 300);
-product3.DisplayProduct();
-Product product4 = new Product("Cherry", 3.9m, 900);
-product4.DisplayProduct();
-
-WareHouse wareHouse_001 = new WareHouse();
-
-Console.WriteLine(  wareHouse_001.NameWareHose);
-
-Category cat1 = new Category();
-var catList = cat1.categories;
-
-foreach (var item in catList)
+void PrintMenu()
 {
-    Console.WriteLine(item);
+    Console.WriteLine("\n1. Create Product in warehouse;");
+    Console.WriteLine("2. Update Product in warehouse;");
+    Console.WriteLine("3. Remove Product in warehouse;");
+    Console.WriteLine("4. Show all Products in warehouse;");
+    Console.WriteLine("5. Exit.");
+    Console.Write("\nChoose one of from menu: ");
+}
+
+while(!endWork)
+{
+    PrintMenu();
+    byte begin = 7;
+    try
+    {
+        begin = byte.Parse(Console.ReadLine()); ;
+    }
+    catch (FormatException e)
+    {
+        Console.WriteLine("\n"+e.Message);
+        continue;
+    }
+    if (begin == 2)
+    {
+
+    }
+    else if (begin == 1)
+    {
+
+    }
+    else if (begin == 4)
+    {
+
+    }
+    else if (begin == 3)
+    {
+
+    }
+    else if(begin == 5)
+    {
+        System.Environment.Exit(0);
+    }
+    else
+    {
+        Console.WriteLine("Please enter from 1 to 5!");
+    }
+
 }
