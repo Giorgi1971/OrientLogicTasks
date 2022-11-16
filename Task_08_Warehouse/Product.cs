@@ -3,12 +3,16 @@ namespace Task_08_Warehouse
 {
     public class Product
     {
+        // რა განსხვავებაა name რომ იყოს??? ეს get და set რა აკეთებს, მაინც ხომ ვწვდები.
+        // ვალიდაცია აქ რომ იყოს უკეთესი ხომ არ იქნება???
+        // private ველები რომ იყოს ესენი და მხოლოდ აქ შეგეძლოს პროდუქტის შექმნა, საწყობის ფუნქციას იძახებდეს.
         public string Name { get; set; }
 
         public decimal Price { get; set; }
 
         public uint Quantity { get; set; }
 
+        // public string Category { get; set; }
 
         public Product(string name, decimal price, uint quantity)
         {
@@ -17,27 +21,13 @@ namespace Task_08_Warehouse
             Quantity = quantity;
         }
 
-        string ValidateName(string _name)
-        {
-            if (_name.Length > 1 && _name.Length < 50) // && name != "unknoun" && !Char.IsDigit(value[0]))
-            {
-                return _name;
-            }
-            else
-            {
-                return "Unknoun";
-            }
-
-        }
-        //public Product ProductRegistration(string Name, decimal Price, uint Quantity)
-        //{
-
-        //    ;
-        //}
-
         public void DisplayProduct()
         {
-            Console.WriteLine($"{Name} - {Quantity} pics, with price {Price}$.");
+            if (Quantity == 0)
+                Console.WriteLine($"{Name} - {Quantity} pics, with price {Price}$. Important! Out of stock!!!!RED!!!!");
+            else
+                Console.WriteLine($"{Name} - {Quantity} pics, with price {Price}$.");
+
         }
     }
 }

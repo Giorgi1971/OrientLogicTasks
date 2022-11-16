@@ -7,11 +7,24 @@ var wh1 = new WareHouse();
 
 var endWork = false;
 
+var cat1 = new Category();
+
+cat1.Desc = "Mood";
+Console.WriteLine(cat1.Desc);
+Console.WriteLine(cat1.categories);
+foreach (var item in cat1.categories)
+{
+    System.Console.WriteLine(item);
+}
+
 Product product1 = new Product("bread", 3.5m, 400);
 Product product2 = new Product("Cheese", 12.5m, 200);
 
+product1.Quantity = 1000;
+
 wh1.Products.Add(product1);
 wh1.Products.Add(product2);
+
 
 Console.WriteLine($"Hello in warehouse \"{WareHouse.NameWareHose}\".");
 Console.WriteLine("We are Begin working.");
@@ -31,6 +44,7 @@ void PrintMenu()
 while (!endWork)
 {
     PrintMenu();
+    // ამის ინიციალიზება აუცილებელია, სხვანაირად ხომ არ უნდა ვაკეთებდე?
     byte begin = 7;
     try
     {
@@ -47,7 +61,7 @@ while (!endWork)
     }
     else if (begin == 1)
     {
-        wh1.CreateProduct();
+        wh1.RegisterProduct();
     }
     else if (begin == 4)
     {
