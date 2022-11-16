@@ -11,7 +11,6 @@ namespace Task_08_Warehouse
 
         public WareHouse()
         {
-            //var wh1 = new WareHouse();
             Products = new List<Product>();
         }
 
@@ -31,22 +30,37 @@ namespace Task_08_Warehouse
 
         string getName()
         {
-            Console.WriteLine("Enter Product Name: ");
-            var name = Console.ReadLine();
-            return name;
+            while (true)
+            {
+                Console.WriteLine("Enter Product Name: ");
+                var _name = Console.ReadLine();
+                if(_name.Length > 1 && _name.Length < 50 && !Char.IsDigit(_name[0]))
+                {
+                    return _name;
+                }
+                else
+                {
+                    System.Console.WriteLine( "Enter Valid Name!");
+                    continue;
+                }
+            }
         }
 
+        // Parse უკეთესია, TryParse თუ Convert ასეთ შემთხვევბში და რატომ???
         decimal getPrice()
         {
             while(true)
                 {
                 Console.WriteLine("Enter Product Price: ");
                 string? str = Console.ReadLine();
-                decimal price = 1;
                 try
                 {
-                    price = Decimal.Parse(str);
+                    decimal price = Decimal.Parse(str);
                     Console.WriteLine("'{0}' converted to {1}.", str, price);
+                    if(price <= 0)
+                    {
+                        throw new FormatException();
+                    }
                     return price;
                 }
                 catch (FormatException)
@@ -84,20 +98,25 @@ namespace Task_08_Warehouse
             }
         }
 
-        public void CreateProduct()
+        public void RegisterProduct()
         {
             var name = getName();
+            if (Products.Exists(x => x.Name == name))
+            {
+                System.Console.WriteLine( "Product with this name already exists!");
+                return;
+            }
             var price = getPrice();
             var quantity = getQuantity();
-            if(name != "" && price != 0 && quantity != 0)
+            try
             {
                 Product product = new Product(name, price, quantity);
                 Products.Add(product);
                 Console.WriteLine($"{name} added in Products list");
             }
-            else
+            catch
             {
-                Console.WriteLine("Object must not created");
+                Console.WriteLine("Object not created");
             }
         }
 
@@ -109,8 +128,7 @@ namespace Task_08_Warehouse
 
         public void UpdateProducts()
         {
-            var name = getName();
-            Product product = Products.Find(x => x.Name == name);
+            Product product = GetProduct();
             var price = getPrice();
             var quantity = getQuantity();
             product.Price = price;
