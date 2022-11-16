@@ -109,8 +109,7 @@ namespace Task_08_Warehouse
 
         public void UpdateProducts()
         {
-            var name = getName();
-            Product product = Products.Find(x => x.Name == name);
+            var product = GetProduct();
             var price = getPrice();
             var quantity = getQuantity();
             product.Price = price;

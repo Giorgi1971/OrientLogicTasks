@@ -14,7 +14,7 @@ wh1.Products.Add(product1);
 wh1.Products.Add(product2);
 
 Console.WriteLine($"Hello in warehouse \"{WareHouse.NameWareHose}\".");
-Console.WriteLine("We are Begin working.\n");
+Console.WriteLine("We are Begin working.");
 
 
 void PrintMenu()
