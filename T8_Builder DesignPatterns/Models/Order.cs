@@ -4,13 +4,14 @@ using System.Text;
 
 namespace T8_Builder_DesignPatterns.Models
 {
-    public class Burger
+    static class Order
     {
-        public List<string> Ingredients { get; set; }
+        public static List<Object> Orders { get; set; }
 
-        public Burger()
+        static Order()
         {
-            Ingredients = new List<string>();
+            Orders = new List<Object>();
         }
     }
 }
+

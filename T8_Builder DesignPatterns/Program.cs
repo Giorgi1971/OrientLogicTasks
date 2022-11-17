@@ -1,4 +1,12 @@
-﻿using System;
+﻿/* შეკვეთების მიცემა (სტილი მაკ-დონალდსი)
+ * გამოდის მენიუ სადაც შეგვიძლია შევუკვეთოთ სასმელები (როგორც მზა ასევე ჩვენით აწყობილი, ლაღიძის წყლები)
+ * და ბურგერები. გამოყენებულია design pattern - Builder (დირექტორის გარეშე) 
+ * ბურგერი დასამთავრებელია. შეკვეთისას ფასებსაც რომ ითვლიდეს იქნებ მერე მოვახერხო....
+ * 
+ */
+
+
+using System;
 using T8_Builder_DesignPatterns.Builders;
 using T8_Builder_DesignPatterns.Models;
 
@@ -8,63 +16,154 @@ namespace T8_Builder_DesignPatterns
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            var ordering = true;
-            WelcomeMenu();
+            var dd1 = new ReadyDrink() { Name = "Coca-Cola", Price = 5, Cup = { "Cola", "Suger", "Water" } };
+            var dd2 = new ReadyDrink() { Name = "Pepsi", Price = 4, Cup = { "Pepsi", "Suger", "Water" } };
 
-            void WelcomeMenu()
+
+            Console.WriteLine("Hello World!");
+
+            var ordering = true;
+            var choiceDrink = true;
+
+            while (ordering)
             {
-                while(ordering)
+                Console.WriteLine("\t\t\tWelcome - Begin Order:\n1 Drink\t\t2 Burger\t3 Orders\t9 Cancel\n");
+                Menu();
+            }
+       
+
+            void Menu()
+            {
+                Console.Write("Enter Choise: ");
+                var choiseMenu = Console.ReadLine();
+                switch (choiseMenu)
                 {
-                    DisplayMenu();
-                    ChoiseMenu();
-                    // ordering = false;
+                    case "1":
+                        DrinkMenu();
+                        break;
+                    case "2":
+                        BurgerMenu();
+                        break;
+                    case "3":
+                        ShowOrder();
+                        break;
+                    case "9":
+                        ordering = false;
+                        break;
+                    default:
+                        Console.WriteLine("Choose Correctly");
+                        break;
                 }
             }
 
-            void CreateDrink()
+
+            void DrinkMenu()
             {
-                while (true)
+                choiceDrink = true;
+                while (choiceDrink)
                 {
-                    Console.WriteLine("1. Ready Drinks;\t\t 2. Custom Drinks.\t\t5. Cancel Order");
-                    var choiseOrd = Console.ReadLine();
-                    if (choiseOrd == "1")
+                    Console.WriteLine("1 ReadyDrink\t2 CustomDrink\t3 backMenu\t9 Cancel");
+                    var orderDrink = Console.ReadLine();
+                    if (orderDrink == "1")
                     {
                         ReadyDrink();
                     }
-                    else if (choiseOrd == "2")
+                    else if (orderDrink == "2")
                     {
                         CustomDrink();
                     }
-                    else if (choiseOrd == "5")
+                    else if (orderDrink == "3")
+                    {
+                        choiceDrink = false;
+                    }
+                    else if (orderDrink == "9")
                     {
                         ordering = false;
                         break;
                     }
                     else
                     {
-                        continue;
+                        Console.WriteLine("Choose Correctly");
                     }
                 }
             }
 
-            void CustomDrink()
+
+            void ReadyDrink()
+            {
+                var rdord = true;
+                while (rdord)
+                {
+                    Console.WriteLine("1. Coca-Cola; \t\t 2. Pepsi\t 3. Back");
+                    var switch_on = Console.ReadLine();
+                    switch (switch_on)
+                    {
+                        case "1":
+                            Order.Orders.Add(dd1);
+                            Console.WriteLine("Coca Cola Added in Orders");
+                            rdord = false;
+                            break;
+                        case "2":
+                            Order.Orders.Add(dd1);
+                            Console.WriteLine("Pepsi Added in Orders");
+                            rdord = false;
+                            break;
+                        case "3":
+                            rdord = false;
+                            break;
+                        default:
+                            Console.WriteLine("Choose from list, enter Number.");
+                            break;
+                    }
+                }
+            }
+
+                    void CustomDrink()
             {
                 var drinkBuilder = new DrinkBuilder();
                 drinkBuilder.ResetDrink();
                 drinkBuilder.WithWather();
-
-                var dd = drinkBuilder.Build();
-                Console.WriteLine(dd);
+                var dord = true;
+                while(dord)
+                {
+                    Console.WriteLine
+                        (
+                        "1 Suger;   2 Nagebi;   3 Chocolate;   4 Kotsakhuri;   5 Ready;   9 Cancel."
+                        );
+                    var switch_on = Console.ReadLine();
+                    switch (switch_on)
+                    {
+                        case "1":
+                            drinkBuilder.WithSpoonSuger();
+                            break;
+                        case "2":
+                            drinkBuilder.WithNagebi();
+                            break;
+                        case "3":
+                            drinkBuilder.WithChocolate();
+                            break;
+                        case "4":
+                            drinkBuilder.WithKhotsakhuri();
+                            break;
+                        case "5":
+                            var objDrink = drinkBuilder.Build();
+                            Order.Orders.Add(objDrink);
+                            dord = false;
+                            break;
+                        case "8":
+                            dord = false;
+                            break;
+                        case "9":
+                            ordering = false;
+                            choiceDrink = false;
+                            dord = false;
+                            break;
+                    }
+                }
             }
 
-            void ReadyDrink()
-            {
-                Console.WriteLine("Coca-Cola");
-                Console.WriteLine("Pepsi");
-            }
 
-            void CreateBurger()
+            void BurgerMenu()
             {
                 var burgerBuilder = new BurgerBuilder();
                 burgerBuilder.ResetBurger();
@@ -77,49 +176,20 @@ namespace T8_Builder_DesignPatterns
                 }
             }
 
-            void ResetAll()
-            {
-                ordering = false;
-                // var drinkBuilder = new DrinkBuilder();
-            }
 
-            void OrderMenu()
+            void ShowOrder()
             {
-                // var drinkBuilder = new DrinkBuilder();
-            }
+                var allOrder = Order.Orders;
 
-            void ChoiseMenu()
-            {
-                Console.WriteLine("Your Choise: ");
-                var choiseMenu = Console.ReadLine();
-                switch (choiseMenu)
+                if(allOrder.Count < 1)
+                    Console.WriteLine("You havn't orders yet");
+                else
                 {
-                    case "1":
-                        CreateDrink();
-                        break;
-                    case "2":
-                        CreateBurger();
-                        break;
-                    case "3":
-                        ResetAll();
-                        break;
-                    case "4":
-                        OrderMenu();
-                        break;
-                    default:
-                        throw new ArithmeticException("Access denied - You must be at least 18 years old.");
+                    foreach (var item in allOrder)
+                    {
+                        Console.WriteLine(item.ToString());
+                    }
                 }
-                Console.WriteLine(choiseMenu);
-            }
-
-
-            static void DisplayMenu()
-            {
-                Console.WriteLine("\t\t\tWelcome");
-                Console.Write("1. Drink");
-                Console.Write("\t2. Burger");
-                Console.Write("\t3. CancelMenu");
-                Console.Write("\t4. Order\n");
             }
         }
     }
