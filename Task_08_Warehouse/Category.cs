@@ -1,23 +1,24 @@
 ﻿using System;
 namespace Task_08_Warehouse
 {
-    public class Category
+    public static class Category
     {
-        private string desc;
-        public string? Desc 
+        static string? desc;
+        public static string? Desc 
         { 
             get
             {
                 return desc;
             }
-            set
+            set 
             {
                 desc = value;
-                categories.Add(desc);
+                // ეს ბევრგან მაქვს და რას აკეთებს წესიერად ვერ ვხვდები ???
+                // Resolve nullable warnings ??? 
+                categories.Add(desc ?? "");
             }
         }
-
-        public List<string> categories = new List<string> { "Food", "electrical equipment", "Sports equipment", "Books" };
+        public static readonly List<string> categories = new() { "Food", "electrical equipment", "Sports equipment", "Books" };
     }
 }
 
