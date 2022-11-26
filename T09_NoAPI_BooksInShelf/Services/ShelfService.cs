@@ -70,6 +70,11 @@ namespace BooksInShelf.Services
             shelf.Name = Console.ReadLine()!;
         }
 
+        public static void BookList()
+        {
+
+        }
+
         public static void ChangeShelf()
         {
             // ავარჩიეთ წიგნი

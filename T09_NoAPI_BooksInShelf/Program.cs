@@ -55,7 +55,7 @@ static void ShelfMenu(int shelf_id)
     bool shelfing = true;
     while (shelfing)
     {
-        Console.WriteLine("1 Create book\t2 Change shelf\t3 Delete book\t4 Back\t9 Exit.");
+        Console.WriteLine("1 Create\t2 Change shelf\t3 Delete\t4 Books\t5 Back\t9 Exit.");
         var choose = Console.ReadLine();
         if (choose == "1")
         {
@@ -65,7 +65,9 @@ static void ShelfMenu(int shelf_id)
             ShelfService.ChangeShelf();
         else if (choose == "3")
             ShelfService.RemoveBook();
-        else if (choose == "4")
+        //else if (choose == "4")
+        //    BooksList();
+        else if (choose == "5")
             break;
         else if (choose == "9")
             System.Environment.Exit(0);
