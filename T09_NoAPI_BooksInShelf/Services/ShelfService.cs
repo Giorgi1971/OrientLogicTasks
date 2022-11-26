@@ -41,7 +41,9 @@ namespace BooksInShelf.Services
             Console.WriteLine(book.Title);
             Console.WriteLine(Shelf.Shelfs[book.ShelfId-1].Name);
             Shelf.Shelfs[book.ShelfId-1].shelfBooks.Remove(book);
-            book.ShelfId = 0;
+            Book.books.Remove(book);
+            Console.WriteLine($"Book {book.Title} Moved from {Shelf.Shelfs[book.ShelfId - 1].Name} shelf to Trash.");
+
         }
 
         // 01 - ერთი თაროს ნახვა და დაბეჭდვა
@@ -72,7 +74,11 @@ namespace BooksInShelf.Services
 
         public static void BookList()
         {
-
+            var bookList = Book.books;
+            foreach (var item in bookList)
+            {
+                item.Display();
+            }
         }
 
         public static void ChangeShelf()
@@ -83,13 +89,17 @@ namespace BooksInShelf.Services
             //var book = Book.books.Find(s => s.Id == bookId)!;
             var book = Book.books[bookId-1];
             Console.WriteLine(book.Title);
+
             // გამოვიღეთ თაროდან
             Console.WriteLine(Shelf.Shelfs[book.ShelfId-1].Name);
             Shelf.Shelfs[book.ShelfId-1].shelfBooks.Remove(book);
+
             // ჩავდეთ ახალ თაროზე
             Console.WriteLine("Enter new Shelf Id");
-            var newshelfId = int.Parse(Console.ReadLine() ?? "");
-            Shelf.Shelfs[newshelfId-1].shelfBooks.Add(book);
+            var newShelfId = int.Parse(Console.ReadLine() ?? "");
+            Console.WriteLine($"Book {book.Title} Moved in {Shelf.Shelfs[newShelfId-1].Name} shelf");
+            book.ShelfId = newShelfId;
+            Shelf.Shelfs[newShelfId - 1].shelfBooks.Add(book);
         }
 
         // 04 - თაროს წაშლა (ყველა წიგნი წაშლილი უნდა იყოს)
@@ -116,6 +126,5 @@ namespace BooksInShelf.Services
                 item.DisplayShelf();
             }
         }
-
     }
 }

@@ -13,7 +13,7 @@ namespace BooksInShelf.Models
             set
             {
                 if (value < Shelf.Shelfs.Count)
-                    shelfId = value-1;
+                    shelfId = value;
             }
         }
 
@@ -28,7 +28,7 @@ namespace BooksInShelf.Models
 
         public void Display()
         {
-            Console.WriteLine($"Book - {Title} with id {Id} in shelf number - {ShelfId}.");
+            Console.WriteLine($"Book - {Title}\tid-{Id} in shelf - {Shelf.Shelfs[ShelfId-1]} id {shelfId}.");
         }
     }
 }
