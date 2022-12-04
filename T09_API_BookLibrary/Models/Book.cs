@@ -8,10 +8,6 @@ namespace T09_API_BookLibrary.Models
         public string? Title { get; set; }
         public string? ISBN { get; set; }
         public string? Description { get; set; }
-
-        //public Book()
-        //{
-        //}
     }
 }
 

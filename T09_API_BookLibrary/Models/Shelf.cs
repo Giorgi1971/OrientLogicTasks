@@ -4,14 +4,16 @@ namespace T09_API_BookLibrary.Models
 {
     public class Shelf
     {
-        public int Id { get; set; }
+        private static int _id = 1;
+        public int Id { get; }
         public string? Name { get; set; }
-        public List<Book> Books { get; set; }
+        public List<Book> ShelfBooks { get; }
 
-        public Shelf()
+        public Shelf(string name)
         {
-            Books = new List<Book>();
+            Id = _id++;
+            Name = name;
+            ShelfBooks = new List<Book>();
         }
     }
 }
-
