@@ -9,10 +9,9 @@ namespace T09_API_BookLibrary.Models
         public string? Name { get; set; }
         public List<Book> ShelfBooks { get; }
 
-        public Shelf(string name)
+        public Shelf()
         {
             Id = _id++;
-            Name = name;
             ShelfBooks = new List<Book>();
         }
     }

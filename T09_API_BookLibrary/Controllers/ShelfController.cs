@@ -1,69 +1,76 @@
 ﻿using T09_API_BookLibrary.Models;
 using T09_API_BookLibrary.Services;
+using T09_API_BookLibrary.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace T09_API_BookLibrary.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+
 public class ShelfController : ControllerBase
 {
+    private readonly ShelfService _shelfService;
+
     public ShelfController()
     {
+        _shelfService = new ShelfService();
     }
 
-    // GET all action
     [HttpGet]
-    public ActionResult<List<Shelf>> GetAll() => ShelfService.GetAll();
-
-    // GET by Id action
-    [HttpGet("{id}")]
-    public ActionResult<Shelf> Get(int id)
+    [Route("get/{shelfId}")]
+    public Shelf? Get(int shelfId)
     {
-        var shelf = ShelfService.Get(id);
-
-        if (shelf == null)
-            return NotFound();
-
-        return shelf;
+        return _shelfService.Get(shelfId);
     }
 
-    // POST action
-    [HttpPost]
-    public IActionResult Create(Shelf shelf)
+    [HttpGet("shelves")]
+    public List<Shelf> GetAll()
     {
-        ShelfService.Add(shelf);
-        return CreatedAtAction(nameof(Create), shelf);
+        return _shelfService.GetAll();
     }
 
-    // PUT action
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, string str)
+    [HttpPost("create")]
+    public Shelf Create(CreateShelfRequest request)
     {
-        // ეს გავაუქმე რას აკეთებდა ვერ გავიგე.
-        // if (id != shelf.Id)
-        //     return BadRequest();
-
-        var existingShelf = ShelfService.Get(id);
-        if (existingShelf is null)
-            return NotFound();
-        existingShelf.Name = str;
-
-        ShelfService.Update(existingShelf);
-
-        return NoContent();
+        return _shelfService.Create(request);
     }
-    // DELETE action
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+
+    [HttpPut("rename")]
+    public Shelf? Rename(RenameShelfRequest request)
     {
-        var shelf = ShelfService.Get(id);
+        return _shelfService.Rename(request);
+    }
 
-        if (shelf is null)
-            return NotFound();
+    [HttpDelete("Delete")]
+    public string Delete(int Id)
+    {
+        return _shelfService.Delete(Id);
+    }
 
-        ShelfService.Delete(id);
+    [HttpPost("createBook")]
+    public Book? AddToShelf(BookCreateInShelf request)
+    {
+        return _shelfService.AddToShelf(request);
+    }
 
-        return NoContent();
+    [HttpDelete("DeleteBook")]
+    public Shelf? Remove(int Id)
+    {
+        return _shelfService.RemoveBook(Id);
+    }
+
+    [HttpPut("ChangeBookShelf")]
+    public Shelf? MoveTo(MoveToShelfRequest request)
+    {
+        return _shelfService.MoveTo(request);
+    }
+
+    [HttpGet]
+    [Route("book/{bookId}")]
+    public Book? GetBook(int bookId)
+    {
+        return _shelfService.GetBook(bookId);
     }
 }
+
