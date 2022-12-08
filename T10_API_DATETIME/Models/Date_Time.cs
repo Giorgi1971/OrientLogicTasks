@@ -25,10 +25,20 @@ namespace T10_API_DATETIME.Models
             }
         }
 
-        public bool IsLeapYear(DateTime date1)
+        public string? IsLeapYear(string date1)
             {
-                var year = date1.Year;
-                return DateTime.IsLeapYear(year);
+                if (date1.Length == 4)
+                {
+                    var date = Convert.ToDateTime($"{date1}-01").Year;
+                    if (DateTime.IsLeapYear(date))
+                        return $"Yes {date1} is Leap year";
+                    else
+                        return $"No {date1} isn't Leap year";
+                }
+                else
+                {
+                    return "Enter Correct Year Formt: 'yyyy'";
+                }
             }
 
         public string DaysBetween(DateTime date1, DateTime date2)

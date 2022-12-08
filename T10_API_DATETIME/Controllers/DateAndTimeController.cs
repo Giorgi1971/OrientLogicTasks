@@ -46,6 +46,12 @@ public class DateAndTimeController : ControllerBase
         return _dt.DaysBetween(date1, date2);
     }
 
+    [HttpGet("IsLeapYear")]
+    public string? IsLeapYear(string year)
+    {
+        return _dt.IsLeapYear(year);
+    }
+
     [HttpGet("DayInGeorgian")]
     public string DayInGeorgian()
     {
