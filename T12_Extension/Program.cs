@@ -1,4 +1,5 @@
 ﻿using ExtensionMethods;
+
 // რიცხვების ექსტენშენ მეთოდების შემოწმება
 int num1 = 15;
 Console.WriteLine(num1.IsGreaterThan(10));
@@ -14,20 +15,22 @@ Console.WriteLine(strDate.IsDate());
 // 
 string strSplit = "2033 12 09 werfwer";
 var splited = strSplit.ToWords();
-foreach (var item in splited)
-{
-    Console.WriteLine(item);
-}
+//foreach (var item in splited)
+//{
+//    Console.WriteLine(item);
+//}
 
-//string strHash = "Hello World!";
-//var hash = strHash.CalculateHash();
-//Console.WriteLine($"Hash for {strHash} is: {hash}.");
+string strHash = "Hello World!";
+var hash = strHash.CalculateHash();
+Console.WriteLine($"Hash for {strHash} is: {hash}.");
 
-//var path = "Files/file.txt";
-//var txt = "Hello, This is text for Write in file.";
-//txt.SaveToFile(path);
+var path = "Files/file.txt";
+var txt = "Hello, This is text for Write in file.";
+txt.SaveToFile(path);
 
 // Decimal Functions
+Console.WriteLine("---------------Double--------------");
+
 // 1. პროცენტი
 Console.WriteLine(0.5.ToPercent());
 
@@ -48,3 +51,14 @@ Console.WriteLine(doubleNumber2.IsLess(5.5)); // False
 double doubleNumber5 = 12.1;
 var result2 = doubleNumber5.RoundDown();
 Console.WriteLine(result2);
+
+Console.WriteLine(Convert.ToInt32(20.7));
+
+
+Console.WriteLine("---------------DateTime--------------");
+DateTime dt = DateTime.Now;
+Console.WriteLine(dt.BeginingOfMonth());
+Console.WriteLine(dt.EndOfMonth());
+var date = new DateTime(2022, 11, 23);
+Console.WriteLine(dt.Max(date));
+Console.WriteLine(dt.Min(date));
