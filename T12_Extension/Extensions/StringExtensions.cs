@@ -63,7 +63,7 @@ namespace ExtensionMethods
             }
         }
 
-        // ToDo ეს ორი მეთოდი დასაწერია:
+        // ToDo ეს ორი მეთოდი დასაწერია, არ ვიცი როგორ:
         // Encrypt(string key, string iv) - უნდა დააბრუნოს დაშიფრული ტექსტი
         // Decrypt(string key, string iv) - უნდა დააბრუნოს გაშიფრული ტექსტი
     }

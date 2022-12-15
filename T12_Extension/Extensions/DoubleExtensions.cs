@@ -12,9 +12,7 @@ namespace ExtensionMethods
         public static Int32 RoundDown(this double i)
         {
             string str = Convert.ToString(i);
-            var num = str.Split(",")[0];
-            Int32 n = (Int32)Convert.ToInt32(num);
-            return n;
+            return (Int32)Convert.ToInt32(str.Split(",")[0]);
         }
 
         public static decimal ToDecimal(this double num1)

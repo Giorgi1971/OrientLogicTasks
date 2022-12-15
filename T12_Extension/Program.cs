@@ -1,18 +1,14 @@
 ﻿using ExtensionMethods;
 
-// რიცხვების ექსტენშენ მეთოდების შემოწმება
 int num1 = 15;
 Console.WriteLine(num1.IsGreaterThan(10));
 
-// რიცხვია თუ არა?
 string strNumber = "123";
 Console.WriteLine(strNumber.IsNumber());
 
-// თარიღია თუ არა
 string strDate = "2033 12 09 2:20";
 Console.WriteLine(strDate.IsDate());
 
-// 
 string strSplit = "2033 12 09 werfwer";
 var splited = strSplit.ToWords();
 //foreach (var item in splited)
@@ -51,9 +47,6 @@ Console.WriteLine(doubleNumber2.IsLess(5.5)); // False
 double doubleNumber5 = 12.1;
 var result2 = doubleNumber5.RoundDown();
 Console.WriteLine(result2);
-
-Console.WriteLine(Convert.ToInt32(20.7));
-
 
 Console.WriteLine("---------------DateTime--------------");
 DateTime dt = DateTime.Now;
