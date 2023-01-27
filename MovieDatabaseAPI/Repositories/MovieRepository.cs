@@ -11,8 +11,10 @@ namespace MovieDatabaseAPI.Repositories
     {
         Task<Movie> AddMovie(Movie movie);
         Task<Movie> GetMovie(int movieId);
+        Task<List<Movie>> AllMovie();
         // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
-        Task<List<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex);
+        Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
+        Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
         Task<Movie> UpdateMovie(Movie movie);
         void DeleteMovie(int movieId);
     }
@@ -24,6 +26,13 @@ namespace MovieDatabaseAPI.Repositories
         public MovieRepository(AppDbContext db)
         {
             _db = db;
+        }
+
+        public async Task<List<Movie>> AllMovie()
+        {
+            return await _db.Movies
+                .Where (m => m.MovieStatus == 0)
+                .ToListAsync();
         }
 
         public async Task<Movie> AddMovie(Movie movie)
@@ -39,21 +48,41 @@ namespace MovieDatabaseAPI.Repositories
             return await _db.Movies.FirstOrDefaultAsync(e => e.Id == movieId);
         }
 
+
         // აქ ტასკის ლისტად გადაკეთება მომიწია :( ??? ქვედა მინდოდა რომ ყოფილიყო
         //public Task<IEnumerable<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex)
-        public async Task<List<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex)
+        public async Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex)
         {
+
             var searchedMovies = _db.Movies.
                 Where(
                 m => m.Title.Contains(filter.InTitle) ||
                 m.Description.Contains(filter.InDescription) ||
                 m.MovieDirector.Contains(filter.InMovieDirector) ||
-                m.Releazed.ToString() == filter.InReleasedDate.ToString()
+                m.Releazed.Year == filter.InReleasedDate
                 )
-                .Skip(pageIndex*pageSize)
+                .Where(m => m.MovieStatus == 0)
+                .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .OrderBy(t => t.Title)
                 // აქ ასინქ რატომ შეიძლება???
+                .ToListAsync();
+
+            return await searchedMovies;
+        }
+
+        public async Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2)
+        {
+            var searchedMovies = _db.Movies
+                .Where(m => m.MovieStatus == 0)
+                .Where(
+                m => m.Title.Contains(filter1) ||
+                m.Description.Contains(filter2)
+                //m.Releazed.ToString() == filter.InReleasedDate.ToString()
+                )
+                //.Skip(pageIndex * pageSize)
+                //.Take(pageSize)
+                .OrderBy(t => t.Title)
                 .ToListAsync();
 
             return await searchedMovies;
@@ -79,19 +108,22 @@ namespace MovieDatabaseAPI.Repositories
             return null;
         }
 
-        public async void DeleteMovie(int movieId)
+        // რატომღაც (დაახლოებით, ბაზას აკითხავდა დამთავრებამდე ხელახლა)
+        // ასინქრონულობის მოცილებამ უშველა????
+        public void DeleteMovie(int movieId)
         {
-            var result = await _db.Movies
-                .FirstOrDefaultAsync(m => m.Id == movieId);
-            if (result != null)
+            var result2 = _db.Movies
+                    .FirstOrDefault(e => e.Id == movieId);
+
+            if (result2 != null)
             {
-                _db.Movies.Remove(result);
-                await _db.SaveChangesAsync();
+                result2.MovieStatus = Status.deleted;
+                _db.SaveChanges();
             }
         }
     }
 
-    public class Filter
+    public class FilterMovie
     {
         public string InTitle { get; set; }
         public string InDescription { get; set; }
