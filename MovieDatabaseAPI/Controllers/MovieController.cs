@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MovieDatabaseAPI.Repositories;
 using MovieDatabaseAPI.Data.Entity;
+using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,12 +60,12 @@ namespace MovieDatabaseAPI.Controllers
         {
             try
             {
-                return (await _movieRepository.AllMovie()).ToList();
+                return Ok(await _movieRepository.AllMovie());
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
+                    "Errorrrrrr retrieving data from the database");
             }
         }
 
@@ -91,22 +92,68 @@ namespace MovieDatabaseAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> AddMovie([FromBody] CreateMovieRequest request)
         {
+            // აქ if და ქვევით try-ის if ერთი და იგივეს ხომ არ აკეთებს? ან ეს საერთოდ ამისია???
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 if (request == null)
                     return BadRequest();
+                // Add custom model validation error
+                if (request.Movie.Title is null ||
+                    request.Movie.Description is null ||
+                    request.Movie.Description is null)
+                {
+                    return BadRequest("Title, Description and Movie Director is Required Value");
+                }
+                if (request.Movie.Releazed.Year < 1895)
+                    return BadRequest("Movie Releazed date must after 1895 year");
 
-                var createMovie = await _movieRepository.AddMovie(request.Movie);
+                var createdMovie = await _movieRepository.AddMovie(request.Movie);
 
                 return CreatedAtAction(nameof(GetEmployee),
-                    new { id = createMovie.Id }, createMovie);
+                    new { id = createdMovie.Id }, createdMovie);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creating new employee record");
+                    "Error From Create 2 retrieving data from the database");
             }
         }
+
+        [HttpPost("Create2")]
+        public async Task<ActionResult<Movie>> CreateMovie([FromBody] CreateMovieRequest request)
+        {
+            try
+            {
+                if (request.Movie == null)
+                {
+                    return BadRequest();
+                }
+                // Add custom model validation error
+                if(request.Movie.Title is null ||
+                    request.Movie.Description is null ||
+                    request.Movie.Description is null)
+                {
+                    return BadRequest("Title, Description and Movie Director is Required Value");
+                }
+                if(request.Movie.Releazed.Year < 1895)
+                    return BadRequest("Movie Releazed date must after 1895 year");
+
+                var createdMovie = await _movieRepository.AddMovie(request.Movie);
+
+                return CreatedAtAction(nameof(GetEmployee),
+                    new { id = createdMovie.Id }, createdMovie);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error From Create 2 retrieving data from the database");
+            }
+        }
+
 
         // PUT api/values/5
         [HttpPut("{id:int}")]
