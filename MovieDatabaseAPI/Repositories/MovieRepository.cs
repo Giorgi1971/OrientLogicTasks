@@ -15,8 +15,9 @@ namespace MovieDatabaseAPI.Repositories
         // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
         Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
         Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
-        Task<Movie> UpdateMovie(Movie movie);
+        Task<Movie> UpdateMovie(int id, string title, string desc, string dir, DateTime date);
         void DeleteMovie(int movieId);
+        // saveChanges მეტოდი აკლია აშკარად....
     }
 
     public class MovieRepository : IMovieRepository
@@ -71,13 +72,13 @@ namespace MovieDatabaseAPI.Repositories
             return await searchedMovies;
         }
 
-        public async Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2)
+        public async Task<List<Movie>> GetSearchedMovies2(string filterTitle, string filterDesc)
         {
             var searchedMovies = _db.Movies
                 .Where(m => m.MovieStatus == 0)
                 .Where(
-                m => m.Title.Contains(filter1) ||
-                m.Description.Contains(filter2)
+                m => m.Title.Contains(filterTitle) ||
+                m.Description.Contains(filterDesc)
                 //m.Releazed.ToString() == filter.InReleasedDate.ToString()
                 )
                 //.Skip(pageIndex * pageSize)
@@ -88,19 +89,19 @@ namespace MovieDatabaseAPI.Repositories
             return await searchedMovies;
         }
 
-        public async Task<Movie> UpdateMovie(Movie movie)
+        public async Task<Movie> UpdateMovie(int movieId, string title, string desc, string dir, DateTime date)
         {
             var result = await _db.Movies
-                .FirstOrDefaultAsync(e => e.Id == movie.Id);
+                .FirstOrDefaultAsync(e => e.Id == movieId);
 
             if (result != null)
             {
-                result.Title = movie.Title;
-                result.Description = movie.Description;
-                result.Releazed = movie.Releazed;
-                result.MovieDirector = movie.MovieDirector;
-                result.MovieStatus = movie.MovieStatus;
-                result.CreateAt = movie.CreateAt;
+                result.Title = title;
+                result.Description = desc;
+                result.Releazed = date;
+                result.MovieDirector = dir;
+                // ამ ხაზსაც ხომ არ ჭირდება განახლება:
+                //result.CreateAt = DateTime.UtcNow;
 
                 await _db.SaveChangesAsync();
                 return result;

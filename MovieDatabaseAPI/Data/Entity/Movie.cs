@@ -20,10 +20,8 @@ namespace MovieDatabaseAPI.Data.Entity
         [Required]
         public string MovieDirector { get; set; }
 
-        [Required]
         public Status MovieStatus { get; set; }
 
-        [Required]
         public DateTime CreateAt { get; set; }
     }
 

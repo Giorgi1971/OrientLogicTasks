@@ -22,8 +22,8 @@ namespace MovieDatabaseAPI.Controllers
         {
             _movieRepository = movieRepository;
         }
-        // GET: api/values
-        [HttpGet("SerchedMovies")]
+
+        [HttpGet("SerchedMoviesWithPageIndex")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies([FromQuery]GetSearchedMoviesRequest request)
         {
             try
@@ -39,13 +39,13 @@ namespace MovieDatabaseAPI.Controllers
             }
         }
 
-        [HttpGet("SerchedMovies2")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies2([FromQuery] GetSearchedMoviesRequest2 request)
+        [HttpGet("SerchedMovies")]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies2([FromQuery]GetSearchedMoviesRequest2 request)
         {
             try
             {
                 return Ok(await _movieRepository.GetSearchedMovies2(
-                    request.Filter1, request.Filter2
+                    request.FilterTitle, request.FilterDescription
                     ));
             }
             catch (Exception)
@@ -65,11 +65,10 @@ namespace MovieDatabaseAPI.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Errorrrrrr retrieving data from the database");
+                    "ErrorrrrrrGetAll retrieving data from the database");
             }
         }
 
-        // GET api/values/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Movie>> GetEmployee(int id)
         {
@@ -88,7 +87,6 @@ namespace MovieDatabaseAPI.Controllers
             }
         }
 
-        // POST api/values
         [HttpPost]
         public async Task<ActionResult<Movie>> AddMovie([FromBody] CreateMovieRequest request)
         {
@@ -102,47 +100,22 @@ namespace MovieDatabaseAPI.Controllers
                 if (request == null)
                     return BadRequest();
                 // Add custom model validation error
-                if (request.Movie.Title is null ||
-                    request.Movie.Description is null ||
-                    request.Movie.Description is null)
+                // აქამდე სავარაუდოდ [required] ატიბუტი არ მოუშვებს!!!
+                var movie = request.Movie;
+                if (movie == null)
+                    return BadRequest("Movie info not in request body");
+                if (movie.Title is null ||
+                    movie.Description is null ||
+                    movie.Description is null)
                 {
                     return BadRequest("Title, Description and Movie Director is Required Value");
                 }
                 if (request.Movie.Releazed.Year < 1895)
                     return BadRequest("Movie Releazed date must after 1895 year");
 
-                var createdMovie = await _movieRepository.AddMovie(request.Movie);
-
-                return CreatedAtAction(nameof(GetEmployee),
-                    new { id = createdMovie.Id }, createdMovie);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error From Create 2 retrieving data from the database");
-            }
-        }
-
-        [HttpPost("Create2")]
-        public async Task<ActionResult<Movie>> CreateMovie([FromBody] CreateMovieRequest request)
-        {
-            try
-            {
-                if (request.Movie == null)
-                {
-                    return BadRequest();
-                }
-                // Add custom model validation error
-                if(request.Movie.Title is null ||
-                    request.Movie.Description is null ||
-                    request.Movie.Description is null)
-                {
-                    return BadRequest("Title, Description and Movie Director is Required Value");
-                }
-                if(request.Movie.Releazed.Year < 1895)
-                    return BadRequest("Movie Releazed date must after 1895 year");
-
-                var createdMovie = await _movieRepository.AddMovie(request.Movie);
+                movie.MovieStatus = Status.active;
+                movie.CreateAt = DateTime.Now;
+                var createdMovie = await _movieRepository.AddMovie(movie);
 
                 return CreatedAtAction(nameof(GetEmployee),
                     new { id = createdMovie.Id }, createdMovie);
@@ -155,21 +128,18 @@ namespace MovieDatabaseAPI.Controllers
         }
 
 
-        // PUT api/values/5
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Movie>> UpdateMovie(int id, [FromBody] UpdateMovieRequest request)
+        public async Task<ActionResult<Movie>> UpdateMovie([FromBody]UpdateMovieRequest request)
         {
             try
             {
-                if (id != request.Movie.Id)
-                    return BadRequest("Movie ID mismatch");
-
-                var movieToUpdate = await _movieRepository.GetMovie(id);
+                //  როგორ მივწვდე ურლ-ის id -ს??? if(id = request.Id)
+                var movieToUpdate = await _movieRepository.GetMovie(request.Id);
 
                 if (movieToUpdate == null)
-                    return NotFound($"Employee with Id = {id} not found");
+                    return NotFound($"Employee with Id = {request.Id} not found");
 
-                return await _movieRepository.UpdateMovie(request.Movie);
+                return await _movieRepository.UpdateMovie(request.Id, request.Title, request.Description, request.Director, request.Released);
             }
             catch (Exception)
             {
@@ -178,8 +148,7 @@ namespace MovieDatabaseAPI.Controllers
             }
         }
 
-        // წინა ToDo -ში წაშლა არ მუშაობს, არც აქ მუშაობდა, სტატუსის შეცვლას ვნახავ
-        // თუ იმუშავებს.
+        // წინა ToDo -ში წაშლა არ მუშაობს, არც აქ მუშაობდა, სტატუსის შეცვლამ იმუშავა!
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Movie>> DeleteEmployee(int id)
         {
