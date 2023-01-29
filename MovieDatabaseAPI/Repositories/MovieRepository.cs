@@ -9,7 +9,7 @@ namespace MovieDatabaseAPI.Repositories
 {
     public interface IMovieRepository
     {
-        Task<IEnumerable<Movie>> GetMoviesAsync();
+        Task<List<Movie>> GetMoviesAsync();
         Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
         Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
         Task<Movie> AddMovie(Movie movie);
@@ -29,7 +29,7 @@ namespace MovieDatabaseAPI.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<Movie>> GetMoviesAsync()
+        public async Task<List<Movie>> GetMoviesAsync()
         {
             var allMovies = _db.Movies.ToListAsync();
             return await allMovies;
