@@ -42,7 +42,7 @@ namespace MovieDatabaseAPI.Controllers
         {
             try
             {
-                return Ok(await _movieRepository.GetSearchedMovies(
+                return Ok(await _movieRepository.GetSearchedMoviesAsync(
                     request.Filter, request.pageSize, request.pageIndex
                     ));
             }
@@ -54,11 +54,11 @@ namespace MovieDatabaseAPI.Controllers
         }
 
         [HttpGet("SerchedMovies")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies2([FromQuery]GetSearchedMoviesRequest2 request)
+        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies2Async([FromQuery]GetSearchedMoviesRequest2 request)
         {
             try
             {
-                return Ok(await _movieRepository.GetSearchedMovies2(
+                return Ok(await _movieRepository.GetSearchedMovies2Async(
                     request.FilterTitle, request.FilterDescription
                     ));
             }
@@ -70,11 +70,11 @@ namespace MovieDatabaseAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Movie>> GetEmployee(int id)
+        public async Task<ActionResult<Movie>> GetMovieAsync(int id)
         {
             try
             {
-                var result = await _movieRepository.GetMovie(id);
+                var result = await _movieRepository.GetMovieAsync(id);
 
                 if (result == null) return NotFound();
 
@@ -88,39 +88,21 @@ namespace MovieDatabaseAPI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Movie>> AddMovie([FromBody] CreateMovieRequest request)
+        [HttpPost("Create")]
+        public async Task<ActionResult<Movie>> AddMovieAsync([FromBody]CreateMovieRequest request)
         {
-            // აქ if და ქვევით try-ის if ერთი და იგივეს ხომ არ აკეთებს? ან ეს საერთოდ ამისია???
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                if (request == null)
-                    return BadRequest();
-                // Add custom model validation error
-                // აქამდე სავარაუდოდ [required] ატიბუტი არ მოუშვებს!!!
-                var movie = request.Movie;
-                if (movie == null)
-                    return BadRequest("Movie info not in request body");
-                if (string.IsNullOrEmpty(movie.Title) ||
-                    string.IsNullOrEmpty(movie.Description) ||
-                    string.IsNullOrEmpty(movie.MovieDirector)
-                    )
-                {
-                    return BadRequest("Title, Description and Movie Director is Required Value");
-                }
-                if (request.Movie.Releazed.Year < 1895)
-                    return BadRequest("Movie Releazed date must after 1895 year");
-
-                movie.MovieStatus = Status.active;
-                movie.CreateAt = DateTime.Now;
-                var createdMovie = await _movieRepository.AddMovie(movie);
-
-                return CreatedAtAction(nameof(GetEmployee),
-                    new { id = createdMovie.Id }, createdMovie);
+                var createdMovie = await _movieRepository.AddMovieAsync(request);
+                await _movieRepository.SaveChangesAsync();
+                // ამას რა ჯანდაბა უნდა, ნახევარი დღე მომაცდინა 
+                //return CreatedAtAction(nameof(GetMovieAsync),
+                //    new { id = createdMovie.Id }, createdMovie);
+                return Ok(createdMovie);
             }
             catch (Exception)
             {
@@ -131,17 +113,19 @@ namespace MovieDatabaseAPI.Controllers
 
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Movie>> UpdateMovie([FromBody]UpdateMovieRequest request)
+        public async Task<ActionResult<Movie>> UpdateMovieAsync([FromBody]UpdateMovieRequest request)
         {
             try
             {
                 //  როგორ მივწვდე ურლ-ის id -ს??? if(id = request.Id)
-                var movieToUpdate = await _movieRepository.GetMovie(request.Id);
+                var movieToUpdate = await _movieRepository.GetMovieAsync(request.Id);
 
                 if (movieToUpdate == null)
-                    return NotFound($"Employee with Id = {request.Id} not found");
+                    return NotFound($"Movie with Id = {request.Id} not found");
+                var updatedMovie = await _movieRepository.UpdateMovieAsync(request.Id, request.Title, request.Description, request.Director, request.Released);
+                await _movieRepository.SaveChangesAsync();
 
-                return await _movieRepository.UpdateMovie(request.Id, request.Title, request.Description, request.Director, request.Released);
+                return updatedMovie;
             }
             catch (Exception)
             {
@@ -151,17 +135,19 @@ namespace MovieDatabaseAPI.Controllers
         }
 
         // წინა ToDo -ში წაშლა არ მუშაობს, არც აქ მუშაობდა, სტატუსის შეცვლამ იმუშავა!
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Movie>> DeleteEmployee(int id)
+        // 
+        [HttpDelete("delete/{id:int}")]
+        public async Task<ActionResult<Movie>> DeleteMovieAsync(int id)
         {
             try
             {
-                var movieToDelete = await _movieRepository.GetMovie(id);
+                var movieToDelete = await _movieRepository.GetMovieAsync(id);
 
                 if (movieToDelete == null)
                     return NotFound($"Movie with Id = {id} not found");
 
                 _movieRepository.DeleteMovie(id);
+                await _movieRepository.SaveChangesAsync();
                 return Ok("Object Deleted");
             }
             catch (Exception)

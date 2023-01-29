@@ -4,6 +4,7 @@ namespace MovieDatabaseAPI.Data.Entity
 {
     public class Movie
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]

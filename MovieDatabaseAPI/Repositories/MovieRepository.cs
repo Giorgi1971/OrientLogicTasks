@@ -3,6 +3,7 @@ using MovieDatabaseAPI.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MovieDatabaseAPI.Data.Entity;
+using MovieDatabaseAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MovieDatabaseAPI.Repositories
@@ -10,13 +11,14 @@ namespace MovieDatabaseAPI.Repositories
     public interface IMovieRepository
     {
         Task<List<Movie>> GetMoviesAsync();
-        Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
-        Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
-        Task<Movie> AddMovie(Movie movie);
-        Task<Movie> GetMovie(int movieId);
+        Task<List<Movie>> GetSearchedMoviesAsync(FilterMovie filter, int pageSize, int pageIndex);
+        Task<List<Movie>> GetSearchedMovies2Async(string filter1, string filter2);
+        Task<Movie> AddMovieAsync(CreateMovieRequest request);
+        Task<Movie> GetMovieAsync(int movieId);
         // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
-        Task<Movie> UpdateMovie(int id, string title, string desc, string dir, DateTime date);
+        Task<Movie> UpdateMovieAsync(int id, string title, string desc, string dir, DateTime date);
         void DeleteMovie(int movieId);
+        Task SaveChangesAsync();
         // saveChanges მეტოდი აკლია აშკარად....
     }
 
@@ -41,7 +43,7 @@ namespace MovieDatabaseAPI.Repositories
 
         // აქ ტასკის ლისტად გადაკეთება მომიწია :( ??? ქვედა მინდოდა რომ ყოფილიყო
         //public Task<IEnumerable<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex)
-        public async Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex)
+        public async Task<List<Movie>> GetSearchedMoviesAsync(FilterMovie filter, int pageSize, int pageIndex)
         {
 
             var searchedMovies = _db.Movies.
@@ -61,7 +63,7 @@ namespace MovieDatabaseAPI.Repositories
             return await searchedMovies;
         }
 
-        public async Task<List<Movie>> GetSearchedMovies2(string filterTitle, string filterDesc)
+        public async Task<List<Movie>> GetSearchedMovies2Async(string filterTitle, string filterDesc)
         {
             var searchedMovies = _db.Movies
                 .Where(m => m.MovieStatus == 0)
@@ -76,22 +78,29 @@ namespace MovieDatabaseAPI.Repositories
             return await searchedMovies;
         }
 
-        public async Task<Movie> AddMovie(Movie movie)
+        public async Task<Movie> AddMovieAsync(CreateMovieRequest request)
         {
+            var movie = new Movie()
+            {
+                Title = request.Title,
+                Description = request.Description,
+                Releazed = request.Releazed,
+                MovieDirector = request.MovieDirector,
+                CreateAt = DateTime.Now
+            };
             var result = await _db.Movies.AddAsync(movie);
             // ამას აქ უწერია ჩაწერა. await რადგან აქვს, აქ ხომ არ ჯობს როგორცაა?
-            await _db.SaveChangesAsync();
             return result.Entity;
         }
 
-        public async Task<Movie> GetMovie(int movieId)
+        public async Task<Movie> GetMovieAsync(int movieId)
         {
             return await _db.Movies.FirstOrDefaultAsync(
                 e => e.Id == movieId && e.MovieStatus != Status.deleted
                 );
         }
 
-        public async Task<Movie> UpdateMovie(int movieId, string title, string desc, string dir, DateTime date)
+        public async Task<Movie> UpdateMovieAsync(int movieId, string title, string desc, string dir, DateTime date)
         {
             var result = await _db.Movies
                 .FirstOrDefaultAsync(e => e.Id == movieId && e.MovieStatus != Status.deleted);
@@ -104,8 +113,7 @@ namespace MovieDatabaseAPI.Repositories
                 result.MovieDirector = dir;
                 // ამ ხაზსაც ხომ არ ჭირდება განახლება:
                 //result.CreateAt = DateTime.UtcNow;
-
-                await _db.SaveChangesAsync();
+                //await _db.SaveChangesAsync();
                 return result;
             }
             return null;
@@ -121,16 +129,12 @@ namespace MovieDatabaseAPI.Repositories
             if (result2 != null)
             {
                 result2.MovieStatus = Status.deleted;
-                _db.SaveChanges();
             }
         }
-    }
 
-    public class FilterMovie
-    {
-        public string InTitle { get; set; }
-        public string InDescription { get; set; }
-        public string InMovieDirector { get; set; }
-        public int InReleasedDate { get; set; }
+        public async Task SaveChangesAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
     }
 }
