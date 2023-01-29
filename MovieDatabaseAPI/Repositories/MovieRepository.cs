@@ -9,12 +9,12 @@ namespace MovieDatabaseAPI.Repositories
 {
     public interface IMovieRepository
     {
-        Task<Movie> AddMovie(Movie movie);
-        Task<Movie> GetMovie(int movieId);
-        Task<List<Movie>> AllMovie();
-        // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
+        Task<IEnumerable<Movie>> GetMoviesAsync();
         Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
         Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
+        Task<Movie> AddMovie(Movie movie);
+        Task<Movie> GetMovie(int movieId);
+        // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
         Task<Movie> UpdateMovie(int id, string title, string desc, string dir, DateTime date);
         void DeleteMovie(int movieId);
         // saveChanges მეტოდი აკლია აშკარად....
@@ -29,24 +29,11 @@ namespace MovieDatabaseAPI.Repositories
             _db = db;
         }
 
-        public async Task<List<Movie>> AllMovie()
+        public async Task<IEnumerable<Movie>> GetMoviesAsync()
         {
-            return await _db.Movies
-                .Where (m => m.MovieStatus == 0)
-                .ToListAsync();
-        }
-
-        public async Task<Movie> AddMovie(Movie movie)
-        {
-            var result = await _db.Movies.AddAsync(movie);
-            // ამას აქ უწერია ჩაწერა. await რადგან აქვს, აქ ხომ არ ჯობს როგორცაა?
-            await _db.SaveChangesAsync();
-            return result.Entity;
-        }
-
-        public async Task<Movie> GetMovie(int movieId)
-        {
-            return await _db.Movies.FirstOrDefaultAsync(e => e.Id == movieId);
+            var allMovies = _db.Movies.ToListAsync();
+            return await allMovies;
+                //.Where (m => m.MovieStatus == 0)
         }
 
 
@@ -87,6 +74,19 @@ namespace MovieDatabaseAPI.Repositories
                 .ToListAsync();
 
             return await searchedMovies;
+        }
+
+        public async Task<Movie> AddMovie(Movie movie)
+        {
+            var result = await _db.Movies.AddAsync(movie);
+            // ამას აქ უწერია ჩაწერა. await რადგან აქვს, აქ ხომ არ ჯობს როგორცაა?
+            await _db.SaveChangesAsync();
+            return result.Entity;
+        }
+
+        public async Task<Movie> GetMovie(int movieId)
+        {
+            return await _db.Movies.FirstOrDefaultAsync(e => e.Id == movieId);
         }
 
         public async Task<Movie> UpdateMovie(int movieId, string title, string desc, string dir, DateTime date)

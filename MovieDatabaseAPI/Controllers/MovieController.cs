@@ -23,6 +23,20 @@ namespace MovieDatabaseAPI.Controllers
             _movieRepository = movieRepository;
         }
 
+        [HttpGet("AllMovies")]
+        public async Task<ActionResult> GetMoviesAsync()
+        {
+            try
+            {
+                return Ok(await _movieRepository.GetMoviesAsync());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "ErrorrrrrrGetAll retrieving data from the database");
+            }
+        }
+
         [HttpGet("SerchedMoviesWithPageIndex")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies([FromQuery]GetSearchedMoviesRequest request)
         {
@@ -55,20 +69,6 @@ namespace MovieDatabaseAPI.Controllers
             }
         }
 
-        [HttpGet("AllMovies")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
-        {
-            try
-            {
-                return Ok(await _movieRepository.AllMovie());
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "ErrorrrrrrGetAll retrieving data from the database");
-            }
-        }
-
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Movie>> GetEmployee(int id)
         {
@@ -80,6 +80,7 @@ namespace MovieDatabaseAPI.Controllers
 
                 return result;
             }
+
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,

@@ -20,7 +20,7 @@ var app = builder.Build();
 
 // ავტომატურად შექმნის ბაზას თუ არ არსებობს.
 using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
 dbContext!.Database.EnsureCreated();
 
 // Configure the HTTP request pipeline.
