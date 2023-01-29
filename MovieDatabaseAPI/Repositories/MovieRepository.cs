@@ -31,7 +31,9 @@ namespace MovieDatabaseAPI.Repositories
 
         public async Task<List<Movie>> GetMoviesAsync()
         {
-            var allMovies = _db.Movies.ToListAsync();
+            var allMovies = _db.Movies
+                .Where(m => m.MovieStatus == Status.active)
+                .ToListAsync();
             return await allMovies;
                 //.Where (m => m.MovieStatus == 0)
         }
@@ -68,8 +70,6 @@ namespace MovieDatabaseAPI.Repositories
                 m.Description.Contains(filterDesc)
                 //m.Releazed.ToString() == filter.InReleasedDate.ToString()
                 )
-                //.Skip(pageIndex * pageSize)
-                //.Take(pageSize)
                 .OrderBy(t => t.Title)
                 .ToListAsync();
 
@@ -86,13 +86,15 @@ namespace MovieDatabaseAPI.Repositories
 
         public async Task<Movie> GetMovie(int movieId)
         {
-            return await _db.Movies.FirstOrDefaultAsync(e => e.Id == movieId);
+            return await _db.Movies.FirstOrDefaultAsync(
+                e => e.Id == movieId && e.MovieStatus != Status.deleted
+                );
         }
 
         public async Task<Movie> UpdateMovie(int movieId, string title, string desc, string dir, DateTime date)
         {
             var result = await _db.Movies
-                .FirstOrDefaultAsync(e => e.Id == movieId);
+                .FirstOrDefaultAsync(e => e.Id == movieId && e.MovieStatus != Status.deleted);
 
             if (result != null)
             {
@@ -114,7 +116,7 @@ namespace MovieDatabaseAPI.Repositories
         public void DeleteMovie(int movieId)
         {
             var result2 = _db.Movies
-                    .FirstOrDefault(e => e.Id == movieId);
+                    .FirstOrDefault(e => e.Id == movieId && e.MovieStatus != Status.deleted);
 
             if (result2 != null)
             {

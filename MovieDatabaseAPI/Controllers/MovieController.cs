@@ -105,9 +105,10 @@ namespace MovieDatabaseAPI.Controllers
                 var movie = request.Movie;
                 if (movie == null)
                     return BadRequest("Movie info not in request body");
-                if (movie.Title is null ||
-                    movie.Description is null ||
-                    movie.Description is null)
+                if (string.IsNullOrEmpty(movie.Title) ||
+                    string.IsNullOrEmpty(movie.Description) ||
+                    string.IsNullOrEmpty(movie.MovieDirector)
+                    )
                 {
                     return BadRequest("Title, Description and Movie Director is Required Value");
                 }
