@@ -10,14 +10,21 @@ namespace MovieDatabaseAPI.Repositories
     public interface IMovieRepository
     {
         Task<List<Movie>> GetMoviesAsync();
+        //როცა async ვიყენებთ მეთოდში ჯობია მეთოდის სახელს ბოლოში დავუმატოტ Async
+        //მაგალითად GetSearchedMoviesAsync(); AddMovieAsync();
         Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex);
         Task<List<Movie>> GetSearchedMovies2(string filter1, string filter2);
         Task<Movie> AddMovie(Movie movie);
+        //GetMovieById უკეთესი სახელი იქნებოდა უფრო meaningfull
         Task<Movie> GetMovie(int movieId);
         // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
         Task<Movie> UpdateMovie(int id, string title, string desc, string dir, DateTime date);
+        //DeleteMovie ასინქრონული უნდა იყოს ამიტომ Task DeleteMovieAsync უნდა ერქვას
+        // და ზოგადად _db.SaveChangesAsync() ჯობია Controller ში გამოიძახოთ
+        // იმიტორო შეიძლება 1ს კი არა 3 რაღაცას ცვლით და ყოველ შეცვლაზე SaveChangesAsync-ის გამოყენებას
+        // ერთხელ ბოლოში დაუწეროთ ჯობია
         void DeleteMovie(int movieId);
-        // saveChanges მეტოდი აკლია აშკარად....
+        // saveChanges მეტოდი აკლია აშკარად.... კი უნდა დაუწეროთ Task SaveChangesAsync();
     }
 
     public class MovieRepository : IMovieRepository
@@ -41,6 +48,8 @@ namespace MovieDatabaseAPI.Repositories
 
         // აქ ტასკის ლისტად გადაკეთება მომიწია :( ??? ქვედა მინდოდა რომ ყოფილიყო
         //public Task<IEnumerable<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex)
+        // იმუსაებს Task<IEnumerable<Movie>> რო დაუწეროთ, interface ში შეცვალეთ მეთოდი რო მაგას აბრუნებდეს
+        // და იმუშავებს ჩვეულებრივად 
         public async Task<List<Movie>> GetSearchedMovies(FilterMovie filter, int pageSize, int pageIndex)
         {
 
@@ -80,6 +89,7 @@ namespace MovieDatabaseAPI.Repositories
         {
             var result = await _db.Movies.AddAsync(movie);
             // ამას აქ უწერია ჩაწერა. await რადგან აქვს, აქ ხომ არ ჯობს როგორცაა?
+            // არა ცალკე ფუნქცია გააკეთეთ SaveChangesAsync() და controllerში გამოიძახეთ
             await _db.SaveChangesAsync();
             return result.Entity;
         }
@@ -102,7 +112,7 @@ namespace MovieDatabaseAPI.Repositories
                 result.Description = desc;
                 result.Releazed = date;
                 result.MovieDirector = dir;
-                // ამ ხაზსაც ხომ არ ჭირდება განახლება:
+                // ამ ხაზსაც ხომ არ ჭირდება განახლება:  არა იყოს როგორც არის CreatedAt არ იცვლება
                 //result.CreateAt = DateTime.UtcNow;
 
                 await _db.SaveChangesAsync();
@@ -113,6 +123,8 @@ namespace MovieDatabaseAPI.Repositories
 
         // რატომღაც (დაახლოებით, ბაზას აკითხავდა დამთავრებამდე ხელახლა)
         // ასინქრონულობის მოცილებამ უშველა????
+        // არა ასინქრონული უნდა იყოს ზოგადად როცა ბაზასთან გვაქ კომუნიკაცია 
+        // მიღებული პრაქტიკაა რომ Async/Await გამოვიყენოთ
         public void DeleteMovie(int movieId)
         {
             var result2 = _db.Movies
