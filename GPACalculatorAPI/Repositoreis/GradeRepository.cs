@@ -3,6 +3,7 @@ using GPACalculatorAPI.Db.Entity;
 using GPACalculatorAPI.Models.Requests;
 using System.Collections.Generic;
 using GPACalculatorAPI.Db;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GPACalculatorAPI.Repositoreis
 {
@@ -10,7 +11,8 @@ namespace GPACalculatorAPI.Repositoreis
     {
         Task<GradeEntity> CreateGradeAsync(int id, CreateGradeRequest request);
         Task SaveChangesAsync();
-        Task<List<int>> GetStudentGrades(int id);
+        Task<List<int>> GetStudentGradesAsync(int id);
+        Task<ActionResult<double>> GetStudentGPAAsync(int studentId);
     }
 
     public class GradeRepository :IGradeRepository
@@ -34,13 +36,19 @@ namespace GPACalculatorAPI.Repositoreis
         }
 
         // აქ ასინქრონულობას ითხოვს და ავეითი ვერსად ჩავტენე, თუ ასინქს მოვუხსნი აწითლებს???
-        public async Task<List<int>> GetStudentGrades(int id)
+        public async Task<List<int>> GetStudentGradesAsync(int id)
         {
             var scores = _db.Grades
                 .Where(g => g.StudentId == id)
                 .Select(u => u.Score)
                 .ToList();
             return scores;
+        }
+
+        public async Task<ActionResult<double>> GetStudentGPAAsync(int studentId)
+        {
+
+            return 54;
         }
 
 

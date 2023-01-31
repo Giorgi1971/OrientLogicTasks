@@ -58,10 +58,19 @@ namespace GPACalculatorAPI.Controllers
         [HttpGet("students/{studentId}/grades")]
         public async Task<ActionResult<GradeEntity>> GetStudentGrades(int studentId)
         {
-            var cetGrades = await _gradeRepositor.GetStudentGrades(studentId);
+            var cetGrades = await _gradeRepositor.GetStudentGradesAsync(studentId);
             return Ok(cetGrades);
         }
 
+        [HttpGet("students/{studentId}/gpa")]
+        public async Task<ActionResult<double>> GetStudentGPAAsync(int studentId)
+        {
+            var cetGPA = await _gradeRepositor.GetStudentGPAAsync(studentId);
+            return Ok();
+        }
+
+
+        
     }
 }
 
