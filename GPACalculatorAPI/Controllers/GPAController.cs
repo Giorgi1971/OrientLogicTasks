@@ -28,8 +28,6 @@ namespace GPACalculatorAPI.Controllers
         }
 
 
-
-        // POST api/values
         [HttpPost("CreateStudent")]
         public async Task<ActionResult<StudentEntity>> CreateStudent([FromBody]CreateStudentRequest request)
         {
@@ -39,7 +37,6 @@ namespace GPACalculatorAPI.Controllers
         }
 
 
-        // POST api/values
         [HttpPost("CreateSubject")]
         public async Task<ActionResult<StudentEntity>> CreateSubject([FromBody] CreateSubjectRequest request)
         {
@@ -48,13 +45,21 @@ namespace GPACalculatorAPI.Controllers
             return Ok(createStudent);
         }
 
-        // POST api/values
-        [HttpPost("CreateGrade")]
-        public async Task<ActionResult<GradeEntity>> CreateGrade([FromBody] CreateGradeRequest request)
+
+        [HttpPost("{StudentId}/CreateGrades")]
+        public async Task<ActionResult<GradeEntity>> CreateGradeAsync(int StudentId, [FromBody] CreateGradeRequest request)
         {
-            var createGrade = _gradeRepositor.CreateGradeAsync(request);
+            var createGrade = _gradeRepositor.CreateGradeAsync(StudentId, request);
             await _studentRepositor.SaveChangesAsync();
             return Ok(createGrade);
+        }
+
+
+        [HttpGet("students/{studentId}/grades")]
+        public async Task<ActionResult<GradeEntity>> GetStudentGrades(int studentId)
+        {
+            var cetGrades = await _gradeRepositor.GetStudentGrades(studentId);
+            return Ok(cetGrades);
         }
 
     }
