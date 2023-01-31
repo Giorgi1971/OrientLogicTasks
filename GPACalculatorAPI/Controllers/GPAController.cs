@@ -11,34 +11,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GPACalculatorAPI.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+
     public class GPAController : ControllerBase
     {
         private readonly IStudentRepositor _studentRepositor;
+        private readonly IGradeRepository _gradeRepositor;
+        private readonly ISubjectRepository _subjectRepositor;
 
-        public GPAController(IStudentRepositor movieRepository)
+        public GPAController(IStudentRepositor movieRepository, ISubjectRepository subjectRepository, IGradeRepository gradeRepository)
         {
             _studentRepositor = movieRepository;
+            _subjectRepositor = subjectRepository;
+            _gradeRepositor = gradeRepository;
         }
 
 
-    [Route("api/[controller]")]
-
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         // POST api/values
-        [HttpPost("Create")]
+        [HttpPost("CreateStudent")]
         public async Task<ActionResult<StudentEntity>> CreateStudent([FromBody]CreateStudentRequest request)
         {
             var createStudent = _studentRepositor.CreateStudenAsync(request);
@@ -46,6 +38,24 @@ namespace GPACalculatorAPI.Controllers
             return Ok(createStudent);
         }
 
+
+        // POST api/values
+        [HttpPost("CreateSubject")]
+        public async Task<ActionResult<StudentEntity>> CreateSubject([FromBody] CreateSubjectRequest request)
+        {
+            var createStudent = _subjectRepositor.CreateSubjectAsync(request);
+            await _subjectRepositor.SaveChangesAsync();
+            return Ok(createStudent);
+        }
+
+        // POST api/values
+        [HttpPost("CreateGrade")]
+        public async Task<ActionResult<GradeEntity>> CreateGrade([FromBody] CreateGradeRequest request)
+        {
+            var createGrade = _gradeRepositor.CreateGradeAsync(request);
+            await _studentRepositor.SaveChangesAsync();
+            return Ok(createGrade);
+        }
 
     }
 }

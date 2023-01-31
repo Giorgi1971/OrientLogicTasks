@@ -28,7 +28,7 @@ namespace GPACalculatorAPI.Repositoreis
             student.LastName = request.LastName;
             student.Course = request.Course;
             student.PersonalNubmer = request.PersonalNubmer;
-            _db.Students.AddAsync(student);
+            await _db.Students.AddAsync(student);
 
             return student;
         }
