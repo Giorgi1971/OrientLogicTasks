@@ -78,11 +78,20 @@ namespace GPACalculatorAPI.Controllers
             return Ok(getTop3Subject);
         }
 
+
         [HttpGet("Less-3-subject")]
         public async Task<ActionResult<List<SubjectEntity>>> GetBottom3Subject()
         {
             var getTop3Subject = await _gradeRepositor.GetBottom3Subject();
             return Ok(getTop3Subject);
+        }
+
+
+        [HttpGet("Top-10-Students-byGPA")]
+        public async Task<ActionResult<List<StudentEntity>>> GetTop10StudentByGPA()
+        {
+            var getTop10StudentByGPA = await _gradeRepositor.GetTop10StudentByGPA();
+            return Ok(getTop10StudentByGPA);
         }
     }
 }

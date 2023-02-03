@@ -17,6 +17,7 @@ namespace GPACalculatorAPI.Repositoreis
         Task<double> GetStudentGPAAsync(int studentId);
         Task<List<SubjectEntity>> GetTop3Subject();
         Task<List<SubjectEntity>> GetBottom3Subject();
+        Task<List<StudentEntity>> GetTop10StudentByGPA();
     }
 
     public class GradeRepository :IGradeRepository
@@ -122,6 +123,26 @@ namespace GPACalculatorAPI.Repositoreis
                 }
             }
             return total/totalGrade;
+        }
+
+        public async Task<List<StudentEntity>> GetTop10StudentByGPA()
+        {
+            var top10student = _db.Students
+                .Select(x => new { Student = x.Id, AverageSubject = GetStudentGPAAsync(x.Id).ToString() })
+                .OrderBy(x => x.AverageSubject)
+                .Take(2);
+
+
+            List<StudentEntity> Top10List = new List<StudentEntity>();
+
+            foreach (var item in top10student)
+            {
+                Top10List.Add(_db.Students.FirstOrDefault(x => x.Id == item.Student));
+            }
+
+            return Top10List;
+
+
         }
 
         public async Task SaveChangesAsync()
