@@ -7,8 +7,8 @@ using GPACalculatorAPI.Models.Requests;
 using GPACalculatorAPI.Repositoreis;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 namespace GPACalculatorAPI.Controllers
 {
     [ApiController]
@@ -46,7 +46,7 @@ namespace GPACalculatorAPI.Controllers
         }
 
 
-        [HttpPost("{StudentId}/CreateGrades")]
+        [HttpPost("Student/{StudentId}/CreateGrades")]
         public async Task<ActionResult<GradeEntity>> CreateGradeAsync(int StudentId, [FromBody] CreateGradeRequest request)
         {
             var createGrade = _gradeRepositor.CreateGradeAsync(StudentId, request);
@@ -55,22 +55,34 @@ namespace GPACalculatorAPI.Controllers
         }
 
 
-        [HttpGet("students/{studentId}/grades")]
+        [HttpGet("student/{studentId}/grades")]
         public async Task<ActionResult<GradeEntity>> GetStudentGrades(int studentId)
         {
-            var cetGrades = await _gradeRepositor.GetStudentGradesAsync(studentId);
+            var cetGrades = await _gradeRepositor.GetStudentGrades(studentId);
             return Ok(cetGrades);
         }
 
-        [HttpGet("students/{studentId}/gpa")]
-        public async Task<ActionResult<double>> GetStudentGPAAsync(int studentId)
+
+        [HttpGet("student/{studentId}/gpa")]
+        public async Task<ActionResult<double>> GetStudentGPA(int studentId)
         {
             var cetGPA = await _gradeRepositor.GetStudentGPAAsync(studentId);
-            return Ok();
+            return Ok(cetGPA);
         }
 
 
-        
+        [HttpGet("top-3-subject")]
+        public async Task<ActionResult<List<SubjectEntity>>> GetTop3Subject()
+        {
+            var getTop3Subject = await _gradeRepositor.GetTop3Subject();
+            return Ok(getTop3Subject);
+        }
+
+        [HttpGet("Less-3-subject")]
+        public async Task<ActionResult<List<SubjectEntity>>> GetBottom3Subject()
+        {
+            var getTop3Subject = await _gradeRepositor.GetBottom3Subject();
+            return Ok(getTop3Subject);
+        }
     }
 }
-

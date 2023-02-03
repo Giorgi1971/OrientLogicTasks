@@ -26,7 +26,7 @@ namespace GPACalculatorAPI.Repositoreis
         {
             var subject = new SubjectEntity();
             subject.Name = request.Name;
-            subject.Credit = request.Credit;
+            subject.Credit = (int)request.Credit;
             await _db.Subjects.AddAsync(subject);
 
             return subject;
