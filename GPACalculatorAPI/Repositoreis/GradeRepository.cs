@@ -127,22 +127,42 @@ namespace GPACalculatorAPI.Repositoreis
 
         public async Task<List<StudentEntity>> GetTop10StudentByGPA()
         {
-            var top10student = _db.Students
-                .Select(x => new { Student = x.Id, AverageSubject = GetStudentGPAAsync(x.Id).ToString() })
-                .OrderBy(x => x.AverageSubject)
-                .Take(2);
+            //var top10student = _db.Students
+            //    .Select(x => new { Student = x.Id, AverageSubject = GetStudentGPAAsync(x.Id) })
+            //    .OrderBy(x => x.AverageSubject)
+            //    .Take(2);
+
+            //List<StudentEntity> Top10List = new List<StudentEntity>();
+
+            //foreach (var item in top10student)
+            //{
+            //    Top10List.Add(_db.Students.FirstOrDefault(x => x.Id == item.Student));
+            //}
+
+            //return  Top10List;
+
+            var allStudents = _db.Students;
+            List<StudentEntity> top10StudentByGPA = new List<StudentEntity>();
+            List<double> StudentsGPA = new List<double>();
 
 
-            List<StudentEntity> Top10List = new List<StudentEntity>();
-
-            foreach (var item in top10student)
+            foreach (var student in allStudents)
             {
-                Top10List.Add(_db.Students.FirstOrDefault(x => x.Id == item.Student));
+                StudentsGPA.Add(await GetStudentGPAAsync(student.Id));
             }
 
-            return Top10List;
+            var topTwoIndexes = StudentsGPA.Select((number, index) => new { number, index })
+                                          .OrderBy(x => x.number)
+                                          .Take(2)
+                                          .Select(x => x.index)
+                                          .ToList();
 
+            foreach (var index in topTwoIndexes)
+            {
+                top10StudentByGPA.Add(_db.Students.FirstOrDefault(x => x.Id == index));
+            }
 
+            return top10StudentByGPA;
         }
 
         public async Task SaveChangesAsync()
