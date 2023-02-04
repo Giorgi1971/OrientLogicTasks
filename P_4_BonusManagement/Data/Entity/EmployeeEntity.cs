@@ -16,6 +16,8 @@ namespace P_4_BonusManagement.Data.Entity
         public double Salary { get; set; }
         public int RecommenderId { get; set; }
         public DateTime HiringDate { get; set; }
+
+        public List<BonusEntity> Bonuses { get; set; }
     }
 }
 

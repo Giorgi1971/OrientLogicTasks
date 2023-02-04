@@ -63,7 +63,7 @@ namespace P_4_BonusManagement.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("create-employee")]
         public async Task<ActionResult<EmployeeEntity>> CreateEmployeeAsync(CreateEmployeeRequest request)
         {
             try
