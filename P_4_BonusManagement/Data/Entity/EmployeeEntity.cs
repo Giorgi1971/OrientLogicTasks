@@ -18,6 +18,11 @@ namespace P_4_BonusManagement.Data.Entity
         public DateTime HiringDate { get; set; }
 
         public List<BonusEntity> Bonuses { get; set; }
+
+        public EmployeeEntity()
+        {
+            Bonuses = new List<BonusEntity>();
+        }
     }
 }
 

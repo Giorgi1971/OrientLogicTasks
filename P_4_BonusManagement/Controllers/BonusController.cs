@@ -41,7 +41,7 @@ namespace P_4_BonusManagement.Controllers
 
         [HttpPost("search-bonuses")]
         // როდის ჭირდება აქშენრეზალტში ენტიტის ჩასმა???
-        public async Task<ActionResult> GetBonusesByDateAsync([FromBody]SearchBonusByDateRequest request)
+        public async Task<ActionResult> GetBonusesByDateAsync([FromBody] SearchBonusByDateRequest request)
         {
             try
             {
@@ -54,7 +54,23 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-        [HttpGet]
+
+        //[HttpGet("top-10-bonused-employee-bonuses")]
+        //public async Task<ActionResult> TopBonusedEmployee()
+        //{
+        //    try
+        //    {
+        //        return Ok(await _bonusRepository.TopBonusedEmployee());
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
+        //    }
+        //}
+
+
+        [HttpGet("Top-10-bonused")]
         public async Task<ActionResult<List<EmployeeEntity>>> GetTopEmployeesWithMostBonuses()
         {
             try
@@ -68,35 +84,37 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
+        // თუ დებაგით ვუშვებ მუშაობს, თუ არადა სრედებიში იჭედება, იბნევა.
         [HttpPost("create-bonus")]
         public async Task<ActionResult<BonusEntity>> CreateBonusAsync(CreateBonusRequest request)
-        {
-            //try
-            //{
-            //    if (request == null)
-            //        return BadRequest();
-
-                var createdBonus = await _bonusRepository.CreateBonusAsync(request);
-                await _bonusRepository.SaveChangesAsync();
-
-                return Ok();
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //        "Error creating new Bonus record");
-            //}
-        }
-
-        [HttpPost("create-one-bonus")]
-        public async Task<ActionResult<BonusEntity>> OneCreateBonusAsync(CreateBonusRequest request)
         {
             try
             {
                 if (request == null)
                     return BadRequest();
 
-                var createdBonus = await _bonusRepository.OneCreateBonusAsync(request);
+                var createdBonus = await _bonusRepository.CreateBonusAsync(request);
+                //await _bonusRepository.SaveChangesAsync();
+
+            return Ok(createdBonus);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creating new Bonus record");
+            }
+        }
+
+
+        [HttpPost("create-try-two-bonus")]
+        public async Task<ActionResult<BonusEntity>> TwoCreateBonusAsync(CreateBonusRequest request)
+        {
+            try
+            {
+                if (request == null)
+                    return BadRequest();
+
+                var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
                 await _bonusRepository.SaveChangesAsync();
 
                 return Ok(createdBonus);
@@ -106,26 +124,6 @@ namespace P_4_BonusManagement.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error creating new Bonus record");
             }
-        }
-
-        [HttpPost("create-try-two-bonus")]
-        public async Task<ActionResult<BonusEntity>> TwoCreateBonusAsync(CreateBonusRequest request)
-        {
-            //try
-            //{
-            //    if (request == null)
-            //        return BadRequest();
-
-                var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
-                await _bonusRepository.SaveChangesAsync();
-
-                return Ok(createdBonus);
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //        "Error creating new Bonus record");
-            //}
         }
     }
 }

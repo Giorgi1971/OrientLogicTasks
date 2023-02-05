@@ -19,7 +19,6 @@ namespace P_4_BonusManagement.Repositories
         Task SaveChangesAsync();
         Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses();
         Task<BonusEntity> CreateBonusAsync(CreateBonusRequest request);
-        Task<BonusEntity> OneCreateBonusAsync(CreateBonusRequest request);
         Task<BonusEntity> TwoCreateBonusAsync(CreateBonusRequest request);
 
     }
@@ -83,96 +82,101 @@ namespace P_4_BonusManagement.Repositories
             return await _db.Employees
             .Include(e => e.Bonuses)
             .OrderByDescending(e => e.Bonuses.Sum(b => b.BonusAmount))
-            .Take(10)
+            .Take(3)
             .ToListAsync();
         }
+
+
+        public async Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses2()
+        {
+            //return await _db.Employees
+            //.Include(e => e.Bonuses)
+            //.OrderByDescending(e => e.Bonuses.Sum(b => b.BonusAmount))
+            //.Take(3)
+            //.ToListAsync();
+        var result = from e in _db.Employees
+                     join b in _db.Bonusies on e.Id equals b.EmployeeId
+                     group b by e.FirstName into g
+                     select new { FirstName = g.Key, TotalBonus = g.Sum(x => x.BonusAmount) };
+
+        var orderedResult = result.OrderBy(x => x.TotalBonus);
+            //var resultForController = new Top10Empl { EmpName = orderedResult.fi, BonusSums = orderedResult. };
+            return new List<EmployeeEntity>();
+        }
+
+
+
+
 
         public async Task<StrangClass> AddBonusEntity(int employeeId, double amount)
         {
             var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Id == employeeId);
-            if (amount > 3 * employee.Salary || amount < employee.Salary / 2)
-                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
-            // ვამატებთ ბონუსს რექვესტის თანახმად, ვამატებთ ბონუსების სიაში რეკომენდატორთან
-            var bonus1 = new BonusEntity();
-            bonus1.EmployeeId = employeeId;
-            bonus1.BonusAmount = amount;
-            bonus1.IssueDate = DateTime.Now;
-            var result = await _db.Bonusies.AddAsync(bonus1);
-            //employee.Bonuses.Add(bonus1);
+            if(employee == null)
+                throw new GiorgisException("aseti momxmarebeli ar arsebobs - AddBonusEntity");
+            var bonus = new BonusEntity() { EmployeeId = employeeId, BonusAmount = amount, IssueDate = DateTime.Now};
+            var result = await _db.Bonusies.AddAsync(bonus);
             await SaveChangesAsync();
-            var strang = new StrangClass();
-            strang.RecomId = employee.RecommenderId;
-            strang.NewAmount = amount / 2;
-            strang.bonusId = bonus1.Id;
+            var strang = new StrangClass() {RecomId = employee.RecommenderId, NewAmount = amount/2, bonusId = bonus.Id };
             return strang;
         }
 
-        // ეს ვარიანტი ჯერ-ჯერობით არ მუშაობს.
         public async Task<BonusEntity> CreateBonusAsync(CreateBonusRequest request)
         {
-            // ვამოწმებთ ბონუსის ოდენობას
-            var bonus1 = AddBonusEntity(request.EmployeeId, request.BonusAmount);
-            // ვამოწმებთ ყავს თუ არა რეკომენდატორი, თუ ყავს ვაძლევთ მას ბონუსის ნახევარს. ვამატებთ ბონუსების სიაში რეკომენდატორთან
+            var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Id == request.EmployeeId);
+            if (employee == null)
+                throw new GiorgisException("aseti momxmarebeli ar arsebobs - CreateBonusAsync");
+
+            if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
+                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
+
+            var bonus1 = AddBonusEntity(employee.Id, request.BonusAmount);
             if (bonus1.Result.RecomId != 0)
             {
                 var bonus2 = AddBonusEntity(bonus1.Result.RecomId, bonus1.Result.NewAmount);
-                // ახლა ვამოწმებთ ამ რეკომენდატორს - ყავს თუ არა რეკომენდატორი, თუ ყავს ვაძლევთ მას ბონუსის ნახევარს. ვამატებთ ბონუსების სიაში რეკომენდატორთან
                 if (bonus2.Result.RecomId != 0)
                 {
                     var bonus3 = AddBonusEntity(bonus2.Result.RecomId, bonus2.Result.NewAmount);
                 }
             }
+            //await SaveChangesAsync();
             var result = await _db.Bonusies.FirstOrDefaultAsync(x => x.Id == bonus1.Result.bonusId);
             return result;
-            // ვაბრუნებთ პირველი ბონუსის ჩანაწერს
         }
 
-
-        public async Task<BonusEntity> OneCreateBonusAsync(CreateBonusRequest request)
-        {
-            var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Id == request.EmployeeId);
-            if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
-                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
-            var bonus1 = new BonusEntity();
-            bonus1.EmployeeId = request.EmployeeId;
-            bonus1.BonusAmount = request.BonusAmount;
-            bonus1.IssueDate = DateTime.Now;
-            var result = await _db.Bonusies.AddAsync(bonus1);
-            await SaveChangesAsync();
-            return result.Entity;
-        }
-
+        // ეს მუშაობს ზედა ვარიანტი იგივეა და არ მუშაობს. ფუნქციები ცალკეა გატანილი უბრალოდ.
         public async Task<BonusEntity> TwoCreateBonusAsync(CreateBonusRequest request)
         {
             var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Id == request.EmployeeId);
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
                 throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
-            var bonus1 = new BonusEntity() { EmployeeId = request.EmployeeId , BonusAmount = request.BonusAmount };
+            var bonus1 = new BonusEntity() { EmployeeId = request.EmployeeId , BonusAmount = request.BonusAmount, IssueDate = DateTime.Now };
             var result = await _db.Bonusies.AddAsync(bonus1);
-            await SaveChangesAsync();
+            // ბონუსებს ვერ ვამატებ მომხმარებლის ბონუსების სიაში?????????????????????/
+            employee.Bonuses.Add(bonus1);
+            _db.Employees.Update(employee);
+            //await SaveChangesAsync();
             if(employee.RecommenderId != 0)
             {
                 var employee2 = await _db.Employees.FirstOrDefaultAsync(e => e.Id == employee.RecommenderId);
-                var amount2 = request.BonusAmount / 2;
-                if (amount2 > 3 * employee.Salary || amount2 < employee.Salary / 2)
-                    throw new GiorgisException("Giorgis 2222 eqsepSeni, bonusebi diapazonSI ar jdeba");
-                var bonus2 = new BonusEntity() { EmployeeId = employee2.Id, BonusAmount = amount2 };
+                var bonus2 = new BonusEntity() { EmployeeId = employee2.Id, BonusAmount = request.BonusAmount / 2, IssueDate = DateTime.Now };
                 var result2 = await _db.Bonusies.AddAsync(bonus2);
-                await SaveChangesAsync();
+                employee2.Bonuses.Add(bonus2);
+                _db.Employees.Update(employee2);
+
+                //await SaveChangesAsync();
                 if (employee2.RecommenderId != 0)
                 {
                     var employee3 = await _db.Employees.FirstOrDefaultAsync(e => e.Id == employee2.RecommenderId);
-                    var amount3 = amount2 / 2;
-                    if (amount3 > 3 * employee.Salary || amount3 < employee.Salary / 2)
-                        throw new GiorgisException("Giorgis 33333 eqsepSeni, bonusebi diapazonSI ar jdeba");
-                    var bonus3 = new BonusEntity() { EmployeeId = employee3.Id, BonusAmount = amount3 };
+                    var bonus3 = new BonusEntity() { EmployeeId = employee3.Id, BonusAmount = request.BonusAmount / 4, IssueDate = DateTime.Now };
                     var result3 = await _db.Bonusies.AddAsync(bonus3);
-                    await SaveChangesAsync();
+                    employee3.Bonuses.Add(bonus3);
+                    _db.Employees.Update(employee3);
+
+                    //await SaveChangesAsync();
                 }
             }
             return result.Entity;
         }
-
 
         public async Task SaveChangesAsync()
         {
