@@ -54,28 +54,26 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-
-        //[HttpGet("top-10-bonused-employee-bonuses")]
-        //public async Task<ActionResult> TopBonusedEmployee()
-        //{
-        //    try
-        //    {
-        //        return Ok(await _bonusRepository.TopBonusedEmployee());
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
-        //    }
-        //}
-
-
-        [HttpGet("Top-10-bonused")]
+        [HttpGet("Top-bonused-employee")]
         public async Task<ActionResult<List<EmployeeEntity>>> GetTopEmployeesWithMostBonuses()
         {
             try
             {
                 return Ok(await _bonusRepository.GetTopEmployeesWithMostBonuses());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
+            }
+        }
+
+        [HttpGet("Top-10-recomendator")]
+        public async Task<ActionResult<List<NClass>>> GetTopRecomendator()
+        {
+            try
+            {
+                return Ok(await _bonusRepository.GetTopRecomendator());
             }
             catch (Exception)
             {
@@ -127,3 +125,4 @@ namespace P_4_BonusManagement.Controllers
         }
     }
 }
+

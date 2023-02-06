@@ -9,6 +9,8 @@ using P_4_BonusManagement.Models.Requests;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using P_4_BonusManagement.Repositories;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace P_4_BonusManagement.Repositories
 {
@@ -16,11 +18,14 @@ namespace P_4_BonusManagement.Repositories
     {
         Task<IEnumerable<BonusEntity>> GetBonusesAsync();
         Task<NewEmptyClass> SearchBonusesByDateAsync(SearchBonusByDateRequest request);
-        Task SaveChangesAsync();
-        Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses();
+
         Task<BonusEntity> CreateBonusAsync(CreateBonusRequest request);
         Task<BonusEntity> TwoCreateBonusAsync(CreateBonusRequest request);
 
+        Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses();
+        Task<List<NClass>> GetTopRecomendator();
+
+        Task SaveChangesAsync();
     }
 
     public class BonusRepository : IBonusRepository
@@ -35,34 +40,23 @@ namespace P_4_BonusManagement.Repositories
 
         public async Task<IEnumerable<BonusEntity>> GetBonusesAsync()
         {
-            return await _db.Bonusies.ToListAsync();
+            var result = await _db.Bonusies.ToListAsync();
+            return result;
         }
 
 
         public async Task<NewEmptyClass> SearchBonusesByDateAsync(SearchBonusByDateRequest request)
         {
-            IQueryable<BonusEntity> query = _db.Bonusies;
+            IQueryable<BonusEntity> _query = _db.Bonusies;
 
             if (!string.IsNullOrEmpty(request.FromDate.ToString()))
             {
-                query = query
+                _query = _query
                     .Where(e => e.IssueDate > request.FromDate
                             && e.IssueDate < request.BeforeDate);
             }
-            var countBonuses = query.Count();
-            var sumBonuses = query.Sum(e => e.BonusAmount);
-
-            // ასე მინდა რომ შემეძლოს გაკეთება:
-            //var result = _db.Bonusies
-            //    .Where(x => x.IssueDate > request.FromDate
-            //                && x.IssueDate < request.BeforeDate)
-            //    .Select(x => new
-            //    {
-            //        Count = _db.Bonusies.Count(),
-            //        Sum = _db.Bonusies.Sum(y => y.BonusAmount)
-            //    })
-            //    .FirstOrDefault();
-
+            var countBonuses = _query.Count();
+            var sumBonuses = _query.Sum(e => e.BonusAmount);
 
             var emptyClass = new EmptyClass();
             emptyClass.BonusCount = countBonuses;
@@ -71,42 +65,61 @@ namespace P_4_BonusManagement.Repositories
             var passData = new NewEmptyClass();
 
             passData.emptyClass = emptyClass;
-            passData.bonusEntity = query;
+            passData.bonusEntity = _query;
 
             return passData;
         }
 
-        // ფუნქცია, რომელიც ბაზაში არაფერს წერს, ასინქრონული უნდა იყოს თუ არა?
+        //  ფუნქცია, რომელიც ბაზაში არაფერს წერს, ასინქრონული უნდა იყოს თუ არა?
         public async Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses()
         {
             return await _db.Employees
             .Include(e => e.Bonuses)
             .OrderByDescending(e => e.Bonuses.Sum(b => b.BonusAmount))
-            .Take(3)
+            .Take(10)
             .ToListAsync();
         }
 
-
-        public async Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses2()
+        public async Task<List<NClass>> GetTopRecomendator()
         {
-            //return await _db.Employees
-            //.Include(e => e.Bonuses)
-            //.OrderByDescending(e => e.Bonuses.Sum(b => b.BonusAmount))
-            //.Take(3)
-            //.ToListAsync();
-        var result = from e in _db.Employees
-                     join b in _db.Bonusies on e.Id equals b.EmployeeId
-                     group b by e.FirstName into g
-                     select new { FirstName = g.Key, TotalBonus = g.Sum(x => x.BonusAmount) };
+            var result = _db.Employees
+                         .Where(e => e.RecommenderId != 0)
+                         .Join(_db.Bonusies, e => e.Id, b => b.EmployeeId, (e, b) => new { e, b })
+                         .GroupBy(x => x.e.RecommenderId)
+                         .Select(g => new
+                         {
+                             RecommenderId = g.Key,
+                             ck = g.Count(),
+                             BBA = g.Sum(x => x.b.BonusAmount)
+                         })
+                         .Take(10)
+                         .OrderByDescending(x => x.ck)
+                         .ThenByDescending(x => x.BBA);
 
-        var orderedResult = result.OrderBy(x => x.TotalBonus);
-            //var resultForController = new Top10Empl { EmpName = orderedResult.fi, BonusSums = orderedResult. };
-            return new List<EmployeeEntity>();
+            List<NClass> allResults = new List<NClass>();
+            foreach (var item in result)
+            {
+                var dd = new NClass() { Amount = item.BBA, RecomendatorId = item.ck };
+                allResults.Add(dd);
+            }
+            return allResults;
         }
 
+        //public async Task<List<NClass>> GetTopRecomendator()
+        //{
+        //    var result = await (from e in _db.Bonusies
+        //                        join d in _db.Employees on e.EmployeeId equals d.Id
+        //                        where d.RecommenderId != 0
+        //                        select new { Bonuses = e.BonusAmount, RecomedatorId = d.RecommenderId }).ToListAsync();
 
-
-
+        //    List<NClass> allResults = new List<NClass>();
+        //    foreach (var item in result)
+        //    {
+        //        var dd = new NClass() { Amount = item.Bonuses, RecomendatorId = item.RecomedatorId };
+        //        allResults.Add(dd);
+        //    }
+        //    return allResults;
+        //}
 
         public async Task<StrangClass> AddBonusEntity(int employeeId, double amount)
         {
@@ -182,7 +195,6 @@ namespace P_4_BonusManagement.Repositories
         {
             await _db.SaveChangesAsync();
         }
-
     }
 }
 
