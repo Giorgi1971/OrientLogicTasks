@@ -31,13 +31,15 @@ namespace P_4_BonusManagement.Repositories
 
         public async Task<IEnumerable<EmployeeEntity>> GetEmployees()
         {
-            return await _db.Employees.ToListAsync();
+            return await _db.EmployeeEntities
+                .Include(e => e.BonusEntities)
+                .ToListAsync();
         }
 
         public async Task<EmployeeEntity> GetEmployee(int employeeId)
         {
-            var result = await _db.Employees
-                .FirstOrDefaultAsync(e => e.Id == employeeId);
+            var result = await _db.EmployeeEntities
+                .FirstOrDefaultAsync(e => e.EmployeeEntityId == employeeId);
             // ეს სწორად მიწერია?? ექსეპშენს რომ გაისვრის მერე რა მოხდება??? return null ხომ არ უნდა??;
             if (result != null)
                 return result;
@@ -46,7 +48,6 @@ namespace P_4_BonusManagement.Repositories
 
         public async Task<EmployeeEntity> AddEmployee(CreateEmployeeRequest request)
         {
-
             var empolyee = new EmployeeEntity();
             empolyee.FirstName = request.FirstName;
             empolyee.LastName = request.LastName;
@@ -55,22 +56,23 @@ namespace P_4_BonusManagement.Repositories
             empolyee.HiringDate = DateTime.Now;
             empolyee.PersonalNumber = request.PersonalNumber;
 
-            var result = await _db.Employees.AddAsync(empolyee);
+            var result = await _db.EmployeeEntities.AddAsync(empolyee);
             return result.Entity;
         }
 
         public async Task<EmployeeEntity> UpdateEmployee(int id, UpdateEmployeeRequest request)
         {
-            var result = await _db.Employees
-                .FirstOrDefaultAsync(e => e.Id == id);
+            var result = await _db.EmployeeEntities
+                .FirstOrDefaultAsync(e => e.EmployeeEntityId == id);
 
             if (result != null)
             {
                 result.LastName = request.LastName;
                 result.Salary = request.Salary;
                 result.HiringDate = request.HiringDate;
-                //await _db.Employees.Update(result);
 
+                // ამის Update გარეშე რატომ ააფდეითებს??
+                //await _db.Employees.Update(result);
                 return result;
             }
             // აქაც რომელი უნდა დავწერო???
@@ -80,28 +82,28 @@ namespace P_4_BonusManagement.Repositories
 
         public async Task<EmployeeEntity> DeleteEmployee(int employeeId)
         {
-            var result = await _db.Employees
-                .FirstOrDefaultAsync(e => e.Id == employeeId);
+            var result = await _db.EmployeeEntities
+                .FirstOrDefaultAsync(e => e.EmployeeEntityId == employeeId);
             if (result != null)
             {
-                _db.Employees.Remove(result);
+                _db.EmployeeEntities.Remove(result);
             }
             return result;
         }
 
         public async Task<IEnumerable<EmployeeEntity>> Search(string name)
         {
-            IQueryable<EmployeeEntity> query = _db.Employees;
+            IQueryable<EmployeeEntity> query = _db.EmployeeEntities;
 
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(e => e.FirstName.Contains(name)
+                query = query
+                    .Include(e => e.BonusEntities)
+                    .Where(e => e.FirstName.Contains(name)
                             || e.LastName.Contains(name));
             }
-
             return await query.ToListAsync();
         }
-
 
         public async Task SaveChangesAsync()
         {

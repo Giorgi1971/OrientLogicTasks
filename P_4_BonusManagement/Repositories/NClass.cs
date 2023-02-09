@@ -2,7 +2,8 @@
 {
     public class NClass
     {
-        public double Amount { get; set; }
+        public double BonusAmount { get; set; }
+        public int CountBonus { get; set; }
         public int RecomendatorId { get; set; }
     }
 }

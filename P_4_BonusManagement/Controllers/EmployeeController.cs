@@ -9,12 +9,9 @@ using P_4_BonusManagement.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace P_4_BonusManagement.Controllers
 {
-
-
     [Route("api/[controller]")]
     [ApiController]
 
@@ -42,7 +39,6 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-
         [HttpGet("{id:int}")]
         public async Task<ActionResult<EmployeeEntity>> GetEmployee(int id)
         {
@@ -53,7 +49,7 @@ namespace P_4_BonusManagement.Controllers
                 // წაშლილ მომხმარებელს ამას რატომ არ ისვრის და ქვედა ერორს მაჩვენებს??
                 if (result == null) return NotFound();
 
-                return result;
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -61,7 +57,6 @@ namespace P_4_BonusManagement.Controllers
                     "Giorgi Error (Get Employee by Id) retrieving data from the database");
             }
         }
-
 
         [HttpPost("create-employee")]
         public async Task<ActionResult<EmployeeEntity>> CreateEmployeeAsync(CreateEmployeeRequest request)
@@ -75,7 +70,7 @@ namespace P_4_BonusManagement.Controllers
                 await _employeeRepository.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetEmployee),
-                    new { id = createdEmployee.Id }, createdEmployee);
+                    new { id = createdEmployee.EmployeeEntityId }, createdEmployee);
             }
             catch (Exception)
             {
@@ -84,9 +79,8 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-
-        [HttpPut("employee/{id:int}/update")]
-        // FromBody ჭირდება თუ ApiController ატრიბუტი არ აქვსო.
+        [HttpPut("{id:int}/update")]
+        // FromBody ჭირდება თუ ApiController ატრიბუტი არ აქვსო. Id შესამოწმებლად რექვესთსაც უნდა ჰქონდეს?
         public async Task<ActionResult<EmployeeEntity>> UpdateEmployee(int id, [FromBody] UpdateEmployeeRequest request)
         {
             try
@@ -130,7 +124,7 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("/search={name}")]
         public async Task<ActionResult<IEnumerable<EmployeeEntity>>> Search(string name)
         {
             try

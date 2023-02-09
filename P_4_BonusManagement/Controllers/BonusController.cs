@@ -9,12 +9,12 @@ using P_4_BonusManagement.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace P_4_BonusManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class BonusController : ControllerBase
     {
         private readonly IBonusRepository _bonusRepository;
@@ -40,7 +40,6 @@ namespace P_4_BonusManagement.Controllers
         }
 
         [HttpPost("search-bonuses")]
-        // როდის ჭირდება აქშენრეზალტში ენტიტის ჩასმა???
         public async Task<ActionResult> GetBonusesByDateAsync([FromBody] SearchBonusByDateRequest request)
         {
             try
@@ -73,7 +72,8 @@ namespace P_4_BonusManagement.Controllers
         {
             try
             {
-                return Ok(await _bonusRepository.GetTopRecomendator());
+                var result = await _bonusRepository.GetTopRecomendator();
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -82,7 +82,6 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-        // თუ დებაგით ვუშვებ მუშაობს, თუ არადა სრედებიში იჭედება, იბნევა.
         [HttpPost("create-bonus")]
         public async Task<ActionResult<BonusEntity>> CreateBonusAsync(CreateBonusRequest request)
         {
@@ -94,7 +93,7 @@ namespace P_4_BonusManagement.Controllers
                 var createdBonus = await _bonusRepository.CreateBonusAsync(request);
                 //await _bonusRepository.SaveChangesAsync();
 
-            return Ok(createdBonus);
+                return Ok(createdBonus);
             }
             catch (Exception)
             {
@@ -112,6 +111,7 @@ namespace P_4_BonusManagement.Controllers
                 if (request == null)
                     return BadRequest();
 
+                // თუ ორი ხაზის ქვევით await წერია, ქვედა ხაზზეც დაწერას რამე აზრი აქვს??
                 var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
                 await _bonusRepository.SaveChangesAsync();
 

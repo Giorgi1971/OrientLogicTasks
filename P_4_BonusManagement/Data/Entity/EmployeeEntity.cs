@@ -5,11 +5,11 @@ namespace P_4_BonusManagement.Data.Entity
 {
     public class EmployeeEntity
     {
-        public int Id { get; set; }
+        public int EmployeeEntityId { get; set; }
 
         [Required]
         [StringLength(55, MinimumLength = 2)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         public string? LastName { get; set; }
         public int PersonalNumber { get; set; }
@@ -17,12 +17,12 @@ namespace P_4_BonusManagement.Data.Entity
         public int RecommenderId { get; set; }
         public DateTime HiringDate { get; set; }
 
-        public List<BonusEntity> Bonuses { get; set; }
+        public ICollection<BonusEntity> BonusEntities { get; set; } = null!;
 
         public EmployeeEntity()
-        {
-            Bonuses = new List<BonusEntity>();
-        }
+            {
+                BonusEntities = new List<BonusEntity>();
+            }
     }
 }
 
