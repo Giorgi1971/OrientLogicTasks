@@ -14,7 +14,7 @@ namespace MovieDatabaseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MovieController : ControllerBase
+    public class MovieController: ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
 
@@ -23,138 +23,69 @@ namespace MovieDatabaseAPI.Controllers
             _movieRepository = movieRepository;
         }
 
+
         [HttpGet("AllMovies")]
         public async Task<ActionResult> GetMoviesAsync()
         {
-            try
-            {
-                return Ok(await _movieRepository.GetMoviesAsync());
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "ErrorrrrrrGetAll retrieving data from the database");
-            }
+            return Ok(await _movieRepository.GetMoviesAsync());
         }
 
-        [HttpGet("SerchedMoviesWithPageIndex")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies([FromQuery]GetSearchedMoviesRequest request)
-        {
-            try
-            {
-                return Ok(await _movieRepository.GetSearchedMoviesAsync(
-                    request.Filter, request.pageSize, request.pageIndex
-                    ));
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
-
-        [HttpGet("SerchedMovies")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetSearchedMovies2Async([FromQuery]GetSearchedMoviesRequest2 request)
-        {
-            try
-            {
-                return Ok(await _movieRepository.GetSearchedMovies2Async(
-                    request.FilterTitle, request.FilterDescription
-                    ));
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Movie>> GetMovieAsync(int id)
-        {
-            try
-            {
-                var result = await _movieRepository.GetMovieAsync(id);
-
-                if (result == null) return NotFound();
-
-                return result;
-            }
-
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
 
         [HttpPost("Create")]
-        public async Task<ActionResult<Movie>> AddMovieAsync([FromBody]CreateMovieRequest request)
+        public async Task<ActionResult<Movie>> AddMovieAsync([FromBody] CreateMovieRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            try
-            {
-                var createdMovie = await _movieRepository.AddMovieAsync(request);
-                await _movieRepository.SaveChangesAsync();
-                // ამას რა ჯანდაბა უნდა, ნახევარი დღე მომაცდინა 
-                //return CreatedAtAction(nameof(GetMovieAsync),
-                //    new { id = createdMovie.Id }, createdMovie);
-                return Ok(createdMovie);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error From Create 2 retrieving data from the database");
-            }
+            var createdMovie = await _movieRepository.AddMovieAsync(request);
+            await _movieRepository.SaveChangesAsync();
+            return Ok(createdMovie);
         }
 
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<Movie>> UpdateMovieAsync([FromBody]UpdateMovieRequest request)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Movie>> GetMovieAsync(int id)
         {
-            try
-            {
-                //  როგორ მივწვდე ურლ-ის id -ს??? if(id = request.Id)
-                var movieToUpdate = await _movieRepository.GetMovieAsync(request.Id);
-
-                if (movieToUpdate == null)
-                    return NotFound($"Movie with Id = {request.Id} not found");
-                var updatedMovie = await _movieRepository.UpdateMovieAsync(request.Id, request.Title, request.Description, request.Director, request.Released);
-                await _movieRepository.SaveChangesAsync();
-
-                return updatedMovie;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error updating data");
-            }
+            var result = await _movieRepository.GetMovieAsync(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
         }
 
-        // წინა ToDo -ში წაშლა არ მუშაობს, არც აქ მუშაობდა, სტატუსის შეცვლამ იმუშავა!
-        // 
-        [HttpDelete("delete/{id:int}")]
+
+        [HttpDelete("{id:int}/delete")]
         public async Task<ActionResult<Movie>> DeleteMovieAsync(int id)
         {
-            try
-            {
-                var movieToDelete = await _movieRepository.GetMovieAsync(id);
+            var movieToDelete = await _movieRepository.GetMovieAsync(id);
 
-                if (movieToDelete == null)
-                    return NotFound($"Movie with Id = {id} not found");
+            if (movieToDelete == null)
+                return NotFound($"Movie with Id = {id} not found");
 
-                _movieRepository.DeleteMovie(id);
-                await _movieRepository.SaveChangesAsync();
-                return Ok("Object Deleted");
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error deleting data");
-            }
+            await _movieRepository.DeleteMovie(id);
+            await _movieRepository.SaveChangesAsync();
+            return Ok("Movie Deleted");
+        }
+
+        [HttpPut("{id:int}/update")]
+        public async Task<ActionResult<Movie>> UpdateMovieAsync([FromBody] UpdateMovieRequest request)
+        {
+            var movieToUpdate = await _movieRepository.GetMovieAsync(request.Id);
+
+            if (movieToUpdate == null)
+                return NotFound($"Movie with Id = {request.Id} not found");
+            var updatedMovie = await _movieRepository.UpdateMovieAsync(request.Id, request.Title, request.Description, request.Director, request.Released);
+            await _movieRepository.SaveChangesAsync();
+
+            return updatedMovie;
+        }
+
+
+        [HttpGet("search-movies-with-pageIndex")]
+        public async Task<ActionResult<IEnumerable<Movie>>> SearchMoviesWithPageIndexAsync([FromQuery]GetSearchedMoviesRequest request)
+        {
+            return Ok(await _movieRepository.SearchMoviesWithPageIndexAsync(
+                request.Filter, request.pageSize, request.pageIndex
+                ));
         }
     }
 }

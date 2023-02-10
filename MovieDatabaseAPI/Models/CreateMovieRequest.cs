@@ -3,35 +3,15 @@ using System.ComponentModel.DataAnnotations;
 using MovieDatabaseAPI.Data.Entity;
 namespace MovieDatabaseAPI.Models
 {
-    // CreateMovieRequest იყენებს Movie Entity-ს და რა აზრი აქვს CreateMovieRequest ის შექმნას
-    // ჯობია ცალკე ქონდეს თავისი აღწერა.
-    // პლიუს კიდე Create -ის დროს არ უნდა გადმოგცეთ სხვამ Movie-ის Id ეს გასაკეთებელია თქვენით
-    // CreateMovieRequests არ უნდა ქონდეს CreatedAt და Id ფროფერთი
     public class CreateMovieRequest
     {
-        //private readonly CreateMovieRequest _createMovieRequest;
-
-        //private readonly string _dateTimeNow;
-        //private string _dateTimeNow
-        //{
-        //    get
-        //    {
-        //        return DateTime.Now.ToString("MM/dd/yyyy");
-        //    }
-        //}
-
-        //public CreateMovieRequest()
-        //{
-        //    _createMovieRequest = new CreateMovieRequest();
-        //}
-            
         [Required]
-        [StringLength(200, MinimumLength = 2, ErrorMessage = "Name must not be more than 200 characters or Lees 3!")]
-        public string Title { get; set; }
+        [StringLength(200, MinimumLength = 2, ErrorMessage = "The name could not be more than 200  or less 2 characters!")]
+        public string Title { get; set; } = null!;
 
         [Required]
-        [StringLength(2000, MinimumLength = 3, ErrorMessage = "Name must not be more than 2000 characters or Lees 3!")]
-        public string Description { get; set; }
+        [StringLength(2000, MinimumLength = 3, ErrorMessage = "The name could not be more than 2000  or less 3 characters!")]
+        public string Description { get; set; } = null!;
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -41,7 +21,6 @@ namespace MovieDatabaseAPI.Models
         public DateTime Releazed { get; set; }
 
         [Required]
-        public string MovieDirector { get; set; }
+        public string MovieDirector { get; set; } = null!;
     }
 }
-

@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using MovieDatabaseAPI.Data.Entity;
 using MovieDatabaseAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MovieDatabaseAPI.Repositories
 {
     public interface IMovieRepository
     {
         Task<List<Movie>> GetMoviesAsync();
-        Task<List<Movie>> GetSearchedMoviesAsync(FilterMovie filter, int pageSize, int pageIndex);
-        Task<List<Movie>> GetSearchedMovies2Async(string filter1, string filter2);
+        Task<List<Movie>> SearchMoviesWithPageIndexAsync(FilterMovie filter, int pageSize, int pageIndex);
         Task<Movie> AddMovieAsync(CreateMovieRequest request);
         Task<Movie> GetMovieAsync(int movieId);
-        // ქვედა ხაზზე Filter-ის ნაცვლად Object რატომ არ შემიძლია???
         Task<Movie> UpdateMovieAsync(int id, string title, string desc, string dir, DateTime date);
-        void DeleteMovie(int movieId);
+        Task DeleteMovie(int movieId);
         Task SaveChangesAsync();
         // saveChanges მეტოდი აკლია აშკარად....
     }
@@ -33,50 +32,39 @@ namespace MovieDatabaseAPI.Repositories
 
         public async Task<List<Movie>> GetMoviesAsync()
         {
-            var allMovies = _db.Movies
+            var allMovies = await _db.Movies
                 .Where(m => m.MovieStatus == Status.active)
                 .ToListAsync();
-            return await allMovies;
+            return allMovies;
                 //.Where (m => m.MovieStatus == 0)
         }
 
-
-        // აქ ტასკის ლისტად გადაკეთება მომიწია :( ??? ქვედა მინდოდა რომ ყოფილიყო
-        //public Task<IEnumerable<Movie>> GetSearchedMovies(Filter filter, int pageSize, int pageIndex)
-        public async Task<List<Movie>> GetSearchedMoviesAsync(FilterMovie filter, int pageSize, int pageIndex)
+        public async Task<List<Movie>> SearchMoviesWithPageIndexAsync(FilterMovie filter, int pageSize, int pageIndex)
         {
-
-            var searchedMovies = _db.Movies.
-                Where(
-                m => m.Title.Contains(filter.InTitle) ||
-                m.Description.Contains(filter.InDescription) ||
-                m.MovieDirector.Contains(filter.InMovieDirector) ||
-                m.Releazed.Year == filter.InReleasedDate
-                )
-                .Where(m => m.MovieStatus == 0)
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .OrderBy(t => t.Title)
-                // აქ ასინქ რატომ შეიძლება???
-                .ToListAsync();
-
-            return await searchedMovies;
+            List<Movie> searchedMovies;
+            try
+            {
+                if (pageSize == 0)
+                    throw new Exception("pageSize Must not be 0");
+                searchedMovies = await _db.Movies.
+                    Where(
+                    m => m.Title.Contains(filter.InTitle) ||
+                    m.Description.Contains(filter.InDescription) ||
+                    m.MovieDirector.Contains(filter.InMovieDirector) ||
+                    m.Releazed.Year == filter.InReleasedDate)
+                    .Where(m => m.MovieStatus == 0)
+                    .Skip(pageIndex * pageSize)
+                    .Take(pageSize)
+                    .OrderBy(t => t.Title)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                searchedMovies = new List<Movie>();
+            }
+            return searchedMovies;
         }
 
-        public async Task<List<Movie>> GetSearchedMovies2Async(string filterTitle, string filterDesc)
-        {
-            var searchedMovies = _db.Movies
-                .Where(m => m.MovieStatus == 0)
-                .Where(
-                m => m.Title.Contains(filterTitle) ||
-                m.Description.Contains(filterDesc)
-                //m.Releazed.ToString() == filter.InReleasedDate.ToString()
-                )
-                .OrderBy(t => t.Title)
-                .ToListAsync();
-
-            return await searchedMovies;
-        }
 
         public async Task<Movie> AddMovieAsync(CreateMovieRequest request)
         {
@@ -86,51 +74,54 @@ namespace MovieDatabaseAPI.Repositories
                 Description = request.Description,
                 Releazed = request.Releazed,
                 MovieDirector = request.MovieDirector,
-                CreateAt = DateTime.Now
+                CreateAt = DateTime.Now,
+                MovieStatus = Status.active
             };
             var result = await _db.Movies.AddAsync(movie);
-            // ამას აქ უწერია ჩაწერა. await რადგან აქვს, აქ ხომ არ ჯობს როგორცაა?
             return result.Entity;
         }
 
-        public async Task<Movie> GetMovieAsync(int movieId)
+
+        public async Task<Movie?> GetMovieAsync(int movieId)
         {
-            return await _db.Movies.FirstOrDefaultAsync(
+            var result = await _db.Movies.FirstOrDefaultAsync(
                 e => e.Id == movieId && e.MovieStatus != Status.deleted
                 );
+            return result;
         }
+
 
         public async Task<Movie> UpdateMovieAsync(int movieId, string title, string desc, string dir, DateTime date)
         {
             var result = await _db.Movies
                 .FirstOrDefaultAsync(e => e.Id == movieId && e.MovieStatus != Status.deleted);
 
-            if (result != null)
+            date = new DateTime();
+            if (result == null)
+                throw new Exception("No movie found to update (Id = {movieId})!");
             {
-                result.Title = title;
-                result.Description = desc;
-                result.Releazed = date;
-                result.MovieDirector = dir;
-                // ამ ხაზსაც ხომ არ ჭირდება განახლება:
-                //result.CreateAt = DateTime.UtcNow;
-                //await _db.SaveChangesAsync();
+                if (!string.IsNullOrEmpty(title)) { result.Title = title; }
+                if (!string.IsNullOrEmpty(desc)) { result.Description = desc; }
+                if (!string.IsNullOrEmpty(dir)) { result.MovieDirector = dir; }
+                if (date != DateTime.MinValue) { result.Releazed = date; }
+                _db.Movies.Update(result);
                 return result;
             }
-            return null;
         }
 
-        // რატომღაც (დაახლოებით, ბაზას აკითხავდა დამთავრებამდე ხელახლა)
-        // ასინქრონულობის მოცილებამ უშველა????
-        public void DeleteMovie(int movieId)
+
+        public async Task DeleteMovie(int movieId)
         {
-            var result2 = _db.Movies
+            var result = _db.Movies
                     .FirstOrDefault(e => e.Id == movieId && e.MovieStatus != Status.deleted);
 
-            if (result2 != null)
+            if (result != null)
             {
-                result2.MovieStatus = Status.deleted;
+                result.MovieStatus = Status.deleted;
             }
+            return;
         }
+
 
         public async Task SaveChangesAsync()
         {

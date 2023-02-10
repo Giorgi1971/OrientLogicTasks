@@ -9,17 +9,17 @@ namespace MovieDatabaseAPI.Data.Entity
 
         [Required]
         [StringLength(200, MinimumLength = 3)]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         [Required]
         [StringLength(2000, ErrorMessage = "Name must not be more than 100 characters.")]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         [Required]
         public DateTime Releazed { get; set; }
 
         [Required]
-        public string MovieDirector { get; set; }
+        public string MovieDirector { get; set; } = null!;
 
         public Status MovieStatus { get; set; }
 
