@@ -87,5 +87,24 @@ namespace MovieDatabaseAPI.Controllers
                 request.Filter, request.pageSize, request.pageIndex
                 ));
         }
+
+        [HttpGet("{id:int}/genres")]
+        public async Task<ActionResult<Movie>> GetMovieWithGenresAsync(int id)
+        {
+            var result = await _movieRepository.GetMovieWithGenresAsync(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
+        }
+
+        [HttpGet("genre/{id:int}")]
+        public async Task<ActionResult<Genre>> GenresAsync(int id)
+        {
+            var result = await _movieRepository.GenresAsync(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
+        }
+
+
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MovieDatabaseAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using MovieDatabaseAPI.Repositories;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,13 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MovieDbContext")));
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
+
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 

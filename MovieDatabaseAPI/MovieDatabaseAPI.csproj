@@ -20,6 +20,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +33,8 @@
     <None Remove="Controllers\" />
     <None Remove="Repositories\" />
     <None Remove="Models\" />
+    <None Remove="Microsoft.EntityFrameworkCore.Relational" />
+    <None Remove="Microsoft.EntityFrameworkCore.Relational.Design" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

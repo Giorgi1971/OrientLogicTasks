@@ -6,6 +6,7 @@ using MovieDatabaseAPI.Data.Entity;
 using MovieDatabaseAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MovieDatabaseAPI.Repositories
 {
@@ -15,6 +16,8 @@ namespace MovieDatabaseAPI.Repositories
         Task<List<Movie>> SearchMoviesWithPageIndexAsync(FilterMovie filter, int pageSize, int pageIndex);
         Task<Movie> AddMovieAsync(CreateMovieRequest request);
         Task<Movie> GetMovieAsync(int movieId);
+        Task<Movie> GetMovieWithGenresAsync(int movieId);
+        Task<ActionResult<Genre>> GenresAsync(int id);
         Task<Movie> UpdateMovieAsync(int id, string title, string desc, string dir, DateTime date);
         Task DeleteMovie(int movieId);
         Task SaveChangesAsync();
@@ -88,6 +91,30 @@ namespace MovieDatabaseAPI.Repositories
                 e => e.Id == movieId && e.MovieStatus != Status.deleted
                 );
             return result;
+        }
+
+        public async Task<Movie> GetMovieWithGenresAsync(int movieId)
+        {
+            var result = await _db.Movies
+                .Include(x => x.MovieGenres)
+                .ThenInclude(m => m.Genre)
+                .FirstOrDefaultAsync(
+                t => t.Id == movieId && t.MovieStatus != Status.deleted
+                );
+            return result;
+        }
+
+
+        public async Task<ActionResult<Genre>> GenresAsync(int id)
+        {
+            var result = await _db.Genres
+                .Include(x => x.MovieGenres)
+                .ThenInclude(m => m.Movie)
+                //.Select(z =>z.MovieGenres.First().Movie)
+                .FirstOrDefaultAsync(
+                t => t.Id == id && t.MovieGenres.First().Movie.MovieStatus != Status.deleted
+                );
+             return result;
         }
 
 

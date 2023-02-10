@@ -1,4 +1,5 @@
 ﻿using System;
+
 using System.ComponentModel.DataAnnotations;
 namespace MovieDatabaseAPI.Data.Entity
 {
@@ -24,6 +25,9 @@ namespace MovieDatabaseAPI.Data.Entity
         public Status MovieStatus { get; set; }
 
         public DateTime CreateAt { get; set; }
+
+        public List<MovieGenre> MovieGenres { get; set; }
+
     }
 
     public enum Status
