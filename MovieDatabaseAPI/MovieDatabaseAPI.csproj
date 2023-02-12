@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,9 @@
     <None Remove="Models\" />
     <None Remove="Microsoft.EntityFrameworkCore.Relational" />
     <None Remove="Microsoft.EntityFrameworkCore.Relational.Design" />
+    <None Remove="Service\" />
+    <None Remove="ErrorSaver\" />
+    <None Remove="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -42,5 +46,7 @@
     <Folder Include="Controllers\" />
     <Folder Include="Repositories\" />
     <Folder Include="Models\" />
+    <Folder Include="Service\" />
+    <Folder Include="ErrorSaver\" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,9 @@
 ﻿using MovieDatabaseAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using MovieDatabaseAPI.Repositories;
+using MovieDatabaseAPI.Service;
 using System.Text.Json.Serialization;
+using MovieDatabaseAPI.ErrorSaver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +18,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
-
-
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<ICalculate, Calculate>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,7 +37,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseExceptionHandlerMiddleware();
 
 app.UseHttpsRedirection();
 

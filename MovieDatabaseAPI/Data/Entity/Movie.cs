@@ -9,7 +9,7 @@ namespace MovieDatabaseAPI.Data.Entity
         public int Id { get; set; }
 
         [Required]
-        [StringLength(200, MinimumLength = 3)]
+        [StringLength(200, MinimumLength = 3, ErrorMessage = "Name must in range from 3 upto 100 characters.")]
         public string Title { get; set; } = null!;
 
         [Required]
@@ -26,7 +26,7 @@ namespace MovieDatabaseAPI.Data.Entity
 
         public DateTime CreateAt { get; set; }
 
-        public List<MovieGenre> MovieGenres { get; set; }
+        public List<MovieGenre> MovieGenres { get; set; } = null!;
 
     }
 
