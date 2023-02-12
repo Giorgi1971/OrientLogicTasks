@@ -49,7 +49,7 @@ namespace P_4_BonusManagement.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
+                    "Error (BonusController - Search Bonuses By Date), retrieving data from the database");
             }
         }
 
@@ -99,7 +99,7 @@ namespace P_4_BonusManagement.Controllers
                     return BadRequest();
 
                 // თუ ორი ხაზის ქვევით await წერია, ქვედა ხაზზეც დაწერას რამე აზრი აქვს??
-                var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
+                var createdBonus = _bonusRepository.TwoCreateBonusAsync(request);
                 await _bonusRepository.SaveChangesAsync();
 
                 return Ok(createdBonus);

@@ -8,6 +8,5 @@ namespace P_4_BonusManagement.Models.Requests
         public int PersonalNumber { get; set; }
         public double Salary { get; set; }
         public int RecommenderId { get; set; }
-        //public DateTime HiringDate { get; set; }
     }
 }

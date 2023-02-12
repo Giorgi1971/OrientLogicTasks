@@ -6,6 +6,9 @@ using P_4_BonusManagement.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using P_4_BonusManagement.Models.Requests;
 using System.Reflection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.NetworkInformation;
+using Microsoft.IdentityModel.Tokens;
 
 namespace P_4_BonusManagement.Repositories
 {
@@ -43,7 +46,7 @@ namespace P_4_BonusManagement.Repositories
             // ეს სწორად მიწერია?? ექსეპშენს რომ გაისვრის მერე რა მოხდება??? return null ხომ არ უნდა??;
             if (result != null)
                 return result;
-            throw new GiorgisException($"Get Employee by Id Failed. Entity with id {employeeId} not found.");
+            throw new GiorgisException($"Get Employee by Id Failed. Entity with id {employeeId} not found. (Employee Repositor)");
         }
 
         public async Task<EmployeeEntity> AddEmployee(CreateEmployeeRequest request)
@@ -67,19 +70,15 @@ namespace P_4_BonusManagement.Repositories
 
             if (result != null)
             {
-                result.LastName = request.LastName;
-                result.Salary = request.Salary;
-                result.HiringDate = request.HiringDate;
-
-                // ამის Update გარეშე რატომ ააფდეითებს??
-                //await _db.Employees.Update(result);
+                if (!string.IsNullOrEmpty(request.LastName)) { result.LastName = request.LastName; }
+                if (request.Salary != 0) {result.Salary = request.Salary; }
+                if (request.HiringDate != DateTime.MinValue) { result.HiringDate = request.HiringDate; }
+                _db.EmployeeEntities.Update(result);
                 return result;
             }
-            // აქაც რომელი უნდა დავწერო???
-            //throw new GiorgisException($"Create Employee Failed. Entity with id {request.Id} not found.");
             return null;
         }
-
+  
         public async Task<EmployeeEntity> DeleteEmployee(int employeeId)
         {
             var result = await _db.EmployeeEntities

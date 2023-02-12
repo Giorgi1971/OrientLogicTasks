@@ -25,7 +25,6 @@ namespace P_4_BonusManagement.Controllers
         }
 
         [HttpGet("All-Employees")]
-        // როდის ჭირდება აქშენრეზალტში ენტიტის ჩასმა???
         public async Task<ActionResult> GetEmployees()
         {
             try
@@ -45,7 +44,6 @@ namespace P_4_BonusManagement.Controllers
             try
             {
                 var result = await _employeeRepository.GetEmployee(id);
-
                 // წაშლილ მომხმარებელს ამას რატომ არ ისვრის და ქვედა ერორს მაჩვენებს??
                 if (result == null) return NotFound();
 
@@ -102,7 +100,7 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}/delete")]
         public async Task<ActionResult<EmployeeEntity>> DeleteEmployee(int id)
         {
             try
@@ -135,7 +133,6 @@ namespace P_4_BonusManagement.Controllers
                 {
                     return Ok(result);
                 }
-
                 return NotFound();
             }
             catch (Exception)
