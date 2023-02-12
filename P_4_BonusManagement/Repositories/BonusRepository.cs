@@ -79,42 +79,6 @@ namespace P_4_BonusManagement.Repositories
                 .ToListAsync();
         }
 
-        //public async Task<List<NClass>> GetTopRecomendator()
-        //{
-
-            //var result = (from ee in _db.EmployeeEntities
-            //              join be in _db.BonusEntities on ee.EmployeeEntityId equals be.EmployeeEntityId
-            //              where ee.RecommenderId != 0
-            //              group new { ee, be } by ee.RecommenderId into g
-            //              select new
-            //              {
-            //                  recId = g.Key,
-            //                  RecName = g.First().ee.FirstName,
-            //                  BB = g.Sum(x => x.be.BonusAmount),
-            //                  CC = g.Count()
-            //              }).OrderBy(x => x.BB);
-
-            //    var result = (from employee in _db.EmployeeEntities
-            //                  join bonus in _db.BonusEntities on employee.EmployeeEntityId equals bonus.EmployeeEntityId
-            //                  where employee.RecommenderId != 0
-            //                  group new { employee, bonus } by employee.RecommenderId into g
-            //                  select new
-            //                  {
-            //                      recId = g.Key,
-            //                      RecName = g.First().employee.FirstName,
-
-            //                      CC = g.Count(),
-            //                      BB = g.Sum(x => x.bonus.BonusAmount)
-            //                  }).OrderByDescending(x => x.BB).ThenByDescending(d => d.CC);
-
-            //    List<NClass> allResults = new List<NClass>();
-            //    foreach (var item in result)
-            //    {
-            //        var dd = new NClass() { Name = item.RecName, BonusAmount = item.BB, CountBonus = item.CC, RecomendatorId = item.recId };
-            //allResults.Add(dd);
-            //    }
-            //    return allResults;
-            //}
 
         public async Task<List<NClass>> GetTopRecomendator()
         {
@@ -185,12 +149,12 @@ namespace P_4_BonusManagement.Repositories
                 .FirstOrDefaultAsync(e => e.EmployeeEntityId == request.EmployeeId);
 
             if(employee == null)
-                throw new GiorgisException("Giorgis Exsepsheni - employee1 is null in TwoCreateBonusAsync");
+                throw new GiorgisException("Employee1 is null in TwoCreateBonusAsync (BonusRepository)");
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
-                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
+                throw new GiorgisException("Bonusebi diapazonshi ar jdeba (BonusRepository)");
             var bonus1 = new BonusEntity() { EmployeeEntityId = request.EmployeeId, BonusAmount = request.BonusAmount, IssueDate = DateTime.Now };
             var result = await _db.BonusEntities.AddAsync(bonus1);
-            employee.BonusEntities.Add(bonus1);
+            //employee.BonusEntities.Add(bonus1);
             // ბონუსებს ვერ ვამატებ მომხმარებლის ბონუსების სიაში?????????????????????/
             // და საერთოდ რამე უნდა დაემატოს აქ, თუ უბრალობ ფორინკეით არის დაკავშირებული
             _db.EmployeeEntities.Update(employee);
@@ -202,7 +166,7 @@ namespace P_4_BonusManagement.Repositories
                     throw new GiorgisException("employee2 is null in TwoCreateBonusAsync");
                 var bonus2 = new BonusEntity() { EmployeeEntityId = employee2.EmployeeEntityId, BonusAmount = request.BonusAmount / 2, IssueDate = DateTime.Now };
                 var result2 = await _db.BonusEntities.AddAsync(bonus2);
-                employee2.BonusEntities.Add(bonus2);
+                //employee2.BonusEntities.Add(bonus2);
                 _db.EmployeeEntities.Update(employee2);
                 //await SaveChangesAsync();
 
@@ -213,7 +177,7 @@ namespace P_4_BonusManagement.Repositories
                         throw new GiorgisException("employee3 is null in TwoCreateBonusAsync");
                     var bonus3 = new BonusEntity() { EmployeeEntityId = employee3.EmployeeEntityId, BonusAmount = request.BonusAmount / 4, IssueDate = DateTime.Now };
                     var result3 = await _db.BonusEntities.AddAsync(bonus3);
-                    employee3.BonusEntities.Add(bonus3);
+                    //employee3.BonusEntities.Add(bonus3);
                     _db.EmployeeEntities.Update(employee3);
                     //await SaveChangesAsync();
                 }

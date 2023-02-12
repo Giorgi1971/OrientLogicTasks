@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using MovieDatabaseAPI.Repositories;
 using MovieDatabaseAPI.Data.Entity;
 using System.ComponentModel.DataAnnotations;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using MovieDatabaseAPI.Service;
+using MovieDatabaseAPI.Data;
+using Microsoft.EntityFrameworkCore;
+using MovieDatabaseAPI.ErrorSaver;
+using static MovieDatabaseAPI.ErrorSaver.ErrorHandlerMiddleware;
 
 namespace MovieDatabaseAPI.Controllers
 {
@@ -17,10 +20,32 @@ namespace MovieDatabaseAPI.Controllers
     public class MovieController: ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
+        private readonly ICalculate _service;
+        private readonly AppDbContext _db;
 
-        public MovieController(IMovieRepository movieRepository)
+        public MovieController(IMovieRepository movieRepository, ICalculate service, AppDbContext db)
         {
             _movieRepository = movieRepository;
+            _service = service;
+            _db = db;
+        }
+
+        [HttpGet("Any/{id}")]
+        public async Task<ActionResult<IEnumerable<Genre>>> ListGanre(int id)
+        {
+            try
+            {
+            var result = await _db.Genres
+                .Include(x => x.MovieGenres)
+                .Where(x => x.MovieGenres.Any(mg => mg.MovieId == id))
+                .ToListAsync();
+            return result;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.LogError(ex, _db);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
 
@@ -47,9 +72,9 @@ namespace MovieDatabaseAPI.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Movie>> GetMovieAsync(int id)
         {
-            var result = await _movieRepository.GetMovieAsync(id);
-            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
-            return result;
+                var result = await _movieRepository.GetMovieAsync(id);
+                if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+                return result;
         }
 
 
@@ -63,8 +88,9 @@ namespace MovieDatabaseAPI.Controllers
 
             await _movieRepository.DeleteMovie(id);
             await _movieRepository.SaveChangesAsync();
-            return Ok("Movie Deleted");
+            return Ok($"Movie {movieToDelete.Title} Deleted");
         }
+
 
         [HttpPut("{id:int}/update")]
         public async Task<ActionResult<Movie>> UpdateMovieAsync([FromBody] UpdateMovieRequest request)
@@ -75,7 +101,6 @@ namespace MovieDatabaseAPI.Controllers
                 return NotFound($"Movie with Id = {request.Id} not found");
             var updatedMovie = await _movieRepository.UpdateMovieAsync(request.Id, request.Title, request.Description, request.Director, request.Released);
             await _movieRepository.SaveChangesAsync();
-
             return updatedMovie;
         }
 
@@ -84,8 +109,44 @@ namespace MovieDatabaseAPI.Controllers
         public async Task<ActionResult<IEnumerable<Movie>>> SearchMoviesWithPageIndexAsync([FromQuery]GetSearchedMoviesRequest request)
         {
             return Ok(await _movieRepository.SearchMoviesWithPageIndexAsync(
-                request.Filter, request.pageSize, request.pageIndex
-                ));
+                request.Filter, request.pageSize, request.pageIndex));
+        }
+
+
+        [HttpGet("{id:int}/genres")]
+        public async Task<ActionResult<Movie>> GetMovieWithGenresAsync(int id)
+        {
+            var result = await _movieRepository.GetMovieWithGenresAsync(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
+        }
+
+
+        //  აქ ვერ ვახერხებ რომ წაშლილი კინოები არ გამოიტანოს!!!
+        [HttpGet("genre/{id:int}/Genre's-all-movies")]
+        public async Task<ActionResult<Genre>> GenresAsync(int id)
+        {
+            var result = await _movieRepository.GenresAsync(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
+        }
+
+
+        [HttpGet("oneMovie-genres-strins-ByCalculate/{id:int}")]
+        public async Task<ActionResult<List<string>>> OneMovieJanresString(int id)
+        {
+            var result = await _service.OneMovieJanresString(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
+        }
+
+
+        [HttpGet("show-movies-byGenreId/{id:int}")]
+        public async Task<ActionResult<List<Movie>>> ShowMoviesByOneJanreObjects(int id)
+        {
+            var result = await _movieRepository.ShowMoviesByOneJanreObjects(id);
+            if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
+            return result;
         }
     }
 }

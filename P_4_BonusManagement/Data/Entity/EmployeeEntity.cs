@@ -17,13 +17,7 @@ namespace P_4_BonusManagement.Data.Entity
         public int RecommenderId { get; set; }
         public DateTime HiringDate { get; set; }
 
-        public ICollection<BonusEntity> BonusEntities { get; set; } = null!;
-
-        public EmployeeEntity()
-            {
-                BonusEntities = new List<BonusEntity>();
-            }
+        public List<BonusEntity> BonusEntities { get; set; }
     }
 }
-
 
