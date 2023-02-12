@@ -2,7 +2,6 @@
 
 namespace P_4_BonusManagement.Repositories
 {
-    [Serializable]
     internal class GiorgisException : Exception
     {
         public GiorgisException()
@@ -11,6 +10,7 @@ namespace P_4_BonusManagement.Repositories
 
         public GiorgisException(string? message) : base(message)
         {
+            
         }
 
         public GiorgisException(string? message, Exception? innerException) : base(message, innerException)
