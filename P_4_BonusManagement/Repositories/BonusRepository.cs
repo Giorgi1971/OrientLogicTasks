@@ -158,7 +158,7 @@ namespace P_4_BonusManagement.Repositories
         {
             var employee = await _db.EmployeeEntities.FirstOrDefaultAsync(e => e.EmployeeEntityId == request.EmployeeId);
             if (employee == null)
-                throw new GiorgisException("aseti momxmarebeli ar arsebobs - CreateBonusAsync");
+                throw new EmployeeNotFoundException(request.EmployeeId, "aseti momxmarebeli ar arsebobs - CreateBonusAsync");
 
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
                 throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");

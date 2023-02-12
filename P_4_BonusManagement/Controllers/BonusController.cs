@@ -85,21 +85,8 @@ namespace P_4_BonusManagement.Controllers
         [HttpPost("create-bonus")]
         public async Task<ActionResult<BonusEntity>> CreateBonusAsync(CreateBonusRequest request)
         {
-            try
-            {
-                if (request == null)
-                    return BadRequest();
-
-                var createdBonus = await _bonusRepository.CreateBonusAsync(request);
-                //await _bonusRepository.SaveChangesAsync();
-
-                return Ok(createdBonus);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creating new Bonus record");
-            }
+            var createdBonus = await _bonusRepository.CreateBonusAsync(request);
+            return Ok(createdBonus);
         }
 
 
