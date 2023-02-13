@@ -22,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="FluentAssertions" Version="6.10.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
     <None Remove="System.ComponentModel.Annotations" />
     <None Remove="Services\" />
     <None Remove="Responce\" />
+    <None Remove="FluentAssertions" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

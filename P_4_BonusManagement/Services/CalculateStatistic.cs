@@ -19,6 +19,10 @@ namespace P_4_BonusManagement.Services
     {
 
         private readonly IStatisticRepository _statistic;
+        public CalculateStatistic()
+        {
+        }
+
 
         public CalculateStatistic(IStatisticRepository db)
         {
