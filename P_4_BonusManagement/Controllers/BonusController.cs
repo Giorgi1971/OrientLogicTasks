@@ -53,34 +53,6 @@ namespace P_4_BonusManagement.Controllers
             }
         }
 
-        [HttpGet("Top-bonused-employee")]
-        public async Task<ActionResult<List<EmployeeEntity>>> GetTopEmployeesWithMostBonuses()
-        {
-            try
-            {
-                return Ok(await _bonusRepository.GetTopEmployeesWithMostBonuses());
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
-            }
-        }
-
-        [HttpGet("Top-10-recomendator")]
-        public async Task<ActionResult<List<NClass>>> GetTopRecomendator()
-        {
-            try
-            {
-                var result = await _bonusRepository.GetTopRecomendator();
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Giorgi, from Bonus Controller (All onuses), retrieving data from the database");
-            }
-        }
 
         [HttpPost("create-bonus")]
         public async Task<ActionResult<BonusEntity>> CreateBonusAsync(CreateBonusRequest request)
@@ -99,7 +71,7 @@ namespace P_4_BonusManagement.Controllers
                     return BadRequest();
 
                 // თუ ორი ხაზის ქვევით await წერია, ქვედა ხაზზეც დაწერას რამე აზრი აქვს??
-                var createdBonus = _bonusRepository.TwoCreateBonusAsync(request);
+                var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
                 await _bonusRepository.SaveChangesAsync();
 
                 return Ok(createdBonus);

@@ -35,7 +35,7 @@ namespace P_4_BonusManagement.Repositories
         public async Task<IEnumerable<EmployeeEntity>> GetEmployees()
         {
             return await _db.EmployeeEntities
-                .Include(e => e.BonusEntities)
+                //.Include(e => e.BonusEntities)
                 .ToListAsync();
         }
 

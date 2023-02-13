@@ -22,9 +22,6 @@ namespace P_4_BonusManagement.Repositories
         Task<BonusEntity> CreateBonusAsync(CreateBonusRequest request);
         Task<BonusEntity> TwoCreateBonusAsync(CreateBonusRequest request);
 
-        Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses();
-        Task<List<NClass>> GetTopRecomendator();
-
         Task SaveChangesAsync();
     }
 
@@ -69,79 +66,42 @@ namespace P_4_BonusManagement.Repositories
         }
 
 
-        //  ფუნქცია, რომელიც ბაზაში არაფერს წერს, ასინქრონული უნდა იყოს თუ არა?
-        public async Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses()
+        public StrangClass AddBonusEntity(int employeeId, double amount)
         {
-            return await _db.EmployeeEntities
-                .Include(e => e.BonusEntities)
-                .OrderByDescending(e => e.BonusEntities.Sum(b => b.BonusAmount))
-                .Take(10)
-                .ToListAsync();
-        }
-
-
-        public async Task<List<NClass>> GetTopRecomendator()
-        {
-            var result = await _db.EmployeeEntities
-                         .Where(e => e.RecommenderId != 0)
-                         .Join(_db.BonusEntities, e => e.EmployeeEntityId, b => b.EmployeeEntityId, (e, b) => new { e, b })
-                         .GroupBy(x => x.e.RecommenderId)
-                         .Select(g => new
-                         {
-                             RecommenderId = g.Key,
-                             ck = g.Count(),
-                             BBA = g.Sum(x => x.b.BonusAmount)
-                         })
-                         .Take(10)
-                         .OrderByDescending(x => x.BBA)
-                         .ThenByDescending(x => x.ck)
-                         .ToListAsync();
-
-            List<NClass> allResults = new List<NClass>();
-            foreach (var item in result)
-            {
-                var dd = new NClass() { BonusAmount = item.BBA, CountBonus = item.ck, RecomendatorId = item.RecommenderId };
-                allResults.Add(dd);
-            }
-            return allResults;
-        }
-
-        public async Task<StrangClass> AddBonusEntity(int employeeId, double amount)
-        {
-            var employee = await _db.EmployeeEntities.FirstOrDefaultAsync(e => e.EmployeeEntityId == employeeId);
+            var employee = _db.EmployeeEntities.FirstOrDefault(e => e.EmployeeEntityId == employeeId);
             if(employee == null)
-                throw new GiorgisException("aseti momxmarebeli ar arsebobs - AddBonusEntity");
+                throw new GiorgisException("aseti momxmarebeli ar arsebobs (BonusRepository) - AddBonusEntity");
             var bonus = new BonusEntity() { EmployeeEntityId = employeeId, BonusAmount = amount, IssueDate = DateTime.Now};
-            var result = await _db.BonusEntities.AddAsync(bonus);
-            await SaveChangesAsync();
+            var result = _db.BonusEntities.Add(bonus);
+            _db.SaveChanges();
             var str = new StrangClass() {RecomId = employee.RecommenderId, NewAmount = amount/2, bonusId = bonus.BonusEntityId };
             return str;
         }
 
+
         public async Task<BonusEntity> CreateBonusAsync(CreateBonusRequest request)
         {
-            var employee = await _db.EmployeeEntities.FirstOrDefaultAsync(e => e.EmployeeEntityId == request.EmployeeId);
+            var employee = _db.EmployeeEntities.FirstOrDefault(e => e.EmployeeEntityId == request.EmployeeId);
             if (employee == null)
-                throw new EmployeeNotFoundException(request.EmployeeId, "aseti momxmarebeli ar arsebobs - CreateBonusAsync");
+                throw new EmployeeNotFoundException(request.EmployeeId, "aseti momxmarebeli ar arsebobs (BonusRepository) - CreateBonusAsync");
 
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
-                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba");
+                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba (BonusRepository)");
 
-            var bonus1 = await AddBonusEntity(employee.EmployeeEntityId, request.BonusAmount);
+            var bonus1 = AddBonusEntity(employee.EmployeeEntityId, request.BonusAmount);
             if (bonus1.RecomId != 0)
             {
-                var bonus2 = await AddBonusEntity(bonus1.RecomId, bonus1.NewAmount);
+                var bonus2 = AddBonusEntity(bonus1.RecomId, bonus1.NewAmount);
                 if (bonus2.RecomId != 0)
                 {
                     var bonus3 = AddBonusEntity(bonus2.RecomId, bonus2.NewAmount);
                 }
             }
-            //await SaveChangesAsync();
-            var result = await _db.BonusEntities.FirstOrDefaultAsync(x => x.BonusEntityId == bonus1.bonusId);
-            return result;
+            var result = _db.BonusEntities.FirstOrDefaultAsync(x => x.BonusEntityId == bonus1.bonusId);
+            return await result;
         }
 
-        // ეს მუშაობს ზედა ვარიანტი იგივეა და არ მუშაობს. ფუნქციები ცალკეა გატანილი უბრალოდ.
+
         public async Task<BonusEntity> TwoCreateBonusAsync(CreateBonusRequest request)
         {
             var employee = await _db.EmployeeEntities
@@ -154,32 +114,22 @@ namespace P_4_BonusManagement.Repositories
                 throw new GiorgisException("Bonusebi diapazonshi ar jdeba (BonusRepository)");
             var bonus1 = new BonusEntity() { EmployeeEntityId = request.EmployeeId, BonusAmount = request.BonusAmount, IssueDate = DateTime.Now };
             var result = await _db.BonusEntities.AddAsync(bonus1);
-            //employee.BonusEntities.Add(bonus1);
-            // ბონუსებს ვერ ვამატებ მომხმარებლის ბონუსების სიაში?????????????????????/
-            // და საერთოდ რამე უნდა დაემატოს აქ, თუ უბრალობ ფორინკეით არის დაკავშირებული
-            _db.EmployeeEntities.Update(employee);
-            //await SaveChangesAsync();
+
             if(employee.RecommenderId != 0)
             {
                 var employee2 = await _db.EmployeeEntities.FirstOrDefaultAsync(e => e.EmployeeEntityId == employee.RecommenderId);
                 if (employee2 == null)
-                    throw new GiorgisException("employee2 is null in TwoCreateBonusAsync");
+                    throw new GiorgisException($"employee2 (Id: {employee.RecommenderId}) is null in TwoCreateBonusAsync");
                 var bonus2 = new BonusEntity() { EmployeeEntityId = employee2.EmployeeEntityId, BonusAmount = request.BonusAmount / 2, IssueDate = DateTime.Now };
                 var result2 = await _db.BonusEntities.AddAsync(bonus2);
-                //employee2.BonusEntities.Add(bonus2);
-                _db.EmployeeEntities.Update(employee2);
-                //await SaveChangesAsync();
 
                 if (employee2.RecommenderId != 0)
                 {
                     var employee3 = await _db.EmployeeEntities.FirstOrDefaultAsync(e => e.EmployeeEntityId == employee2.RecommenderId);
                     if (employee3 == null)
-                        throw new GiorgisException("employee3 is null in TwoCreateBonusAsync");
+                        throw new GiorgisException($"employee3 (Id: {employee2.RecommenderId}) is null in TwoCreateBonusAsync");
                     var bonus3 = new BonusEntity() { EmployeeEntityId = employee3.EmployeeEntityId, BonusAmount = request.BonusAmount / 4, IssueDate = DateTime.Now };
                     var result3 = await _db.BonusEntities.AddAsync(bonus3);
-                    //employee3.BonusEntities.Add(bonus3);
-                    _db.EmployeeEntities.Update(employee3);
-                    //await SaveChangesAsync();
                 }
             }
             return result.Entity;
