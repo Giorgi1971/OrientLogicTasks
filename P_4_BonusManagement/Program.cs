@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using P_4_BonusManagement.Data;
+using P_4_BonusManagement.Services;
 using P_4_BonusManagement.Repositories;
 using System.Text.Json.Serialization;
 using P_4_BonusManagement.Middlewares;
@@ -21,6 +22,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IBonusRepository, BonusRepository>();
+builder.Services.AddScoped<IStatisticRepository, StatisticRepository>();
+builder.Services.AddScoped<ICalculateStatistic, CalculateStatistic>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

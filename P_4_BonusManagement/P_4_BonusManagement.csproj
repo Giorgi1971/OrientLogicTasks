@@ -35,6 +35,8 @@
     <None Remove="Servicies\" />
     <None Remove="Repositories\" />
     <None Remove="System.ComponentModel.Annotations" />
+    <None Remove="Services\" />
+    <None Remove="Responce\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -42,5 +44,7 @@
     <Folder Include="Models\" />
     <Folder Include="Models\Requests\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+    <Folder Include="Responce\" />
   </ItemGroup>
 </Project>

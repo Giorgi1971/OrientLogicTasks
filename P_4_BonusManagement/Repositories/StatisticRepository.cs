@@ -9,8 +9,7 @@ namespace P_4_BonusManagement.Repositories
     {
         Task<List<EmployeeEntity>> GetTopEmployeesWithMostBonuses();
         Task<List<NClass>> GetTopRecomendator();
-
-
+        List<BonusEntity> GetJoinedData();
     }
 
     public class StatisticRepository :IStatisticRepository
@@ -20,6 +19,15 @@ namespace P_4_BonusManagement.Repositories
         public StatisticRepository(AppDbContext db)
         {
             _db = db;
+        }
+
+        public List<BonusEntity> GetJoinedData()
+        {
+            var query = _db.BonusEntities
+                .Include(s => s.EmployeeEntity)
+                .ToList();
+
+            return query;
         }
 
         //  ფუნქცია, რომელიც ბაზაში არაფერს წერს, ასინქრონული უნდა იყოს თუ არა?
