@@ -84,11 +84,16 @@ namespace GPACalculatorAPI.Repositoreis
             return Top3Subjects;
         }
 
+        public IQueryable<GradeEntity> getGradesByStudentId(int studentId)
+        {
+            return _db.Grades.Where(x => x.StudentId == studentId);
+        }
+
         public async Task<double> GetStudentGPAAsync(int studentId)
         {
             var totalGrade = 0;
             double total = 0;
-            var studentGrades = _db.Grades.Where(x => x.StudentId==studentId);
+            var studentGrades = getGradesByStudentId(studentId);
 
             foreach(var grade in studentGrades)
             {

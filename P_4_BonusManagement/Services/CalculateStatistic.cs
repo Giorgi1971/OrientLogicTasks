@@ -88,7 +88,7 @@ namespace P_4_BonusManagement.Services
             var dd = query
                 .Where(m => m.EmployeeEntity.RecommenderId != 0)
                 .GroupBy(m => m.EmployeeEntity.RecommenderId)
-                .Select(g => new
+                .Select(g => new NClass
                 {
                     RecomendatorId = g.Key,
                     CountBonus = g.Count(),
@@ -97,14 +97,14 @@ namespace P_4_BonusManagement.Services
                 .Take(10)
                 .OrderByDescending(x => x.BonusAmount)
                 .ThenByDescending(x => x.CountBonus)
-               .ToList();
-            List<NClass> nClasses = new List<NClass>();
-            foreach (var item in dd)
-            {
-                nClasses.Add(new NClass() { BonusAmount = item.BonusAmount, CountBonus = item.CountBonus, RecomendatorId = item.RecomendatorId });
-            }
+                .ToList();
+            //List<NClass> nClasses = new List<NClass>();
+            //foreach (var item in dd)
+            //{
+            //    nClasses.Add(new NClass() { BonusAmount = item.BonusAmount, CountBonus = item.CountBonus, RecomendatorId = item.RecomendatorId });
+            //}
            
-            return nClasses;
+            return dd;
         }
     }
 }

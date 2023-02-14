@@ -9,5 +9,3 @@ namespace GPACalculatorAPI.Db.Entity
         public int Score { get; set; }
     }
 }
-
-
