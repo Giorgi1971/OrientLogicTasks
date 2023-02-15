@@ -10,3 +10,5 @@ var isVowel = IsVowel('a'); // true
 isVowel = IsVowel('b'); // false
 isVowel = IsVowel('ე'); // true
 isVowel = IsVowel('კ'); // false
+
+Console.ReadKey();
