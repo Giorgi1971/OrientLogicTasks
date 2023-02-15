@@ -32,22 +32,21 @@ namespace TodoApp.Api.Controllers
         [HttpPost("change-status")]
         public async Task<IActionResult> ChangeTodoStatus([FromBody] ChangeTodoStatusRequest request)
         {
-            //var user = await _todoRepository.GetUserFromRepositoryAsync(5);
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _todoRepository.GetUserFromRepositoryAsync(5);
+            //var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
                 return NotFound("User not found");
             var changedTodo = await _managtodoRepository.ChangeTodoStatusAsync(user.Id, request);
             await _todoRepository.SaveChangesAsync();
             if (changedTodo == null)
-                return Ok("change yodo is null");
+                return Ok("change todo is null");
             return Ok(changedTodo);
         }
 
 
-
         //[Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpPost("autherize-user's-todo-list")]
+        [HttpGet("autherize-user's-todo-list")]
         public async Task<IActionResult> ListOfTodosAuthUser()
         {
             var user = await _todoRepository.GetUserFromRepositoryAsync(5);
@@ -59,6 +58,16 @@ namespace TodoApp.Api.Controllers
             await _todoRepository.SaveChangesAsync();
             if (ListTodos == null)
                 return Ok("change yodo is null");
+            return Ok(ListTodos);
+        }
+
+        //[Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        [HttpPost("search-todo-in-title-description")]
+        public async Task<IActionResult> SearchTodoByTitleDescAsync(SearchTodoRequest request)
+        {
+            var ListTodos = await _managtodoRepository.SearchTodoByTitleDescAsync(request);
+            if (ListTodos == null)
+                return Ok("Noting Found in this filter");
             return Ok(ListTodos);
         }
     }

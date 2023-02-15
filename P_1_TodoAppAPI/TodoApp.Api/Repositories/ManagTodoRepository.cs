@@ -20,6 +20,7 @@ namespace TodoApp.Api.Repositories
     {
         Task<ToDoEntity?> ChangeTodoStatusAsync(int userId, ChangeTodoStatusRequest request);
         Task<List<ToDoEntity>> ListOfTodosAuthUserAsync(int Id);
+        Task<List<ToDoEntity>> SearchTodoByTitleDescAsync(SearchTodoRequest request);
     }
 
     public class ManagTodoRepository : IManagTodoRepository
@@ -35,6 +36,10 @@ namespace TodoApp.Api.Repositories
 
         public async Task<ToDoEntity?> ChangeTodoStatusAsync(int userId, ChangeTodoStatusRequest request)
         {
+            // Todo აქ ქვედა აუცილებელია და არ მიშვებს ??? ისე ნებისმიერ რიცხვს ვწერ ბაზაში
+            //if(request.Status != TodoStatus.New || request.Status != TodoStatus.Done || request.Status != TodoStatus.Canceled)
+            //if(request.Status != 0 || request.Status != 1 || request.Status != 2)
+                //throw new Exception("request Status is not valid");
             var StatusChangedTodo = _db.Todos.FirstOrDefault(x => x.Id == request.Id);
             if (StatusChangedTodo == null)
                 throw new Exception("This is not your Todo 1111111");
@@ -50,7 +55,25 @@ namespace TodoApp.Api.Repositories
         {
             var listUserTodos = _db.Todos
                 .Where(x => x.UserId == Id)
+                //.Where(z => z.Status == TodoStatus.New)
                 .OrderByDescending(m => m.DeadLine)
+                .ToList();
+            if (listUserTodos == null)
+                // aq ra unda davabruno?
+                throw new Exception("Authorize user have No ToDos");
+            return listUserTodos;
+        }
+
+        // Todo აქ ასინქრონლობაზე პრობლემაა, ვერ ვუწერ ToListAsync()-ს
+        public async Task<List<ToDoEntity>> SearchTodoByTitleDescAsync(SearchTodoRequest request)
+        {
+            var listUserTodos = _db.Todos
+                .Where(
+                x =>
+                x.Title.Contains(request.Title) ||
+                x.Description.Contains(request.Description)
+                )
+                .OrderBy(m => m.Title)
                 .ToList();
             if (listUserTodos == null)
                 // aq ra unda davabruno?
