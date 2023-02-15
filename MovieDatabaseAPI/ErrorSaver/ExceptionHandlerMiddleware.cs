@@ -53,16 +53,16 @@ namespace MovieDatabaseAPI.ErrorSaver
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly AppDbContext _db;
 
-        public ErrorHandlerMiddleware(RequestDelegate next, AppDbContext db)
+        public ErrorHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
-            _db = db;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext)
+        public async Task InvokeAsync(HttpContext httpContext, AppDbContext _db)
         {
+
+
             try
             {
                 await _next(httpContext);

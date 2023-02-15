@@ -78,8 +78,8 @@ namespace TodoApp.Api.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ToDoEntity>> CreateToDo([FromBody] CreateTodoRequest request)
         {
-            var user = await _todoRepository.GetUserFromRepositoryAsync(5);
-            //var user = await _userManager.GetUserAsync(User);
+            //var user = await _todoRepository.GetUserFromRepositoryAsync(5);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return NotFound("User not Found");
 

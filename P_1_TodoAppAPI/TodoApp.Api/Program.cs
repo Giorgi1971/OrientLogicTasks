@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(
     ));
 
 builder.Services.AddTransient<ISendEmailRequestRepository, SendEmailRequestRepository>();
+builder.Services.AddTransient<IManagTodoRepository, ManagTodoRepository>();
 builder.Services.AddTransient<ITodoRepository, TodoRepository>();
 
 builder.Services.AddControllers();

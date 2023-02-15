@@ -40,6 +40,7 @@
     <None Remove="Models\" />
     <None Remove="Models\Requests\" />
     <None Remove="Repositories\" />
+    <None Remove="Midlware\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Auth\" />
@@ -48,6 +49,7 @@
     <Folder Include="Models\" />
     <Folder Include="Models\Requests\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Midlware\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="CLICommands.txt">
