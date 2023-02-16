@@ -12,4 +12,3 @@ namespace P_4_BonusManagement.Data.Entity
         public DateTime ErrorDate { get; set; }
     }
 }
-

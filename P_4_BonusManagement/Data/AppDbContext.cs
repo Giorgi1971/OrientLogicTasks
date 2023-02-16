@@ -13,6 +13,7 @@ namespace P_4_BonusManagement.Data
 
         public DbSet<EmployeeEntity> EmployeeEntities { get; set; }
         public DbSet<BonusEntity> BonusEntities { get; set; }
+        public DbSet<ErrorLogEntity> ErrorLogEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,12 +23,13 @@ namespace P_4_BonusManagement.Data
                 .OnDelete(DeleteBehavior.Cascade);
                 //.OnDelete(DeleteBehavior.Delete);
                 //.OnDelete(DeleteBehavior.SetNull);
+
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+        //}
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -38,7 +40,6 @@ namespace P_4_BonusManagement.Data
 
         //    optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog(logger)));
         //}
-
     }
 }
 

@@ -6,6 +6,7 @@ using P_4_BonusManagement.Repositories;
 using System.Text.Json.Serialization;
 using P_4_BonusManagement.Middlewares;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -42,11 +43,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
-
-app.UseMiddleware<ErrorHandlerMiddleware>();
-
-app.UseDeveloperExceptionPage();
+//app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseExceptionHandlerMiddleware();
 
 app.UseHttpsRedirection();
 

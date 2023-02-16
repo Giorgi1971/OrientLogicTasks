@@ -35,6 +35,7 @@ namespace MovieDatabaseAPI.Controllers
         [HttpGet("/{id}/Any")]
         public async Task<ActionResult> ListGanreByMovieId(int id)
         {
+            throw new Exception("frfrfrf");
             try
             {
             var result = await _db.Genres

@@ -46,29 +46,18 @@ namespace P_4_BonusManagement.Repositories
                          .Where(e => e.RecommenderId != 0)
                          .Join(_db.BonusEntities, e => e.EmployeeEntityId, b => b.EmployeeEntityId, (e, b) => new { e, b })
                          .GroupBy(x => x.e.RecommenderId)
-                         .Select(g => new
+                         .Select(g => new NClass
                          {
-                             RecommenderId = g.Key,
-                             ck = g.Count(),
-                             BBA = g.Sum(x => x.b.BonusAmount)
+                             RecomendatorId = g.Key,
+                             CountBonus = g.Count(),
+                             BonusAmount = g.Sum(x => x.b.BonusAmount)
                          })
                          .Take(10)
-                         .OrderByDescending(x => x.BBA)
-                         .ThenByDescending(x => x.ck)
+                         .OrderByDescending(x => x.BonusAmount)
+                         .ThenByDescending(x => x.CountBonus)
                          .ToListAsync();
 
-            List<NClass> allResults = new List<NClass>();
-            foreach (var item in result)
-            {
-                var dd = new NClass() { BonusAmount = item.BBA, CountBonus = item.ck, RecomendatorId = item.RecommenderId };
-                allResults.Add(dd);
-            }
-            return allResults;
+            return result;
         }
-
-
-
-
     }
 }
-

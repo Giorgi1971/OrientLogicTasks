@@ -69,12 +69,12 @@ namespace P_4_BonusManagement.Repositories
         public StrangClass AddBonusEntity(int employeeId, double amount)
         {
             var employee = _db.EmployeeEntities.FirstOrDefault(e => e.EmployeeEntityId == employeeId);
-            if(employee == null)
-                throw new GiorgisException("aseti momxmarebeli ar arsebobs (BonusRepository) - AddBonusEntity");
-            var bonus = new BonusEntity() { EmployeeEntityId = employeeId, BonusAmount = amount, IssueDate = DateTime.Now};
+            if (employee == null)
+                throw new GiorgisException("Gio Gio aseti momxmarebeli ar arsebobs (BonusRepository) - AddBonusEntity");
+            var bonus = new BonusEntity() { EmployeeEntityId = employeeId, BonusAmount = amount, IssueDate = DateTime.Now };
             var result = _db.BonusEntities.Add(bonus);
             _db.SaveChanges();
-            var str = new StrangClass() {RecomId = employee.RecommenderId, NewAmount = amount/2, bonusId = bonus.BonusEntityId };
+            var str = new StrangClass() { RecomId = employee.RecommenderId, NewAmount = amount / 2, bonusId = bonus.BonusEntityId };
             return str;
         }
 
@@ -111,7 +111,7 @@ namespace P_4_BonusManagement.Repositories
             if(employee == null)
                 throw new GiorgisException("Employee1 is null in TwoCreateBonusAsync (BonusRepository)");
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
-                throw new GiorgisException("Bonusebi diapazonshi ar jdeba (BonusRepository)");
+                throw new Exception("Bonusebi diapazonshi ar jdeba (BonusRepository)");
             var bonus1 = new BonusEntity() { EmployeeEntityId = request.EmployeeId, BonusAmount = request.BonusAmount, IssueDate = DateTime.Now };
             var result = await _db.BonusEntities.AddAsync(bonus1);
 

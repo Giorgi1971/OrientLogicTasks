@@ -25,7 +25,6 @@ namespace P_4_BonusManagement.Controllers
         }
 
         [HttpGet("All-Bonuses")]
-        // როდის ჭირდება აქშენრეზალტში ენტიტის ჩასმა???
         public async Task<ActionResult> GetBonusesAsync()
         {
             try
@@ -65,22 +64,21 @@ namespace P_4_BonusManagement.Controllers
         [HttpPost("create-try-two-bonus")]
         public async Task<ActionResult<BonusEntity>> TwoCreateBonusAsync(CreateBonusRequest request)
         {
-            try
-            {
-                if (request == null)
-                    return BadRequest();
+            //try
+            //{
+            //    if (request == null)
+            //        return BadRequest();
 
-                // თუ ორი ხაზის ქვევით await წერია, ქვედა ხაზზეც დაწერას რამე აზრი აქვს??
                 var createdBonus = await _bonusRepository.TwoCreateBonusAsync(request);
                 await _bonusRepository.SaveChangesAsync();
 
                 return Ok(createdBonus);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creating new Bonus record");
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError,
+            //        "Error creating new Bonus record");
+            //}
         }
     }
 }

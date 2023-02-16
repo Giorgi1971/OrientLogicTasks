@@ -41,19 +41,18 @@ namespace P_4_BonusManagement.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<EmployeeEntity>> GetEmployee(int id)
         {
-            try
-            {
+            //try
+            //{
                 var result = await _employeeRepository.GetEmployee(id);
-                // წაშლილ მომხმარებელს ამას რატომ არ ისვრის და ქვედა ერორს მაჩვენებს??
                 if (result == null) return NotFound();
 
                 return Ok(result);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Giorgi Error (Get Employee by Id) retrieving data from the database");
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError,
+            //        "Giorgi Error (Get Employee by Id) retrieving data from the database");
+            //}
         }
 
         [HttpPost("create-employee")]
