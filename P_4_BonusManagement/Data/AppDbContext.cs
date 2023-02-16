@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using P_4_BonusManagement.Data.Entity;
+using Serilog;
 
 namespace P_4_BonusManagement.Data
 {
@@ -22,6 +23,22 @@ namespace P_4_BonusManagement.Data
                 //.OnDelete(DeleteBehavior.Delete);
                 //.OnDelete(DeleteBehavior.SetNull);
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+        }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var connectionString = "Server=(localdb)\\mssqllocaldb;Database=myapp;Trusted_Connection=True;MultipleActiveResultSets=true";
+        //    var logger = new LoggerConfiguration()
+        //        .WriteTo.MSSqlServer(connectionString, "ErrorLog")
+        //        .CreateLogger();
+
+        //    optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog(logger)));
+        //}
+
     }
 }
 

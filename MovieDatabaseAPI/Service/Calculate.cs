@@ -7,7 +7,6 @@ namespace MovieDatabaseAPI.Service
     public interface ICalculate
     {
         Task<List<string>> OneMovieJanresString(int id);
-        //Task<List<GenreIdName>> ShowMoviesByOneJanreObjects(int id);
     }
 
 
@@ -26,13 +25,5 @@ namespace MovieDatabaseAPI.Service
             var data = _movieRepository.OneMovieJanresString(id);
             return data;
         }
-
-        //public Task<List<GenreIdName>> ShowMoviesByOneJanreObjects(int id)
-        //{
-        //    var data = _movieRepository.ShowMoviesByOneJanreObjects(id);
-        //    return data;
-        //}
-
     }
 }
-

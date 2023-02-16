@@ -30,31 +30,31 @@ namespace MovieDatabaseAPI.Controllers
             _db = db;
         }
 
-        [HttpGet("Any/{id}")]
-        public async Task<ActionResult<IEnumerable<Genre>>> ListGanre(int id)
+
+        // !!!!! თუ id-ს ინტზე დიდ ციფრს მივცემ, მიბუნებს სტატუსს 400-ს. აქ მიწერია 500 დააბრუნეო.
+        [HttpGet("/{id}/Any")]
+        public async Task<ActionResult> ListGanreByMovieId(int id)
         {
             try
             {
             var result = await _db.Genres
-                .Include(x => x.MovieGenres)
+                //.Include(x => x.MovieGenres)
                 .Where(x => x.MovieGenres.Any(mg => mg.MovieId == id))
                 .ToListAsync();
-            return result;
+            return Ok(result);
             }
             catch (Exception ex)
             {
-                ErrorLogHelper.LogError(ex, _db);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                throw new Exception("aq ratom ar Semodis??");
+                //return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
 
         [HttpGet("AllMovies")]
         public async Task<ActionResult> GetMoviesAsync()
         {
             return Ok(await _movieRepository.GetMoviesAsync());
         }
-
 
         [HttpPost("Create")]
         public async Task<ActionResult<Movie>> AddMovieAsync([FromBody] CreateMovieRequest request)
@@ -122,7 +122,6 @@ namespace MovieDatabaseAPI.Controllers
         }
 
 
-        //  აქ ვერ ვახერხებ რომ წაშლილი კინოები არ გამოიტანოს!!!
         [HttpGet("genre/{id:int}/Genre's-all-movies")]
         public async Task<ActionResult<Genre>> GenresAsync(int id)
         {

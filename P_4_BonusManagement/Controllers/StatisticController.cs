@@ -12,7 +12,6 @@ namespace P_4_BonusManagement.Controllers
 
     public class StatisticController : ControllerBase
     {
-
         private readonly IStatisticRepository _statisticRepository;
         private readonly ICalculateStatistic _calculateStatistic;
         private readonly AppDbContext _db;

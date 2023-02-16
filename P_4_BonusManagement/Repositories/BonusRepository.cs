@@ -86,7 +86,7 @@ namespace P_4_BonusManagement.Repositories
                 throw new EmployeeNotFoundException(request.EmployeeId, "aseti momxmarebeli ar arsebobs (BonusRepository) - CreateBonusAsync");
 
             if (request.BonusAmount > 3 * employee.Salary || request.BonusAmount < employee.Salary / 2)
-                throw new GiorgisException("Giorgis eqsepSeni, bonusebi diapazonSI ar jdeba (BonusRepository)");
+                throw new GiorgisException("Bonusebi diapazonSI ar jdeba (BonusRepository)");
 
             var bonus1 = AddBonusEntity(employee.EmployeeEntityId, request.BonusAmount);
             if (bonus1.RecomId != 0)

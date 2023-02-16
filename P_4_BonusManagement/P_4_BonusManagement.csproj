@@ -23,6 +23,7 @@
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.10.0" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
     <None Remove="Services\" />
     <None Remove="Responce\" />
     <None Remove="FluentAssertions" />
+    <None Remove="Serilog" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

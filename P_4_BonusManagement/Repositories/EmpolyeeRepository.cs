@@ -73,7 +73,7 @@ namespace P_4_BonusManagement.Repositories
                 if (!string.IsNullOrEmpty(request.LastName)) { result.LastName = request.LastName; }
                 if (request.Salary != 0) {result.Salary = request.Salary; }
                 if (request.HiringDate != DateTime.MinValue) { result.HiringDate = request.HiringDate; }
-                _db.EmployeeEntities.Update(result);
+                //_db.EmployeeEntities.Update(result);
                 return result;
             }
             return null;

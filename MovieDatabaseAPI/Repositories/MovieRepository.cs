@@ -69,7 +69,6 @@ namespace MovieDatabaseAPI.Repositories
             }
             catch (Exception ex)
             {
-                //ErrorLogHelper.LogError(ex, _db);
                 return null;
             }
         }
@@ -99,7 +98,6 @@ namespace MovieDatabaseAPI.Repositories
             }
             return searchedMovies;
         }
-
 
         public async Task<Movie> AddMovieAsync(CreateMovieRequest request)
         {
@@ -135,16 +133,11 @@ namespace MovieDatabaseAPI.Repositories
                 .FirstOrDefaultAsync(
                 t => t.Id == movieId && t.MovieStatus == Status.active
                 );
-            //if (result == null)
-            //{
-            //    Console.WriteLine(result);
-            //    throw new Exception($"No Movie with GenresSOS this {movieId} Id (throw in repository).");
-            //}
-                return result;
+            return result;
         }
 
 
-        public async Task<ActionResult<Genre>> GenresAsync(int id)
+        public async Task<ActionResult<Genre?>> GenresAsync(int id)
         {
             try
             {
@@ -182,7 +175,7 @@ namespace MovieDatabaseAPI.Repositories
             }
         }
 
-
+        // ეს ტასკი რას აბრუნებს (Ok არ აბრუნებს)
         public Task DeleteMovie(int movieId)
         {
             var result = _db.Movies
