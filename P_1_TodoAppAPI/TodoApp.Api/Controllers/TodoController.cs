@@ -33,7 +33,7 @@ namespace TodoApp.Api.Controllers
 
         // მუშაობს ავტორიზაციის გარეშე
         //[Authorize]
-        //[Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpGet("All-ToDos")]
         public async Task<ActionResult> GetTodos()
         {

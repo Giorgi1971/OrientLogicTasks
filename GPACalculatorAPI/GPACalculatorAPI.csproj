@@ -31,6 +31,7 @@
     <None Remove="Repositoreis\" />
     <None Remove="Models\" />
     <None Remove="Models\Requests\" />
+    <None Remove="Models\Responce\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Db\" />
@@ -38,5 +39,6 @@
     <Folder Include="Repositoreis\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Requests\" />
+    <Folder Include="Models\Responce\" />
   </ItemGroup>
 </Project>
