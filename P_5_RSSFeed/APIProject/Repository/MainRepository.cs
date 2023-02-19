@@ -1,11 +1,10 @@
 ﻿using System;
-namespace APIProject
+namespace APIProject.Db.Entity;
+
+public class MainRepository
 {
-    public class MainRepository
+    public MainRepository()
     {
-        public MainRepository()
-        {
-        }
     }
 }
 

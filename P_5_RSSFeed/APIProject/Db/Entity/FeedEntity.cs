@@ -17,4 +17,3 @@ namespace APIProject.Db.Entity
         public List<FeedTag> FeedTags { get; set; } = null!;
     }
 }
-

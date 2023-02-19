@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 public class Program
 {
+    
     static HttpClient client = new HttpClient();
 
     static async Task Main(string[] args)
@@ -34,7 +35,7 @@ public class Program
         if (response.IsSuccessStatusCode)
         {
             var data = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<MyApiModel>(data);
+            var result = JsonConvert.DeserializeObject<Feeds>(data);
             Console.WriteLine($"Result: {result}");
         }
         else
