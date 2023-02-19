@@ -37,11 +37,21 @@
     <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     <None Remove="Microsoft.EntityFrameworkCore.Sqlite" />
+    <None Remove="Repository\" />
+    <None Remove="Servicies\" />
+    <None Remove="Models\" />
+    <None Remove="Models\Requests\" />
+    <None Remove="Models\Responses\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Db\" />
     <Folder Include="Db\Entity\" />
+    <Folder Include="Repository\" />
+    <Folder Include="Servicies\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Requests\" />
+    <Folder Include="Models\Responses\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleProject\ConsoleProject.csproj">
