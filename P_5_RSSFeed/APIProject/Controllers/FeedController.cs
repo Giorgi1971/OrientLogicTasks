@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIProject.Db;
 using APIProject.Db.Entity;
+using ConsoleProject.MM0dels;
 
 namespace APIProject.Controllers
 {
