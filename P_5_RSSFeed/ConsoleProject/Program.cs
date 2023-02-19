@@ -4,12 +4,10 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml;
 using Newtonsoft.Json;
-using ConsoleProject.MM0dels;
-using A
+using ConsoleProject.;
 
 public class Program
 {
-    
     static HttpClient client = new HttpClient();
 
     static async Task Main(string[] args)
@@ -70,9 +68,9 @@ public class Program
     //}
 }
 
-public class MyApiModel
-{
-    public string Name { get; set; }
-    public int Age { get; set; }
-}
+//public class MyApiModel
+//{
+//    public string Name { get; set; }
+//    public int Age { get; set; }
+//}
 

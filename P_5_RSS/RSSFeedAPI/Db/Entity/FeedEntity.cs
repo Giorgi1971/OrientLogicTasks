@@ -1,5 +1,5 @@
 ﻿using System;
-namespace APIProject.Db.Entity
+namespace RSSFeedAPI.Db.Entity
 {
     public class FeedEntity
     {
@@ -12,8 +12,8 @@ namespace APIProject.Db.Entity
         public DateTime CreateAt { get; set; }
 
         public int WebSiteEntityId { get; set; }
-        public WebSiteEntity WebSiteEntity { get; set; } = null!;
+        public WebSiteEntity? WebSiteEntity { get; set; }
 
-        public List<FeedTag> FeedTags { get; set; } = null!;
+        public List<FeedTag>? FeedTags { get; set; }
     }
 }

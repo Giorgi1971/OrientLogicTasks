@@ -11,15 +11,11 @@
     <None Remove="Microsoft.AspNetCore.Cors" />
     <None Remove="Newtonsoft.Json" />
     <None Remove="System.Net.Http" />
-    <None Remove="MM0dels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MM0dels\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\APIProject\APIProject.csproj" />
