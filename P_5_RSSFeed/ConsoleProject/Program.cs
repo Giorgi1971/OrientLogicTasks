@@ -7,8 +7,6 @@ using Newtonsoft.Json;
 
 public class Program
 {
-
-
     static HttpClient client = new HttpClient();
 
     static async Task Main(string[] args)
