@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -23,14 +24,38 @@ namespace RSSFeedAPI.Controllers
 
         // GET: api/Feed
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<FeedEntity>>> GetFeeds()
+        public async Task<ActionResult<IEnumerable<FeedEntity>>> GetFeeds(int pageIndex = 0)
         {
-          if (_context.Feeds == null)
-          {
-              return NotFound();
-          }
-            return await _context.Feeds.ToListAsync();
+            var AllFeeds = _context.Feeds;
+            var pageSize = AllFeeds.Count() / 20 >100 ? 30 : 20;
+
+            if (_context.Feeds == null)
+            {
+                return NotFound();
+            }
+            var result = await _context.Feeds
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .OrderBy(t => t.CreateAt)
+                .ToListAsync();
+            return result;
         }
+
+        // GET: api/Feed
+        [HttpGet("feeds-by-tag")]
+        public async Task<ActionResult<IEnumerable<FeedEntity>>> GetFeedsByTagId(int TagId)
+        {
+            if (_context.Feeds == null)
+            {
+                return NotFound();
+            }
+            var result = await _context.Feeds
+                .Where(x => x.FeedTags.Any(y => y.TagEntityId == TagId))
+                .OrderBy(t => t.CreateAt)
+                .ToListAsync();
+            return result;
+        }
+
 
         // GET: api/Feed/5
         [HttpGet("{id}")]
