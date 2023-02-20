@@ -7,6 +7,18 @@ using System.Text;
 using System.Net.Http;
 using System.Text.Json;
 
+
+StartRSS start = new StartRSS();
+
+try
+{
+    var urlList = start.getUrlStringsFromRepository();
+    var fetchedData = start.FetchUrls(urlList);
+}
+catch
+{
+    Console.WriteLine("Something is wrong");
+}
 string feedUrl = "https://feed.infoq.com/";
 
 
