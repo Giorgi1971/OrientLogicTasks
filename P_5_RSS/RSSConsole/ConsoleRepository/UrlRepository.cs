@@ -14,14 +14,17 @@ namespace RSSConsole.ConsoleRepository
 
         public List<string> getUrlStringsFromRepository()
         {
-            return _db.Urls
+            var rr = _db.Urls;
+            var result = _db.Urls
                 .Select(x => x.Url)
                 .ToList();
+            return result;
         }
 
-        public List<WebSiteEntity> getUrlFromRepositoryAsync()
+        public List<WebSiteEntity> getWebUrlsFromRepository()
         {
-            return _db.Urls.ToList();
+            var result = _db.Urls.ToList();
+            return result;
         }
 
     }

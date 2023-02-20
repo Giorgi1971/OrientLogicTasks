@@ -7,53 +7,39 @@ namespace RSSConsole
 {
     public class StartRSS
     {
-        private readonly FeedService _feedServ;
-        public StartRSS(FeedService service)
+        private readonly FeedService? _feedServ;
+        private readonly UrlService? _urlServ;
+
+        public StartRSS(FeedService service, UrlService servUrl)
         {
             _feedServ = service;
+            _urlServ = servUrl;
         }
 
-        public List<string> getUrlStringsFromRepository()
+        public List<WebSiteEntity> getUrls()
         {
-            return getUrlStringsFromRepository();
+            var result = _urlServ.getUrsFromService();
+            return result;
         }
 
-        public void FetchUrls(List<string> urls)
+        public void FetchUrls(List<WebSiteEntity> urls)
         {
+            var httpClient = _feedServ.httpClient();
             foreach (var url in urls)
             {
-                var feededUrl = FetchFromUrl(url);
-            }
-        }
+                //Console.WriteLine(url.Url);
 
-        public List<FeedEntity> FetchFromUrl(string feedUrl)
-        {
-            List<FeedEntity> feedEntities = new List<FeedEntity>();
-
-            XmlDocument rssDoc = new XmlDocument();
-            rssDoc.Load(feedUrl);
-            XmlNodeList rssItems = rssDoc.SelectNodes("rss/channel/item");
-
-            foreach (XmlNode rssItem in rssItems)
-            {
-                var entity = new FeedEntity();
-                entity.Title = rssItem.SelectSingleNode("title").InnerText;
-                entity.Description = rssItem.SelectSingleNode("description").InnerText.Replace("\"", "'").ToString();
-                entity.CreateAt = DateTime.Now;
-                entity.WebSiteEntityId = 1;
-                Console.WriteLine("Title: {0}\nDescription: {1}\nPublication Date: {2}\n", entity.Title, entity.Description, entity.CreateAt);
-                if (entity == null)
-                    Console.WriteLine("Null is entity");
-                else
+                var feedEntities = _feedServ.FetchFromUrl(url);
+                var j = 0;
+                foreach (var feedEntity in feedEntities)
                 {
-                    feedEntities.Add(entity);
-                    //_db.Feeds.Add(entity);
-                    //_db.SaveChanges();
+                    if (j == 3)
+                        break;
+                    _feedServ.PutDataInDb(feedEntity, httpClient);
+                    j++;
                 }
-
             }
-            return feedEntities;
-
         }
     }
+}
 
