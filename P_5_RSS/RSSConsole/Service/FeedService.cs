@@ -13,13 +13,23 @@ using RSSFeedAPI.Db.Entity;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text.RegularExpressions;
 
 namespace RSSConsole.Service
 {
     public class FeedService
     {
+        private readonly FeedRepository _FeedRepos;
+
+        public FeedService(FeedRepository FeedRepos)
+        {
+            _FeedRepos = FeedRepos;
+        }
+
         public List<FeedEntity> FetchFromUrl(WebSiteEntity feedUrl)
         {
+            //var feeds = _FeedRepos.getFeedsFromRepositoryAsync();
             List<FeedEntity> feedEntities = new List<FeedEntity>();
 
             XmlDocument rssDoc = new XmlDocument();
@@ -32,14 +42,35 @@ namespace RSSConsole.Service
                 Console.WriteLine($"No Load From {feedUrl.Url}");
                 return feedEntities;
             }
+
+            // ეს მეორე ვარიანტი ჯავასკრიპტის კოდების წაშლის.სავარაუდოდ ეს უფრო სწორია!!!
+            // Assuming "xmlDoc" is the XmlDocument you received from the RSS feed
+            string xmlString = rssDoc.OuterXml;
+            string cleanedXmlString = Regex.Replace(xmlString, @"<script[^>]*>[\s\S]*?</script>", string.Empty, RegexOptions.IgnoreCase);
+            XmlDocument cleanedXmlDoc = new XmlDocument();
+            cleanedXmlDoc.LoadXml(cleanedXmlString);
+
             XmlNodeList rssItems = rssDoc.SelectNodes("rss/channel/item");
-            
+            var i = 0;
             foreach (XmlNode rssItem in rssItems)
             {
-                DateTime dateResult;
+                if (i == 3)
+                    break;
+                i++;
+                var checkTitle = rssItem.SelectSingleNode("title").InnerText;
+                Console.WriteLine(checkTitle);
+                var TitleList = _FeedRepos.getFeedsTitleByUrlId(feedUrl.WebSiteEntityId);
+                //Console.WriteLine(TitleList);
+                if (TitleList.Contains(checkTitle))
+                    continue;
                 var entity = new FeedEntity();
-                entity.Title = rssItem.SelectSingleNode("title").InnerText;
-                entity.Description = rssItem.SelectSingleNode("description").InnerText.Replace("\"", "'").ToString();
+                entity.Title = checkTitle;
+
+                var text = rssItem.SelectSingleNode("description").InnerText.Replace("\"", "'").ToString();
+                // Assuming "text" is the string you received from the RSS feed
+                string cleanedText = Regex.Replace(text, @"<script[^>]*>[\s\S]*?</script>", string.Empty, RegexOptions.IgnoreCase);
+
+                entity.Description = cleanedText;
                 entity.CreateAt = DateTime.Now;
                 //if (DateTime.TryParse(rssItem.SelectSingleNode("updated").InnerText, out dateResult))
                 //{

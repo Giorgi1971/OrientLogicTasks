@@ -21,8 +21,9 @@ var options = optionsBuilder.Options;
 // Note that the using block is used to ensure that the AppDbContext instance is properly disposed of when it is no longer needed
 AppDbContext db = new AppDbContext(options);
 UrlRepository url = new UrlRepository(db);
+FeedRepository feed = new FeedRepository(db);
 UrlService urlService = new UrlService(url);
-FeedService feedService = new FeedService();
+FeedService feedService = new FeedService(feed);
 StartRSS start = new StartRSS(feedService, urlService);
 
 
