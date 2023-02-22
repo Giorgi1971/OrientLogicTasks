@@ -1,8 +1,6 @@
 ﻿using RSSConsole;
 using RSSFeedAPI.Db;
 using RSSFeedAPI.Db.Entity;
-using RSSConsole.ConsoleRepository;
-using RSSConsole.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System;

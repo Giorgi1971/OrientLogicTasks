@@ -1,6 +1,4 @@
 ﻿using System;
-using RSSConsole.Service;
-using RSSConsole.ConsoleRepository;
 using RSSFeedAPI.Db;
 using RSSFeedAPI.Db.Entity;
 using System.Xml;
@@ -43,8 +41,8 @@ namespace RSSConsole
             Console.WriteLine(feedUrl.LastUpdated);
             if (feedTitles.Count != 0)
             {
-                // ვამოწმებთ ამ ulr-ze განახლება იყო თუ არა
-                //feedUrl.LastUpdated = syndicatedFeeds.LastUpdatedTime.UtcDateTime;
+                // აქ სადღაც უნდა ვინახავსე სინდიკატის ბოლო განახლების თარიღს webUrlEntity-ში ბაზაში.!!!!!!!!!!!!!!!!!!
+                // ისე ამის შემოწმებას აზრი არ აქვს. და ბოლოშიც როცა ნაწილობრივ განვაახლებ შეიძლება მაშინაც იყოს საჭირო
                 if (syndicatedFeeds.LastUpdatedTime.DateTime == feedUrl.LastUpdated)
                 {
                     return "This Url is Up-to-Date";
@@ -64,9 +62,8 @@ namespace RSSConsole
             foreach (var item in syndicatedFeeds.Items)
             {
                 // ფიდის დამატების პირობები:
-                // სათაური არ უნდა იყოს ცარიელი
                 var title = item.Title.Text.Trim();
-                if (i >= 3)
+                if (i >= 4)
                     break;
                 i++;
                 if (string.IsNullOrEmpty(title))
