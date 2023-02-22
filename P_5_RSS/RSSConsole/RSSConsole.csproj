@@ -16,10 +16,12 @@
     <None Remove="Service\" />
     <None Remove="ConsoleRepository\" />
     <None Remove="Service\Validate\" />
+    <None Remove="System.ServiceModel.Syndication" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />

@@ -18,11 +18,11 @@ namespace RSSConsole.Service.Validate
             _feedRepos = feed;
         }
 
-        public bool ValidateTitle()
-        {
-            _urlRepos.getWebUrlsFromRepository();
-            return true;
-        }
+        //public bool ValidateTitle()
+        //{
+        //    _urlRepos.GetWebUrlsFromRepositoryAsync();
+        //    return true;
+        //}
     }
 }
 

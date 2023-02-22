@@ -13,17 +13,17 @@ namespace RSSConsole.Service
             _urlRepos = url;
         }
 
-        public List<string> getUrlStringsFromService()
-        {
-            var result = _urlRepos.getUrlStringsFromRepository();
-            return result;
-        }
+        //public async Task<List<string>> GetUrlStringsFromService()
+        //{
+        //    var result = await _urlRepos.GetUrlStringsFromRepository();
+        //    return result;
+        //}
 
-        public List<WebSiteEntity> getUrsFromService()
-        {
-            var result = _urlRepos.getWebUrlsFromRepository();
-            return result;
-        }
+        //public async Task<List<WebSiteEntity>> GetUrsFromServiceAsync()
+        //{
+        //    var result = await _urlRepos.GetWebUrlsFromRepositoryAsync();
+        //    return result;
+        //}
     }
 }
 

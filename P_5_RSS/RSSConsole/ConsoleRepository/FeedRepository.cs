@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 using RSSFeedAPI.Db;
 using RSSFeedAPI.Db.Entity;
 
@@ -13,40 +14,42 @@ namespace RSSConsole.ConsoleRepository
             _db = db;
         }
 
-        public List<string?> getFeedTextFromRepository()
-        {
-            return _db.Feeds
-                .OrderByDescending(x => x.Title)
-                .Select(x => x.Description)
-                .ToList();
-        }
+        //    public async Task<List<string?>> GetFeedTextFromRepositoryAsync()
+        //    {
+        //        var result = await _db.Feeds
+        //            .OrderByDescending(x => x.Title)
+        //            .Select(x => x.Description)
+        //            .ToListAsync();
+        //        return result;
+        //    }
 
-        public List<FeedEntity> getFeedsFromRepositoryAsync()
-        {
-            return _db.Feeds
-                .OrderByDescending(x => x.Title)
-                .ToList();
-        }
+        //    public async Task<List<FeedEntity>> GetFeedsFromRepositoryAsync()
+        //    {
+        //        var result = await _db.Feeds
+        //            .OrderByDescending(x => x.Title)
+        //            .ToListAsync();
+        //        return result;
+        //    }
 
 
-        public List<FeedEntity> getFeedsRepositoryByUrlId(int Id)
-        {
-            var result = _db.Feeds
-                .OrderByDescending(x => x.Title)
-                .Where(x => x.WebSiteEntityId == Id)
-                .ToList();
-            return result;
-        }
+        //    public async Task<List<FeedEntity>> GetFeedsRepositoryByUrlIdAsync(int Id)
+        //    {
+        //        var result = await _db.Feeds
+        //            .OrderByDescending(x => x.Title)
+        //            .Where(x => x.WebSiteEntityId == Id)
+        //            .ToListAsync();
+        //        return result;
+        //    }
 
-        public List<string> getFeedsTitleByUrlId(int Id)
-        {
-            var result = _db.Feeds
-                .OrderByDescending(x => x.Title)
-                .Where(x => x.WebSiteEntityId == Id)
-                .Select(x => x.Title)
-                .ToList();
-            return result;
-        }
+        //    public async Task<List<string>> GetFeedsTitleByUrlIdAsync(int Id)
+        //    {
+        //        var result = await _db.Feeds
+        //            .OrderByDescending(x => x.Title)
+        //            .Where(x => x.WebSiteEntityId == Id)
+        //            .Select(x => x.Title)
+        //            .ToListAsync();
+        //        return result;
+        //    }
     }
 }
 

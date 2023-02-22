@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 using RSSFeedAPI.Db;
 using RSSFeedAPI.Db.Entity;
 namespace RSSConsole.ConsoleRepository
@@ -12,21 +13,25 @@ namespace RSSConsole.ConsoleRepository
             _db = db;
         }
 
-        public List<string> getUrlStringsFromRepository()
-        {
-            var rr = _db.Urls;
-            var result = _db.Urls
-                .Select(x => x.Url)
-                .ToList();
-            return result;
-        }
+        //public async Task<List<TagEntity>> GetAllTagsAsync()
+        //{
+        //    var result = await _db.Tags.ToListAsync();
+        //    return result;
+        //}
 
-        public List<WebSiteEntity> getWebUrlsFromRepository()
-        {
-            var result = _db.Urls.ToList();
-            return result;
-        }
+        //public async Task<List<string>> GetUrlStringsFromRepository()
+        //{
+        //    var result = await _db.Urls
+        //        .Select(x => x.Url)
+        //        .ToListAsync();
+        //    return result;
+        //}
 
+        //public async Task<List<WebSiteEntity>> GetWebUrlsFromRepositoryAsync()
+        //{
+        //    var result = await _db.Urls.ToListAsync();
+        //    return result;
+        //}
     }
 }
 

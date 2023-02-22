@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using RSSFeedAPI.Db.Entity;
 using RSSFeedAPI.Db;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +35,8 @@ namespace RSSFeedAPI.Db
                 .WithMany(b => b.Feeds)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+
+        public DbSet<RSSFeedAPI.Db.Entity.FeedTag> FeedTag { get; set; } = default!;
     }
 }
 
