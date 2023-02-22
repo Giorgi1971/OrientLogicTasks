@@ -34,10 +34,11 @@ public class Program
 
         // Note that the using block is used to ensure that the AppDbContext instance is properly disposed of when it is no longer needed
         AppDbContext db = new(options);
-        UrlRepository url = new(db);
-        FeedRepository feed = new(db);
-        FeedService feedService = new(feed);
-        StartRSS startRSS = new(feedService, feed, url, db);
+        //UrlRepository url = new(db);
+        //FeedRepository feed = new(db);
+        //FeedService feedService = new(feed);
+        //StartRSS startRSS = new(feedService, feed, url, db);
+        StartRSS startRSS = new(db);
 
         //var feeds2 = SyndicationFeed.Load(XmlReader.Create("https://dev.to/feed/"));
         //Console.WriteLine(feeds2.LastUpdatedTime);
@@ -45,12 +46,21 @@ public class Program
 
 
         var urlList = await startRSS.GetUrlsAsync();
-        Console.WriteLine(urlList.Count + DateTime.UtcNow.ToString());
+        Console.WriteLine(urlList.Count + "- number Urls. -- " + DateTime.UtcNow.ToString());
 
-        var result = await Task.WhenAll(urlList.Select(startRSS.ProcessFeedsAsync));
+        var result = await Task.WhenAll(urlList.Select(startRSS.BeginFeedsAsync));
+
+        Console.WriteLine("---------------------------------");
+        foreach (var item in result)
+        {
+            Console.WriteLine(item);
+        }
         Console.WriteLine(result);
 
         Console.ReadKey();
+
+
+
 
         //foreach (var item in urlList)
         //{

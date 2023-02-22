@@ -13,97 +13,99 @@ namespace RSSConsole
 {
     public class StartRSS
     {
-        private readonly FeedService _feedServ;
-        private readonly UrlRepository _urlRepo;
         private readonly AppDbContext _db;
-        private readonly FeedRepository _feedRepo;
 
-        public StartRSS(FeedService service, FeedRepository feedRepo, UrlRepository urlRepository, AppDbContext db)
+        public StartRSS(AppDbContext db)
         {
-            _feedServ = service;
-            _urlRepo = urlRepository;
             _db = db;
-            _feedRepo = feedRepo;
         }
 
-        // FetchBySindicationAsync
-        public async Task<string> ProcessFeedsAsync(WebSiteEntity feedUrl)
+        public async Task<string> BeginFeedsAsync(WebSiteEntity feedUrl)
         {
-            var feeds = new SyndicationFeed();
+            SyndicationFeed syndicatedFeeds;
+
             try
             {
-                var url = feedUrl.Url;
-                Console.WriteLine($"Fetchingggg {feedUrl.WebSiteEntityId}");
-                feeds = SyndicationFeed.Load(XmlReader.Create(url));
+                syndicatedFeeds = SyndicationFeed.Load(XmlReader.Create(feedUrl.Url));
+                Console.WriteLine($"Fetched - {feedUrl.WebSiteEntityId}");
             }
             catch
             {
-                Console.WriteLine($"Dont fwtch web Id - {feedUrl.WebSiteEntityId}");
+                Console.WriteLine($"Dont fetched - {feedUrl.WebSiteEntityId}");
                 return "Hello";
             }
-            // ვამოწმებთ ამ ulr-ze განახლება იყო თუ არა
-            // ამაზე ერორს აგდებს:
-            //if (feeds.LastUpdatedTime == feedUrl.LastUpdated)
-            //    return;
-            // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
 
-            //var feedsTitles = await _feedRepo.GetFeedsTitleByUrlIdAsync(feedUrl.WebSiteEntityId);
-            var feedsTitles = _db.Feeds.Where(x => x.WebSiteEntityId == feedUrl.WebSiteEntityId);
-            Console.WriteLine(feedsTitles.Count());
-            if (feeds == null)
-                return "sdasdas";
-            return "end";
-            //var i = 0;
-            //foreach (var item in feeds.Items)
-            //{
-            //    // ფიდის დამატების პირობები:
-            //    // სათაური არ უნდა იყოს ცარიელი
-            //    if (i >= 2)
-            //        break;
-            //    i++;
-            //    if (!string.IsNullOrEmpty(item.Title.Text))
-            //    {
-            //        // სათაური არ უნდა გვქონდეს უკვე Feed-ებში.
-            //        if (!feedsTitles.Contains(item.Title.Text))
-            //        {
-            //            var feedEntity = new FeedEntity() { Title = "NoTitle" };
+            var feeds = GetFeedsByUrlIdsAsync(feedUrl.WebSiteEntityId).Result;
+            var feedTitles = feeds.Select(obj => ((FeedEntity)obj).Title).ToList();
 
-            //            feedEntity.Title = item.Title.Text.Trim();
-            //            // 1. წავშალოთ ჯავასკრიპტის კოდი ტექსტში
-            //            string rssFeedText = item.Summary.Text;
-            //            string cleanedText = Regex.Replace(rssFeedText, @"<script\b[^>]*>(.*?)</script>", "", RegexOptions.IgnoreCase);
-            //            feedEntity.Description = cleanedText.Trim();
-            //            feedEntity.Author = item.Authors.FirstOrDefault()?.Name??"Unknoun";
-            //            feedEntity.CreateAt = item.LastUpdatedTime.DateTime;
-            //            feedEntity.WebSiteEntityId = feedUrl.WebSiteEntityId;
-            //            var fent = await _db.Feeds.AddAsync(feedEntity);
-            //            var ttt = await _db.SaveChangesAsync();
-            //            // ვიწყებთ tag-ის ჩაწერას:
-            //            //var tags = await _urlRepo.GetAllTagsAsync();
-            //            //string[] tagList = new string[5];
-            //            //foreach (var tag in tags)
-            //            //{
-            //            //    // 2. შევამოწმოთ 5-ზე მეტი ტეგი ხომ არ აქვს
-            //            //    if (tagList.Length > 5)
-            //            //        break;
-            //            //    // 3. დავამატოთ ახალი ტეგები
-
-            //            //    if (cleanedText.Contains(tag.TagTitle))
-            //            //    {
-            //            //        var feedtag = new FeedTag();
-            //            //        feedtag.FeedEntityId = fent.Entity.FeedEntityId;
-            //            //        feedtag.TagEntityId = tag.TagEntityId;
-            //            //        await _db.FeedTag.AddAsync(feedtag);
-            //            //        await _db.SaveChangesAsync();
-            //            //        tagList.Append(tag.TagTitle);
-            //            //    }
-            //            //}
-            //}
-            //}
+            Console.WriteLine(feedTitles.Count);
+            Console.WriteLine(syndicatedFeeds.LastUpdatedTime);
+            Console.WriteLine(feedUrl.LastUpdated);
+            if (feedTitles.Count != 0)
+            {
+                // ვამოწმებთ ამ ulr-ze განახლება იყო თუ არა
+                //feedUrl.LastUpdated = syndicatedFeeds.LastUpdatedTime.UtcDateTime;
+                if (syndicatedFeeds.LastUpdatedTime.DateTime == feedUrl.LastUpdated)
+                {
+                    return "This Url is Up-to-Date";
+                };
+                Console.WriteLine(":must be updated");
+                //Todo must be updated partially
+                // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
+            }
+            await AddFeedsFromsyndicatedFeedsAsync(syndicatedFeeds, feedTitles, feedUrl.WebSiteEntityId); 
+            return "All Ok";
         }
-        //Console.WriteLine("Feed title: {0}", feeds.Title.Text);
-        //Console.WriteLine("RSS feed fetched");
-        //}
+
+
+    public async Task AddFeedsFromsyndicatedFeedsAsync(SyndicationFeed syndicatedFeeds, List<string> feedTitles, int urlId)
+        {
+            var i = 0;
+            foreach (var item in syndicatedFeeds.Items)
+            {
+                // ფიდის დამატების პირობები:
+                // სათაური არ უნდა იყოს ცარიელი
+                var title = item.Title.Text.Trim();
+                if (i >= 3)
+                    break;
+                i++;
+                if (string.IsNullOrEmpty(title))
+                    continue;
+                // სათაური არ უნდა გვქონდეს უკვე Feed-ებში.
+                if (feedTitles.Contains(title))
+                    continue;
+                var feedEntity = new FeedEntity() { Title = "NoTitle" }; // Title not null aqvs
+                feedEntity.Title = title;
+                // 1. წავშალოთ ჯავასკრიპტის კოდი ტექსტში
+                string rssFeedText = item.Summary.Text.Trim();
+                string cleanedText = Regex.Replace(rssFeedText, @"<script\b[^>]*>(.*?)</script>", "", RegexOptions.IgnoreCase);
+                feedEntity.Description = cleanedText.Trim();
+                feedEntity.Author = item.Authors.FirstOrDefault()?.Name ?? "Unknoun";
+                feedEntity.CreateAt = item.PublishDate.DateTime;
+                feedEntity.WebSiteEntityId = urlId;
+                var fent = await _db.Feeds.AddAsync(feedEntity);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+                    // ვიწყებთ tag-ის ჩაწერას:
+                    //var tags = await _urlRepo.GetAllTagsAsync();
+                    //string[] tagList = new string[5];
+                    //foreach (var tag in tags)
+                    //{
+                    //    // 2. შევამოწმოთ 5-ზე მეტი ტეგი ხომ არ აქვს
+                    //    if (tagList.Length > 5)
+                    //        break;
+                    //    // 3. დავამატოთ ახალი ტეგები
+
+                    //    if (cleanedText.Contains(tag.TagTitle))
+                    //    {
+                    //        var feedtag = new FeedTag();
+                    //        feedtag.FeedEntityId = fent.Entity.FeedEntityId;
+                    //        feedtag.TagEntityId = tag.TagEntityId;
+                    //        await _db.FeedTag.AddAsync(feedtag);
+                    //        await _db.SaveChangesAsync();
+                    //        tagList.Append(tag.TagTitle);
 
 
         public async Task<List<WebSiteEntity>> GetUrlsAsync()
@@ -113,6 +115,15 @@ namespace RSSConsole
                 .ToListAsync();
             return result;
         }
+
+        public async Task<List<FeedEntity>> GetFeedsByUrlIdsAsync(int Id)
+        {
+            var result = await _db.Feeds
+                .Where(x => x.WebSiteEntityId == Id)
+                .ToListAsync();
+            return result;
+        }
+
 
         //public async Task FetchUrlsAsync(List<WebSiteEntity> urls)
         //{
