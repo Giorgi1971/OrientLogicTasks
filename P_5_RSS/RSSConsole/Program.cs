@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 public class Program
 {
-    static System.Timers.Timer timer;
+    //static System.Timers.Timer timer;
 
     public static async Task Main()
     {

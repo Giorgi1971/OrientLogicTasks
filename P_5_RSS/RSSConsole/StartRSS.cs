@@ -77,41 +77,51 @@ namespace RSSConsole
                 var feedEntity = new FeedEntity() { Title = "NoTitle" }; // Title not null aqvs
                 feedEntity.Title = title;
                 // 1. წავშალოთ ჯავასკრიპტის კოდი ტექსტში
+                try
+                {
                 string rssFeedText = item.Summary.Text.Trim();
                 string cleanedText = Regex.Replace(rssFeedText, @"<script\b[^>]*>(.*?)</script>", "", RegexOptions.IgnoreCase);
                 feedEntity.Description = cleanedText.Trim();
+                }
+                catch
+                {
+                    feedEntity.Description = "Cannot Fetch text, from JS code. aslo ";
+                }
                 feedEntity.Author = item.Authors.FirstOrDefault()?.Name ?? "Unknoun";
                 feedEntity.CreateAt = item.PublishDate.DateTime;
                 feedEntity.WebSiteEntityId = urlId;
                 var fent = await _db.Feeds.AddAsync(feedEntity);
                 await _db.SaveChangesAsync();
+
+                // ვიწყებთ tag-ის ჩაწერას:
+                var tags = await _db.Tags.ToListAsync();
+                string[] tagList = new string[5];
+                foreach (var tag in tags)
+                {
+                    // 2. შევამოწმოთ 5-ზე მეტი ტეგი ხომ არ აქვს
+                    if (tagList.Length > 5)
+                        break;
+                    // 3. დავამატოთ ახალი ტეგები
+
+                    if (feedEntity.Description.Contains(tag.TagTitle))
+                    {
+                        var feedtag = new FeedTag();
+                        feedtag.FeedEntityId = fent.Entity.FeedEntityId;
+                        feedtag.TagEntityId = tag.TagEntityId;
+                        await _db.FeedTag.AddAsync(feedtag);
+                        await _db.SaveChangesAsync();
+                        tagList.Append(tag.TagTitle);
+                    }
+                }
             }
         }
 
-                    // ვიწყებთ tag-ის ჩაწერას:
-                    //var tags = await _urlRepo.GetAllTagsAsync();
-                    //string[] tagList = new string[5];
-                    //foreach (var tag in tags)
-                    //{
-                    //    // 2. შევამოწმოთ 5-ზე მეტი ტეგი ხომ არ აქვს
-                    //    if (tagList.Length > 5)
-                    //        break;
-                    //    // 3. დავამატოთ ახალი ტეგები
-
-                    //    if (cleanedText.Contains(tag.TagTitle))
-                    //    {
-                    //        var feedtag = new FeedTag();
-                    //        feedtag.FeedEntityId = fent.Entity.FeedEntityId;
-                    //        feedtag.TagEntityId = tag.TagEntityId;
-                    //        await _db.FeedTag.AddAsync(feedtag);
-                    //        await _db.SaveChangesAsync();
-                    //        tagList.Append(tag.TagTitle);
 
 
         public async Task<List<WebSiteEntity>> GetUrlsAsync()
         {
             var result = await _db.Urls
-                .Where(x => x.WebSiteEntityId < 4)
+                //.Where(x => x.WebSiteEntityId < 7)
                 .ToListAsync();
             return result;
         }
