@@ -50,6 +50,7 @@ namespace RSSConsole
                 Console.WriteLine(":must be updated");
                 //Todo must be updated partially
                 // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
+                // ----- ეს მგონი უკვე გაკეთებულია
             }
             await AddFeedsFromsyndicatedFeedsAsync(syndicatedFeeds, feedTitles, feedUrl.WebSiteEntityId); 
             return "All Ok";
@@ -90,15 +91,12 @@ namespace RSSConsole
                 var fent = await _db.Feeds.AddAsync(feedEntity);
                 await _db.SaveChangesAsync();
 
-                // ვიწყებთ tag-ის ჩაწერას:
                 var tags = await _db.Tags.ToListAsync();
                 string[] tagList = new string[5];
                 foreach (var tag in tags)
                 {
-                    // 2. შევამოწმოთ 5-ზე მეტი ტეგი ხომ არ აქვს
                     if (tagList.Length > 5)
                         break;
-                    // 3. დავამატოთ ახალი ტეგები
 
                     if (feedEntity.Description.Contains(tag.TagTitle))
                     {
@@ -112,7 +110,6 @@ namespace RSSConsole
                 }
             }
         }
-
 
 
         public async Task<List<WebSiteEntity>> GetUrlsAsync()
@@ -130,24 +127,6 @@ namespace RSSConsole
                 .ToListAsync();
             return result;
         }
-
-
-        //public async Task FetchUrlsAsync(List<WebSiteEntity> urls)
-        //{
-        //    var httpClient = _feedServ.httpClient();
-        //    foreach (var url in urls)
-        //    {
-        //        List<FeedEntity> feedEntities = _feedServ.FetchFromUrl(url);
-        //        var j = 0;
-        //        foreach (var feedEntity in feedEntities)
-        //        {
-        //            if (j == 3)
-        //                break;
-        //            await _feedServ.PutDataInDb(feedEntity, httpClient);
-        //            j++;
-        //        }
-        //    }
-        //}
     }
 }
 
