@@ -6,10 +6,11 @@ using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using RSSConsole.Service;
 
 namespace RSSConsole
 {
-    public class StartRSS
+    public partial class StartRSS
     {
         private readonly AppDbContext _db;
 
@@ -21,24 +22,21 @@ namespace RSSConsole
         public async Task<string> BeginFeedsAsync(WebSiteEntity feedUrl)
         {
             SyndicationFeed syndicatedFeeds;
-
             try
             {
                 syndicatedFeeds = SyndicationFeed.Load(XmlReader.Create(feedUrl.Url));
-                Console.WriteLine($"Fetched - {feedUrl.WebSiteEntityId}");
+                //Console.WriteLine($"Fetched - {feedUrl.WebSiteEntityId}");
             }
             catch
             {
-                Console.WriteLine($"Dont fetched - {feedUrl.WebSiteEntityId}");
+                //Console.WriteLine($"Dont fetched - {feedUrl.WebSiteEntityId}");
                 return "Hello";
             }
 
             var feeds = GetFeedsByUrlIdsAsync(feedUrl.WebSiteEntityId).Result;
-            var feedTitles = feeds.Select(obj => ((FeedEntity)obj).Title).ToList();
+            var feedTitles = feeds.Select(obj => obj.Title).ToList();
 
-            Console.WriteLine(feedTitles.Count);
-            Console.WriteLine(syndicatedFeeds.LastUpdatedTime);
-            Console.WriteLine(feedUrl.LastUpdated);
+            Console.WriteLine("BeginFeedsAsync "+feedUrl.WebSiteEntityId);
             if (feedTitles.Count != 0)
             {
                 // აქ სადღაც უნდა ვინახავსე სინდიკატის ბოლო განახლების თარიღს webUrlEntity-ში ბაზაში.!!!!!!!!!!!!!!!!!!
@@ -47,7 +45,7 @@ namespace RSSConsole
                 {
                     return "This Url is Up-to-Date";
                 };
-                Console.WriteLine(":must be updated");
+                //Console.WriteLine(":must be updated");
                 //Todo must be updated partially
                 // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
                 // ----- ეს მგონი უკვე გაკეთებულია
@@ -56,17 +54,17 @@ namespace RSSConsole
             return "All Ok";
         }
 
-
     public async Task AddFeedsFromsyndicatedFeedsAsync(SyndicationFeed syndicatedFeeds, List<string> feedTitles, int urlId)
         {
-            var i = 0;
+            //var i = 0;
+            Console.WriteLine("AddFeedsFromsyndicatedFeedsAsync - "+urlId);
             foreach (var item in syndicatedFeeds.Items)
             {
                 // ფიდის დამატების პირობები:
                 var title = item.Title.Text.Trim();
-                if (i >= 4)
-                    break;
-                i++;
+                //if (i >= 4)
+                    //break;
+                //i++;
                 if (string.IsNullOrEmpty(title))
                     continue;
                 // სათაური არ უნდა გვქონდეს უკვე Feed-ებში.
@@ -78,7 +76,7 @@ namespace RSSConsole
                 try
                 {
                 string rssFeedText = item.Summary.Text.Trim();
-                string cleanedText = Regex.Replace(rssFeedText, @"<script\b[^>]*>(.*?)</script>", "", RegexOptions.IgnoreCase);
+                string cleanedText = MyRegex().Replace(rssFeedText, "");
                 feedEntity.Description = cleanedText.Trim();
                 }
                 catch
@@ -105,17 +103,21 @@ namespace RSSConsole
                         feedtag.TagEntityId = tag.TagEntityId;
                         await _db.FeedTag.AddAsync(feedtag);
                         await _db.SaveChangesAsync();
-                        tagList.Append(tag.TagTitle);
+                        var dd = tagList.Append(tag.TagTitle);
                     }
                 }
+               
+                Console.WriteLine("Add Feeds url " + urlId);
             }
-        }
+            Console.WriteLine("There below is task Delay 10000");
+            await Task.Delay(10000);
+            Console.WriteLine("finished - " + urlId);
 
+        }
 
         public async Task<List<WebSiteEntity>> GetUrlsAsync()
         {
             var result = await _db.Urls
-                //.Where(x => x.WebSiteEntityId < 7)
                 .ToListAsync();
             return result;
         }
@@ -127,6 +129,8 @@ namespace RSSConsole
                 .ToListAsync();
             return result;
         }
+
+        [GeneratedRegex("<script\\b[^>]*>(.*?)</script>", RegexOptions.IgnoreCase, "en-GE")]
+        private static partial Regex MyRegex();
     }
 }
-
