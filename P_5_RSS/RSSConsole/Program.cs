@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
 
 public class Program
 {
@@ -25,12 +28,55 @@ public class Program
         AppDbContext db = new(options);
         StartRSS startRSS = new(db);
 
-        var urlList = await startRSS.GetUrlsAsync();
-        //Console.WriteLine(urlList.Count + "- number Urls. -- " + DateTime.UtcNow.ToString());
+        var rssUrls = await startRSS.GetUrlsAsync();
 
-        var result = await Task.WhenAll(urlList.Select(startRSS.BeginFeedsAsync));
-        Console.WriteLine("This is almost Finish");
-        var speak = Console.ReadLine();
-        Console.WriteLine($"Good {speak}");
+        // Set the number of URLs to retrieve at a time
+        int pageSize = 4;
+
+        // Set the delay between each page retrieval
+        TimeSpan delay = TimeSpan.FromSeconds(10);
+
+        // Create a loop to retrieve pages of URLs
+        int page = 0;
+        while (true)
+        {
+            // Retrieve the next page of URLs
+            var urls = GetUrls(rssUrls, pageSize, page);
+
+            // Do something with the URLs
+            foreach (var url in urls)
+            {
+                // Retrieve the feeds for the URL
+                var feeds = startRSS.BeginFeeds(url);
+                if (feeds == null)
+                    continue;
+                // Do something with the feeds
+                foreach (var feed in feeds)
+                {
+                    await startRSS.AddFeedsFromsyndicatedFeedsAsync(feed, url.WebSiteEntityId);
+                    //Console.WriteLine(feed.Title.Text.Trim());
+                    // Process the feed
+                }
+                Console.WriteLine($"Finished url {url.WebSiteEntityId}");
+            }
+            Console.WriteLine("delay 10 second");
+            // Wait for the delay before retrieving the next page
+            await Task.Delay(delay);
+
+            // Increment the page counter
+            page++;
+        }
+
+        // Method to retrieve a page of URLs
+        IEnumerable<WebSiteEntity> GetUrls(List<WebSiteEntity> urls, int pageSize, int page)
+        {
+            // Skip the URLs on previous pages
+            var skippedUrls = urls.Skip(pageSize * page);
+
+            // Take the next page of URLs
+            var pageUrls = skippedUrls.Take(pageSize);
+
+            return pageUrls;
+        }
     }
 }

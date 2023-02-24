@@ -5,6 +5,7 @@ using System.Xml;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using RSSConsole.Service;
 
@@ -19,7 +20,7 @@ namespace RSSConsole
             _db = db;
         }
 
-        public async Task<string> BeginFeedsAsync(WebSiteEntity feedUrl)
+        public IEnumerable<SyndicationItem>? BeginFeeds(WebSiteEntity feedUrl)
         {
             SyndicationFeed syndicatedFeeds;
             try
@@ -30,89 +31,92 @@ namespace RSSConsole
             catch
             {
                 //Console.WriteLine($"Dont fetched - {feedUrl.WebSiteEntityId}");
-                return "Hello";
+                return null;
             }
-
-            var feeds = GetFeedsByUrlIdsAsync(feedUrl.WebSiteEntityId).Result;
-            var feedTitles = feeds.Select(obj => obj.Title).ToList();
-
-            Console.WriteLine("BeginFeedsAsync "+feedUrl.WebSiteEntityId);
-            if (feedTitles.Count != 0)
-            {
-                // აქ სადღაც უნდა ვინახავსე სინდიკატის ბოლო განახლების თარიღს webUrlEntity-ში ბაზაში.!!!!!!!!!!!!!!!!!!
-                // ისე ამის შემოწმებას აზრი არ აქვს. და ბოლოშიც როცა ნაწილობრივ განვაახლებ შეიძლება მაშინაც იყოს საჭირო
-                if (syndicatedFeeds.LastUpdatedTime.DateTime == feedUrl.LastUpdated)
-                {
-                    return "This Url is Up-to-Date";
-                };
-                //Console.WriteLine(":must be updated");
-                //Todo must be updated partially
-                // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
-                // ----- ეს მგონი უკვე გაკეთებულია
-            }
-            await AddFeedsFromsyndicatedFeedsAsync(syndicatedFeeds, feedTitles, feedUrl.WebSiteEntityId); 
-            return "All Ok";
+            return syndicatedFeeds.Items;
         }
 
-    public async Task AddFeedsFromsyndicatedFeedsAsync(SyndicationFeed syndicatedFeeds, List<string> feedTitles, int urlId)
+        //    var feeds = GetFeedsByUrlIdsAsync(feedUrl.WebSiteEntityId).Result;
+        //    var feedTitles = feeds.Select(obj => obj.Title).ToList();
+
+        //    Console.WriteLine("BeginFeedsAsync "+feedUrl.WebSiteEntityId);
+        //    if (feedTitles.Count != 0)
+        //    {
+        //        // აქ სადღაც უნდა ვინახავსე სინდიკატის ბოლო განახლების თარიღს webUrlEntity-ში ბაზაში.!!!!!!!!!!!!!!!!!!
+        //        // ისე ამის შემოწმებას აზრი არ აქვს. და ბოლოშიც როცა ნაწილობრივ განვაახლებ შეიძლება მაშინაც იყოს საჭირო
+        //        if (syndicatedFeeds.LastUpdatedTime.DateTime == feedUrl.LastUpdated)
+        //        {
+        //            return "This Url is Up-to-Date";
+        //        };
+        //        //Console.WriteLine(":must be updated");
+        //        //Todo must be updated partially
+        //        // თუ იყო ვნახულობთ ახალი სათაურს და ვამატებსთ ფიდს
+        //        // ----- ეს მგონი უკვე გაკეთებულია
+        //    }
+        //    await AddFeedsFromsyndicatedFeedsAsync(syndicatedFeeds, feedTitles, feedUrl.WebSiteEntityId); 
+        //    return "All Ok";
+        //}
+
+        //public async Task AddFeedsFromsyndicatedFeedsAsync(SyndicationFeed syndicatedFeeds, List<string> feedTitles, int urlId)
+        //    {
+        //        //var i = 0;
+        //        Console.WriteLine("AddFeedsFromsyndicatedFeedsAsync - "+urlId);
+        //        foreach (var item in syndicatedFeeds.Items)
+        //        {
+        // ფიდის დამატების პირობები:
+        public async Task AddFeedsFromsyndicatedFeedsAsync(SyndicationItem item, int urlId)
         {
-            //var i = 0;
-            Console.WriteLine("AddFeedsFromsyndicatedFeedsAsync - "+urlId);
-            foreach (var item in syndicatedFeeds.Items)
+
+            var title = item.Title.Text.Trim();
+            //if (i >= 4)
+            //break;
+            //i++;
+            //if (string.IsNullOrEmpty(title))
+            //continue;
+            // სათაური არ უნდა გვქონდეს უკვე Feed-ებში.
+            //if (feedTitles.Contains(title))
+            //continue;
+            var feedEntity = new FeedEntity() { Title = "NoTitle" }; // Title not null aqvs
+            feedEntity.Title = title;
+            // 1. წავშალოთ ჯავასკრიპტის კოდი ტექსტში
+            try
             {
-                // ფიდის დამატების პირობები:
-                var title = item.Title.Text.Trim();
-                //if (i >= 4)
-                    //break;
-                //i++;
-                if (string.IsNullOrEmpty(title))
-                    continue;
-                // სათაური არ უნდა გვქონდეს უკვე Feed-ებში.
-                if (feedTitles.Contains(title))
-                    continue;
-                var feedEntity = new FeedEntity() { Title = "NoTitle" }; // Title not null aqvs
-                feedEntity.Title = title;
-                // 1. წავშალოთ ჯავასკრიპტის კოდი ტექსტში
-                try
-                {
                 string rssFeedText = item.Summary.Text.Trim();
-                string cleanedText = MyRegex().Replace(rssFeedText, "");
-                feedEntity.Description = cleanedText.Trim();
-                }
-                catch
-                {
-                    feedEntity.Description = "Cannot Fetch text, from JS code. aslo ";
-                }
-                feedEntity.Author = item.Authors.FirstOrDefault()?.Name ?? "Unknoun";
-                feedEntity.CreateAt = item.PublishDate.DateTime;
-                feedEntity.WebSiteEntityId = urlId;
-                var fent = await _db.Feeds.AddAsync(feedEntity);
-                await _db.SaveChangesAsync();
-
-                var tags = await _db.Tags.ToListAsync();
-                string[] tagList = new string[5];
-                foreach (var tag in tags)
-                {
-                    if (tagList.Length > 5)
-                        break;
-
-                    if (feedEntity.Description.Contains(tag.TagTitle))
-                    {
-                        var feedtag = new FeedTag();
-                        feedtag.FeedEntityId = fent.Entity.FeedEntityId;
-                        feedtag.TagEntityId = tag.TagEntityId;
-                        await _db.FeedTag.AddAsync(feedtag);
-                        await _db.SaveChangesAsync();
-                        var dd = tagList.Append(tag.TagTitle);
-                    }
-                }
-               
-                Console.WriteLine("Add Feeds url " + urlId);
+                //string cleanedText = MyRegex().Replace(rssFeedText, "");
+                feedEntity.Description = rssFeedText.Trim();
             }
-            Console.WriteLine("There below is task Delay 10000");
-            await Task.Delay(10000);
-            Console.WriteLine("finished - " + urlId);
+            catch
+            {
+                feedEntity.Description = "Cannot Fetch text, from JS code. aslo ";
+            }
+            feedEntity.Author = item.Authors.FirstOrDefault()?.Name ?? "Unknoun";
+            feedEntity.CreateAt = item.PublishDate.DateTime;
+            feedEntity.WebSiteEntityId = urlId;
+            var fent = await _db.Feeds.AddAsync(feedEntity);
+            await _db.SaveChangesAsync();
 
+            var tags = await _db.Tags.ToListAsync();
+            string[] tagList = new string[5];
+            foreach (var tag in tags)
+            {
+                if (tagList.Length > 5)
+                    break;
+
+                if (feedEntity.Description.Contains(tag.TagTitle))
+                {
+                    var feedtag = new FeedTag();
+                    feedtag.FeedEntityId = fent.Entity.FeedEntityId;
+                    feedtag.TagEntityId = tag.TagEntityId;
+                    await _db.FeedTag.AddAsync(feedtag);
+                    await _db.SaveChangesAsync();
+                    var dd = tagList.Append(tag.TagTitle);
+                }
+
+                //Console.WriteLine("Add Feeds url " + urlId);
+            }
+            //Console.WriteLine("There below is task Delay 10000");
+            //await Task.Delay(1000);
+            //Console.WriteLine("finished - " + urlId);
         }
 
         public async Task<List<WebSiteEntity>> GetUrlsAsync()
@@ -130,7 +134,8 @@ namespace RSSConsole
             return result;
         }
 
-        [GeneratedRegex("<script\\b[^>]*>(.*?)</script>", RegexOptions.IgnoreCase, "en-GE")]
-        private static partial Regex MyRegex();
+        //[GeneratedRegex("<script\\b[^>]*>(.*?)</script>", RegexOptions.IgnoreCase, "en-GE")]
+        //private static partial Regex MyRegex();
     }
+
 }
