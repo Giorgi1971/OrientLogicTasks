@@ -20,6 +20,10 @@ namespace P_6_Pricing_API.Repository
     {
         private readonly PricingDbContext _db;
 
+        public CalculateRepository()
+        {
+        }
+
         public CalculateRepository(PricingDbContext dbContext1)
         {
             _db = dbContext1;
