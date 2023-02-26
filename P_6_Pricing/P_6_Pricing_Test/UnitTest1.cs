@@ -12,9 +12,8 @@ namespace P_6_Pricing_Test;
 public class Tests
 {
     private UserInputRequest _request;
-    private readonly DbInput _dbInput;
+    private DbInput _dbInput;
     private CalculatedInputs _calc;
-
 
     [SetUp]
     public void Setup()
@@ -43,6 +42,7 @@ public class Tests
             PrepaymentRate = 0.07m
         };
 
+        _dbInput = dbInput;
         _request = request;
 
         _calc = CalculatedInput.GetCalculatedInputs(_request, _dbInput);
@@ -62,14 +62,15 @@ public class Tests
         Assert.That(calc.UsedPayment, Is.EqualTo(45.155m).Within(0.01));
     }
 
-
-
     [Test]
     public void Test2()
     {
         var balance = new CalculateRepository();
         decimal excpected = balance.CalculateBalance(_request, _dbInput, _calc);
-
         Assert.That(excpected, Is.EqualTo(5240m).Within(111));
+
+        _request.Balance = 2000;
+        decimal excpected2 = balance.CalculateBalance(_request, _dbInput, _calc);
+        Assert.That(excpected2, Is.EqualTo(10465).Within(111));
     }
 }

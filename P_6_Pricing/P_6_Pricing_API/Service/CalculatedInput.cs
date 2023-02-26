@@ -8,12 +8,12 @@ namespace P_6_Pricing_API.Service
 {
     public class CalculatedInput
     {
-        private readonly PricingDbContext _db;
+        //private readonly PricingDbContext _db;
 
-        public CalculatedInput(PricingDbContext db)
-        {
-            _db = db;
-        }
+        //public CalculatedInput(PricingDbContext db)
+        //{
+        //    _db = db;
+        //}
 
         public static CalculatedInputs GetCalculatedInputs(UserInputRequest request, DbInput dbInputs)
         {
