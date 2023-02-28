@@ -15,11 +15,15 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="System.ServiceModel.Syndication" />
     <None Remove="Service\" />
+    <None Remove="HtmlSanitizer" />
+    <None Remove="AntiXSS" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
+    <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
+    <PackageReference Include="AntiXSS" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Service\" />

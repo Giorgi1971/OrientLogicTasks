@@ -34,37 +34,44 @@ public class Program
         int pageSize = 4;
 
         // Set the delay between each page retrieval
-        TimeSpan delay = TimeSpan.FromSeconds(10);
+        TimeSpan delay = TimeSpan.FromSeconds(2);
 
         // Create a loop to retrieve pages of URLs
         int page = 0;
         while (true)
         {
             // Retrieve the next page of URLs
-            var urls = GetUrls(rssUrls, pageSize, page);
-
+            var webSiteEntities = GetUrls(rssUrls, pageSize, page);
+            var i = 0;
             // Do something with the URLs
-            foreach (var url in urls)
+            foreach (var webSiteEntity in webSiteEntities)
             {
                 // Retrieve the feeds for the URL
-                var feeds = startRSS.BeginFeeds(url);
+                if (i > 3) break;
+                i++;
+                var feeds = startRSS.GetSyndicatedFeedsFromUrl(webSiteEntity);
                 if (feeds == null)
                     continue;
                 // Do something with the feeds
                 foreach (var feed in feeds)
                 {
-                    await startRSS.AddFeedsFromsyndicatedFeedsAsync(feed, url.WebSiteEntityId);
+                    if (i > 5) break;
+                    i++;
+
+                    // ganmeorebiTi ar unda Ciweros xolme TagFeed!!!!
+                    await startRSS.AddFeedFromsyndicatedFeedsAsync(feed, webSiteEntity.WebSiteEntityId);
                     //Console.WriteLine(feed.Title.Text.Trim());
                     // Process the feed
                 }
-                Console.WriteLine($"Finished url {url.WebSiteEntityId}");
+                Console.WriteLine($"Finished url {webSiteEntity.WebSiteEntityId}");
             }
             Console.WriteLine("delay 10 second");
             // Wait for the delay before retrieving the next page
             await Task.Delay(delay);
 
             // Increment the page counter
-            page++;
+            if (page >= 4) page = 0;
+            else page++;
         }
 
         // Method to retrieve a page of URLs
