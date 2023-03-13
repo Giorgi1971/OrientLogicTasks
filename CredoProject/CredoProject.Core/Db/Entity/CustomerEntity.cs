@@ -11,5 +11,8 @@ namespace CredoProject.Core.Db.Entity
         public DateTime BirthDate { get; set; }
         public string? Email { get; set; }
         public string? Hash { get; set; }
+
+        public ICollection<AccountEntity> AccountEntities { get; set; }
+        //public ICollection<CardEntity> CardEntities { get; set; }
     }
 }
