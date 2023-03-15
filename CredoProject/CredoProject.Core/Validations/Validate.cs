@@ -5,25 +5,23 @@ using CredoProject.Core.Db.Entity;
 
 namespace CredoProject.Core.Validations
 {
-
     public interface IValidate 
     {
-        CustomerEntity ValidateCustomer(CreateCustomerRequest request);
+        UserEntity ValidateCustomer(CreateCustomerRequest request);
         AccountEntity ValidateAccount(CreateAccountRequest request);
         CardEntity ValidateCard(CreateCardRequest request);
     }
 
     public class Validate: IValidate
     {
-        public CustomerEntity ValidateCustomer(CreateCustomerRequest request)
+        public UserEntity ValidateCustomer(CreateCustomerRequest request)
         {
-            var customer = new CustomerEntity()
+            var customer = new UserEntity()
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 BirthDate = request.BirthDate,
                 Email = request.Email,
-                Hash = GetPasswordHash(request.Password),
                 PersonalNumber = request.PersonalNumber
             };
             return customer;
@@ -45,31 +43,25 @@ namespace CredoProject.Core.Validations
                 IBAN = iban,
                 Amount = request.Amount,
                 Currency = request.Currency,
-                CustomerId = request.CustomerId,
+                CustomerEntityId = request.CustomerId,
                 CreateAt = DateTime.Now,
             };
             return account;
         }
 
-
         public CardEntity ValidateCard(CreateCardRequest request)
         {
             var card = new CardEntity()
             {
-                //FirstName = request.FirstName,
-                //LastName = request.LastName,
-                //BirthDate = request.BirthDate,
-                //Email = request.Email,
-                //Hash = GetPasswordHash(request.Password),
-                //PersonalNumber = request.PersonalNumber
+                CardNumber = request.CardNumber,
+                PIN = request.PIN,
+                CVV = request.CVV,
+                AccountEntityId = request.AccountEntityId,
+                RegistrationDate = DateTime.Now,
+                ExpiredDate = DateTime.Now.AddYears(3),
+                Status = Status.Active
             };
             return card;
-        }
-        private string GetPasswordHash(string? password)
-        {
-            if (password == null) 
-                throw new NotImplementedException();
-            return "HashedPassword";
         }
     }
 }

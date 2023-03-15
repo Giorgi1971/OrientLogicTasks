@@ -8,14 +8,15 @@ namespace CredoProject.Core.Repositories
 {
     public interface IBankRepository
     {
-        Task<CustomerEntity> GetCustomerById(int id);
-        Task AddCustomerToDbAsync(CustomerEntity customer);
+        Task<UserEntity> GetCustomerById(int id);
+        Task<AccountEntity> GetAccountById(int id);
+        Task<CardEntity> GetCardById(int id);
+        Task AddCustomerToDbAsync(UserEntity customer);
         Task AddAccountToDbAsync(AccountEntity account);
         Task AddCardToDbAsync(CardEntity card);
 
         Task SaveChangesAsync();
     }
-
 
     public class BankRepository : IBankRepository
     {
@@ -26,7 +27,7 @@ namespace CredoProject.Core.Repositories
             _db = db;
         }
 
-        public async Task AddCustomerToDbAsync(CustomerEntity customer)
+        public async Task AddCustomerToDbAsync(UserEntity customer)
         {
             await _db.CustomerEntities.AddAsync(customer);
         }
@@ -41,12 +42,23 @@ namespace CredoProject.Core.Repositories
             await _db.CardEntities.AddAsync(card);
         }
 
-        public async Task<CustomerEntity> GetCustomerById(int id)
+        public async Task<UserEntity> GetCustomerById(int id)
         {
-            var customer = await _db.CustomerEntities.FirstOrDefaultAsync(x => x.Id == id);
-            return customer ?? throw new Exception("Now new Exeption");
+            var customer = await _db.CustomerEntities.SingleOrDefaultAsync(x => x.Id == id);
+            return customer ?? throw new Exception("Customer Not Found!");
         }
 
+        public async Task<AccountEntity> GetAccountById(int id)
+        {
+            var account = await _db.AccountEntities.SingleOrDefaultAsync(x => x.AccountEntityId == id);
+            return account ?? throw new Exception("Account Not Found!");
+        }
+
+        public async Task<CardEntity> GetCardById(int id)
+        {
+            var card = await _db.CardEntities.SingleOrDefaultAsync(x => x.CardEntityId == id);
+            return card ?? throw new Exception("Card Not Found!");
+        }
 
         public async Task SaveChangesAsync()
         {

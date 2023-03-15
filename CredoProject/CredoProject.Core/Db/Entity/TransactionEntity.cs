@@ -7,7 +7,7 @@ namespace CredoProject.Core.Db.Entity
 {
     public class TransactionEntity
     {
-        public long Id { get; set; }
+        public long TransactionEntityId { get; set; }
         public Currency Currency { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal AmountTransaction { get; set; }
@@ -18,10 +18,10 @@ namespace CredoProject.Core.Db.Entity
         public decimal Fee { get; set; }
 
         public int AccountFromId { get; set; }
-        public AccountEntity AccountEntityFrom { get; set; }
+        public AccountEntity AccountEntityFrom { get; set; } = null!;
 
         public int AccountToId { get; set; }
-        public AccountEntity AccountEntityTo { get; set; }
+        public AccountEntity AccountEntityTo { get; set; } = null!;
     }
 }
 

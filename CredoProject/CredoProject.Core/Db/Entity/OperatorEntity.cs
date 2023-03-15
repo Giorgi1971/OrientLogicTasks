@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace CredoProject.Core.Db.Entity
 {
-    public class OperatorEntity
+    public class OperatorEntity: IdentityUser<int>
     {
-        public int OperatorEntityId { get; set; }
-        public string FullName { get; set; }
-        public string Password { get; set; }
+        public string? FullName { get; set; }
+        public string? Password { get; set; }
     }
 }

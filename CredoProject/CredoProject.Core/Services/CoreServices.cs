@@ -5,12 +5,11 @@ using CredoProject.Core.Validations;
 using CredoProject.Core.Repositories;
 using CredoProject.Core.Models.Requests;
 
-
 namespace CredoProject.Core.Services
 {
     public interface ICoreServices
     {
-        Task<CustomerEntity> RegisterCustomerAsync(CreateCustomerRequest request);
+        Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request);
         Task<AccountEntity> RegisterAccountAsync(CreateAccountRequest request);
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
     }
@@ -26,9 +25,17 @@ namespace CredoProject.Core.Services
             _bankRepository = repository;
         }
 
-        public async Task<CustomerEntity> RegisterCustomerAsync(CreateCustomerRequest request)
+        public async Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request)
         {
-            var customer = _validate.ValidateCustomer(request);
+            var customer = new UserEntity()
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                BirthDate = request.BirthDate,
+                Email = request.Email,
+                PersonalNumber = request.PersonalNumber
+            };
+            
             await _bankRepository.AddCustomerToDbAsync(customer);
             await _bankRepository.SaveChangesAsync();
             return customer;
@@ -44,7 +51,20 @@ namespace CredoProject.Core.Services
 
         public async Task<CardEntity> RegisterCardAsync(CreateCardRequest request)
         {
-            var card = _validate.ValidateCard(request);
+            var account = _bankRepository.GetAccountById(request.AccountEntityId).Result;
+            var customer = _bankRepository.GetCustomerById(account.CustomerEntityId).Result;
+            var card = new CardEntity()
+            {
+                AccountEntityId = request.AccountEntityId,
+                CardNumber = request.CardNumber,
+                PIN = request.PIN,
+                CVV = request.CVV,
+                OwnerName = customer.FirstName,
+                OwnerLastName = customer.LastName,
+                RegistrationDate = DateTime.Now,
+                ExpiredDate = DateTime.Now.AddYears(3),
+                Status = Status.Active
+            };
             await _bankRepository.AddCardToDbAsync(card);
             await _bankRepository.SaveChangesAsync();
             return card;
