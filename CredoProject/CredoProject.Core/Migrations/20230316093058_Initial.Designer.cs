@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CredoProject.Core.Migrations
 {
     [DbContext(typeof(CredoDbContext))]
-    [Migration("20230315221519_Init")]
-    partial class Init
+    [Migration("20230316093058_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -166,11 +166,11 @@ namespace CredoProject.Core.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b4b4f394-353e-4d72-b023-960186e87e6b",
+                            ConcurrencyStamp = "68a004de-c8b4-4be4-8c96-3f83c212576d",
                             Email = "gio2@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEHnr2oUN63RNLrMEWBtIeCuK65ZCJpcN8wH+5960wD7pUhFvvuwh3KHFD0wEb3DcQw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOr0uzjV61YE0MdFuvnw2aS+MDhsX5JXbL3x8+0zcqA43RnHdlxhUhMh3jN1pF8W2A==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "gio2@gmail.com"
@@ -210,29 +210,29 @@ namespace CredoProject.Core.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "311b2221-beba-4fa9-83a9-a08b4cae4b95",
-                            Name = "Manager",
+                            ConcurrencyStamp = "d5bd56e2-18cb-43f5-bbc4-8e71eff84f30",
+                            Name = "ApiManager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "8eea1780-7d51-4179-91be-7fd3fcb5e7e8",
-                            Name = "Customer",
+                            ConcurrencyStamp = "2e767a2e-694c-4bbb-aa0a-c48fc988d4f2",
+                            Name = "ApiUser",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "336fc8a4-5d2f-4fe5-92ce-582ae13bfe5f",
-                            Name = "Operator",
+                            ConcurrencyStamp = "2177c8ab-2d4b-42f3-babc-f0a7bff63892",
+                            Name = "ApiOperator",
                             NormalizedName = "OPERATOR"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "dca89121-553c-49b3-9ae3-e65175027944",
-                            Name = "Admin",
+                            ConcurrencyStamp = "a1f6f6d9-242e-4d86-9168-d0a19ef31ad3",
+                            Name = "ApiAdmin",
                             NormalizedName = "ADMIN"
                         });
                 });
@@ -390,13 +390,13 @@ namespace CredoProject.Core.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "649822cd-06ef-445d-a0fe-f6765afbe10a",
+                            ConcurrencyStamp = "e722d0ac-82b6-4e16-adc9-207dba7aa926",
                             Email = "gio5@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Gio",
                             LastName = "Mas",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAED1bxdxc30Efkwnro6gsG1lsRO4pPVTdMk73Xr7rBVQXnYrqOkM+p880ZF32yol0QA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHwd3V+B+QKgEVkeC/sxHnBBhH7tuF8QthftgAA3iK7ZH0LlRUy0olRqZm+EhMBZMQ==",
                             PersonalNumber = "01030019697",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false
@@ -406,13 +406,13 @@ namespace CredoProject.Core.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "e3ae1f7f-8899-4e71-8635-6fdeff447e52",
+                            ConcurrencyStamp = "659a3365-2b0b-4b8c-b013-953de33c0969",
                             Email = "nino@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Nino",
                             LastName = "Chale",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEKzU3eMtuQFUoXvTCt0ll7ALrLQPrinB/jNSMCPOUI1Bs/+p3ZvOQPp0dEKtMwN20w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEbDu9XpBBUD217SQzclX3ykAVh7xzJy0CEeetoU2BWy/Ol79wwcAc8wBLeHTQhkOA==",
                             PersonalNumber = "01015003600",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false
@@ -422,13 +422,13 @@ namespace CredoProject.Core.Migrations
                             Id = 3,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "02d0e856-86bd-4684-b282-fbf974045657",
+                            ConcurrencyStamp = "36f259c2-ff1f-4a7d-8682-f3bb5ae9e75c",
                             Email = "nikoCha@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Niko",
                             LastName = "Mas",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEDGNkrALnwQXkA/16zjZN9h5r69Y8s1Hvc+N5tAa+xQpAcgUBRev/hNdIHJgXlsRhA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBHQnBRMgMBLvbiMKn9zNEDL5/rgMO3Xw9WsWJwH9I8l1qLpD4ekRC6s69xWBK4CXQ==",
                             PersonalNumber = "01015008765",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false

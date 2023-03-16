@@ -4,7 +4,7 @@ namespace CredoProject.Core.Models.AuthRequests
 {
     public class LoginRequest
     {
-        public string Email { get; set; } = null!;
+        public int userId { get; set; }
         public string Password { get; set; } = null!;
     }
 }

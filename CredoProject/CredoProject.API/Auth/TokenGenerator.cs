@@ -15,16 +15,12 @@ namespace CredoProject.API.Auth
             _settings = settings.Value;
         }
 
-        public string Generate(string userId)
+        public string Generate(string userId, string str)
         {
-            // movZebne useri
-            //var user = await _userManager.FindByIdAsync(email);
-            // movZebno roli
-
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
-                new Claim(ClaimTypes.Role, "api-customer"),
+                new Claim(ClaimTypes.Role, str),
                 new Claim("test type", "test value")
             };
 

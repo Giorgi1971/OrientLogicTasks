@@ -4,6 +4,8 @@ using CredoProject.Core.Db.Entity;
 using CredoProject.Core.Validations;
 using CredoProject.Core.Repositories;
 using CredoProject.Core.Models.Requests;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 
 namespace CredoProject.Core.Services
 {
@@ -12,6 +14,7 @@ namespace CredoProject.Core.Services
         Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request);
         Task<AccountEntity> RegisterAccountAsync(CreateAccountRequest request);
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
+        Task<UserEntity> GetUserEntity(int id);
     }
 
     public class CoreServices : ICoreServices
@@ -52,7 +55,7 @@ namespace CredoProject.Core.Services
         public async Task<CardEntity> RegisterCardAsync(CreateCardRequest request)
         {
             var account = _bankRepository.GetAccountById(request.AccountEntityId).Result;
-            var customer = _bankRepository.GetCustomerById(account.CustomerEntityId).Result;
+            var customer = await _bankRepository.GetUserByIdAsync(account.CustomerEntityId);
             var card = new CardEntity()
             {
                 AccountEntityId = request.AccountEntityId,
@@ -68,6 +71,13 @@ namespace CredoProject.Core.Services
             await _bankRepository.AddCardToDbAsync(card);
             await _bankRepository.SaveChangesAsync();
             return card;
+
+        }
+
+        public async Task<UserEntity> GetUserEntity(int id)
+        {
+            var customer = await _bankRepository.GetUserByIdAsync(id);
+            return customer;
         }
     }
 }

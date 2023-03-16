@@ -8,7 +8,7 @@ namespace CredoProject.Core.Repositories
 {
     public interface IBankRepository
     {
-        Task<UserEntity> GetCustomerById(int id);
+        Task<UserEntity> GetUserByIdAsync(int id);
         Task<AccountEntity> GetAccountById(int id);
         Task<CardEntity> GetCardById(int id);
         Task AddCustomerToDbAsync(UserEntity customer);
@@ -29,7 +29,7 @@ namespace CredoProject.Core.Repositories
 
         public async Task AddCustomerToDbAsync(UserEntity customer)
         {
-            await _db.CustomerEntities.AddAsync(customer);
+            await _db.UserEntities.AddAsync(customer);
         }
 
         public async Task AddAccountToDbAsync(AccountEntity account)
@@ -42,9 +42,9 @@ namespace CredoProject.Core.Repositories
             await _db.CardEntities.AddAsync(card);
         }
 
-        public async Task<UserEntity> GetCustomerById(int id)
+        public async Task<UserEntity> GetUserByIdAsync(int id)
         {
-            var customer = await _db.CustomerEntities.SingleOrDefaultAsync(x => x.Id == id);
+            var customer = await _db.UserEntities.SingleOrDefaultAsync(x => x.Id == id);
             return customer ?? throw new Exception("Customer Not Found!");
         }
 

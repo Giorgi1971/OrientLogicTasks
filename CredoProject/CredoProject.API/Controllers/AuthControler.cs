@@ -40,7 +40,7 @@ namespace CredoProject.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             // TODO:Check user credentials...
-            var user = await _userManager.FindByIdAsync(request.Email);
+            var user = await _userManager.FindByIdAsync(request.userId.ToString());
             if (user == null)
                 return NotFound("Invalid email or password!!!");
 
@@ -48,16 +48,16 @@ namespace CredoProject.API.Controllers
 
             if (!isCorrectPassword)
                 return BadRequest("Invalid email or password");
+            var role = _userManager.GetRolesAsync(user).Result[0];
 
-            return Ok(_tokenGenerator.Generate(user.Email.ToString()));
+            return Ok(_tokenGenerator.Generate(user.Email.ToString(), role));
         }
 
-        // TODO:register
-        [HttpPost("register-customer")]
-        [Authorize("Operator", AuthenticationSchemes ="Bearer")]
+        [HttpPost("register-customer-by-operator")]
+        [Authorize("ApiOperator", AuthenticationSchemes ="Bearer")]
         public async Task<IActionResult> Register([FromBody]CreateCustomerRequest request)
         {
-            // Create
+            // როლი უნდა შევამოწმო თუ არსებობს, რომ მერე ბაზაში უსერი როლის გარეშე არ დამრჩეს
             var entity = new UserEntity()
             {
                 UserName = request.Email,
@@ -70,7 +70,6 @@ namespace CredoProject.API.Controllers
             var hasherUser = new PasswordHasher<UserEntity>();
             entity.PasswordHash = hasherUser.HashPassword(entity, request.Password);
 
-            //await _userManager.AddToRoleAsync(entity, "operator");
             var result = await _userManager.CreateAsync(entity, request.Password);
 
             if (!result.Succeeded)
@@ -78,10 +77,9 @@ namespace CredoProject.API.Controllers
                 var firstError = result.Errors.First();
                 return BadRequest(firstError.Description);
             }
+            // აქ არ თავიდან ბაზაში რომ არ ვეძებო უსერი, ისე აიდის ვერ გავიგებ???
             var user = await _userManager.FindByEmailAsync(request.Email);
-            await _userManager.AddToRoleAsync(user, "Operator");
-            var dd = await _userManager.GetRolesAsync(user);
-            Console.WriteLine(dd);
+            await _userManager.AddToRoleAsync(user, request.Role);
             return Ok();
         }
 

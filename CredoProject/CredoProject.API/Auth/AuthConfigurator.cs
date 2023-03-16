@@ -43,17 +43,17 @@ namespace CredoProject.API.Auth
 
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("Operator",
-                    policy => policy.RequireClaim(ClaimTypes.Role, "operator"));
+                options.AddPolicy("ApiManager",
+                policy => policy.RequireClaim(ClaimTypes.Role, "api-manager"));
+
+                options.AddPolicy("ApiUser",
+                policy => policy.RequireClaim(ClaimTypes.Role, "ApiUser"));
+
+                options.AddPolicy("ApiOperator",
+                    policy => policy.RequireClaim(ClaimTypes.Role, "ApiOperator"));
 
                 options.AddPolicy("ApiAdmin",
                     policy => policy.RequireClaim(ClaimTypes.Role, "api-admin"));
-
-                options.AddPolicy("OPP",
-                    policy => policy.RequireClaim(ClaimTypes.Role, "OPP"));
-
-                options.AddPolicy("ApiOperator",
-                    policy => policy.RequireClaim(ClaimTypes.Role, "api-operator"));
             });
 
             builder.Services

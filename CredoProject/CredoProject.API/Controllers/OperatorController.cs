@@ -11,21 +11,15 @@ namespace CredoProject.API.Controllers
     public class OperatorController : ControllerBase
     {
         private readonly ICoreServices _coreServices;
-        private readonly CredoDbContext _db;
+        //private readonly CredoDbContext _db;
 
-        public OperatorController(ICoreServices coreServices, CredoDbContext db)
+        public OperatorController(ICoreServices coreServices)
         {
-            _db = db;
+            //_db = db;
             _coreServices = coreServices;
         }
 
-        [HttpPost("CreateCustomer")]
-        public async Task<ActionResult<UserEntity>> RegisterCustomerAsync([FromBody] CreateCustomerRequest request)
-        {
-            var customer = await _coreServices.RegisterCustomerAsync(request);
-            return CreatedAtAction("GetCustomerEntity", new { id = customer.Id }, customer);
-        }
-
+        //[Authorize("ApiOperator", AuthenticationSchemes = "Bearer")]
         [HttpPost("CreateAcount")]
         public async Task<ActionResult<AccountEntity>> RegisterAccountAsync([FromBody] CreateAccountRequest request)
         {
@@ -33,7 +27,7 @@ namespace CredoProject.API.Controllers
             return Ok(account);
         }
 
-        [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        //[Authorize("ApiOperator", AuthenticationSchemes = "Bearer")]
         [HttpPost("CreateCard")]
         public async Task<ActionResult<CardEntity>> RegisterCardAsync([FromBody] CreateCardRequest request)
         {
@@ -41,7 +35,7 @@ namespace CredoProject.API.Controllers
             return Ok(account);
         }
 
-        [Authorize("ApiCustomer", AuthenticationSchemes = "Bearer")]
+        //[Authorize("ApiOperator", AuthenticationSchemes = "Bearer")]
         [HttpPost("CreateCard-customer")]
         public async Task<ActionResult<CardEntity>> RegisterCardAsyncCustomer([FromBody] CreateCardRequest request)
         {
@@ -50,19 +44,10 @@ namespace CredoProject.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserEntity>> GetCustomerEntity(int id)
+        public async Task<ActionResult<UserEntity>> GetUserEntity(int id)
         {
-            if (_db.CustomerEntities == null)
-            {
-                return NotFound();
-            }
-            var customerEntity = await _db.CustomerEntities.FindAsync(id);
-
-            if (customerEntity == null)
-            {
-                return NotFound();
-            }
-            return customerEntity;
+            var userEntity = await _coreServices.GetUserEntity(id);
+            return Ok(userEntity);
         }
     }
 }

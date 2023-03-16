@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CredoProject.Core.Migrations
 {
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -289,10 +289,10 @@ namespace CredoProject.Core.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "311b2221-beba-4fa9-83a9-a08b4cae4b95", "Manager", "MANAGER" },
-                    { 2, "8eea1780-7d51-4179-91be-7fd3fcb5e7e8", "Customer", "CUSTOMER" },
-                    { 3, "336fc8a4-5d2f-4fe5-92ce-582ae13bfe5f", "Operator", "OPERATOR" },
-                    { 4, "dca89121-553c-49b3-9ae3-e65175027944", "Admin", "ADMIN" }
+                    { 1, "d5bd56e2-18cb-43f5-bbc4-8e71eff84f30", "ApiManager", "MANAGER" },
+                    { 2, "2e767a2e-694c-4bbb-aa0a-c48fc988d4f2", "ApiUser", "CUSTOMER" },
+                    { 3, "2177c8ab-2d4b-42f3-babc-f0a7bff63892", "ApiOperator", "OPERATOR" },
+                    { 4, "a1f6f6d9-242e-4d86-9168-d0a19ef31ad3", "ApiAdmin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -300,15 +300,15 @@ namespace CredoProject.Core.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PersonalNumber", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "649822cd-06ef-445d-a0fe-f6765afbe10a", "gio5@gmail.com", false, "Gio", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAED1bxdxc30Efkwnro6gsG1lsRO4pPVTdMk73Xr7rBVQXnYrqOkM+p880ZF32yol0QA==", "01030019697", null, false, null, false, null },
-                    { 2, 0, new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "e3ae1f7f-8899-4e71-8635-6fdeff447e52", "nino@gmail.com", false, "Nino", "Chale", false, null, null, null, "AQAAAAEAACcQAAAAEKzU3eMtuQFUoXvTCt0ll7ALrLQPrinB/jNSMCPOUI1Bs/+p3ZvOQPp0dEKtMwN20w==", "01015003600", null, false, null, false, null },
-                    { 3, 0, new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "02d0e856-86bd-4684-b282-fbf974045657", "nikoCha@gmail.com", false, "Niko", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEDGNkrALnwQXkA/16zjZN9h5r69Y8s1Hvc+N5tAa+xQpAcgUBRev/hNdIHJgXlsRhA==", "01015008765", null, false, null, false, null }
+                    { 1, 0, new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "e722d0ac-82b6-4e16-adc9-207dba7aa926", "gio5@gmail.com", false, "Gio", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEHwd3V+B+QKgEVkeC/sxHnBBhH7tuF8QthftgAA3iK7ZH0LlRUy0olRqZm+EhMBZMQ==", "01030019697", null, false, null, false, null },
+                    { 2, 0, new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "659a3365-2b0b-4b8c-b013-953de33c0969", "nino@gmail.com", false, "Nino", "Chale", false, null, null, null, "AQAAAAEAACcQAAAAEEbDu9XpBBUD217SQzclX3ykAVh7xzJy0CEeetoU2BWy/Ol79wwcAc8wBLeHTQhkOA==", "01015003600", null, false, null, false, null },
+                    { 3, 0, new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "36f259c2-ff1f-4a7d-8682-f3bb5ae9e75c", "nikoCha@gmail.com", false, "Niko", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEBHQnBRMgMBLvbiMKn9zNEDL5/rgMO3Xw9WsWJwH9I8l1qLpD4ekRC6s69xWBK4CXQ==", "01015008765", null, false, null, false, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "OperatorEntities",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "b4b4f394-353e-4d72-b023-960186e87e6b", "gio2@gmail.com", false, null, false, null, null, null, null, "AQAAAAEAACcQAAAAEHnr2oUN63RNLrMEWBtIeCuK65ZCJpcN8wH+5960wD7pUhFvvuwh3KHFD0wEb3DcQw==", null, false, null, false, "gio2@gmail.com" });
+                values: new object[] { 1, 0, "68a004de-c8b4-4be4-8c96-3f83c212576d", "gio2@gmail.com", false, null, false, null, null, null, null, "AQAAAAEAACcQAAAAEOr0uzjV61YE0MdFuvnw2aS+MDhsX5JXbL3x8+0zcqA43RnHdlxhUhMh3jN1pF8W2A==", null, false, null, false, "gio2@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

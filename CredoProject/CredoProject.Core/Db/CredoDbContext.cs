@@ -9,7 +9,7 @@ namespace CredoProject.Core.Db
     public class CredoDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
     {
         public DbSet<OperatorEntity> OperatorEntities { get; set; }
-        public DbSet<UserEntity> CustomerEntities { get; set; }
+        public DbSet<UserEntity> UserEntities { get; set; }
         public DbSet<AccountEntity> AccountEntities { get; set; }
         public DbSet<CardEntity> CardEntities { get; set; }
         public DbSet<TransactionEntity> TransactionEntities { get; set; }
@@ -22,10 +22,10 @@ namespace CredoProject.Core.Db
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<RoleEntity>().HasData(
-                new RoleEntity { Id = 1, Name = "Manager", NormalizedName = "MANAGER" },
-                new RoleEntity { Id = 2, Name = "Customer", NormalizedName = "CUSTOMER" },
-                new RoleEntity { Id = 3, Name = "Operator", NormalizedName = "OPERATOR" },
-                new RoleEntity { Id = 4, Name = "Admin", NormalizedName = "ADMIN" }
+                new RoleEntity { Id = 1, Name = "ApiManager", NormalizedName = "APIMANAGER" },
+                new RoleEntity { Id = 2, Name = "ApiUser", NormalizedName = "APIUSER" },
+                new RoleEntity { Id = 3, Name = "ApiOperator", NormalizedName = "APIOPERATOR" },
+                new RoleEntity { Id = 4, Name = "ApiAdmin", NormalizedName = "APIADMIN" }
             );
 
             modelBuilder.Entity<TransactionEntity>()
