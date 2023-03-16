@@ -3,45 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using CredoProject.Core.Models.Requests.Card;
+using CredoProject.Core.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CredoProject.ATM.Controllers
 {
     [Route("api/[controller]")]
-    public class ATMController : Controller
+    public class ATMController : ControllerBase
     {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        private readonly IATMServices _atmServices;
+
+        public ATMController(IATMServices atmServices)
         {
-            return new string[] { "value1", "value2" };
+            _atmServices = atmServices;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string GetCardAuthorization(CardAutorizationRequest request)
+        [HttpPost("card-authorization")]
+        public async Task<string> CardAuthorizationAsync([FromBody] CardAutorizationRequest request)
         {
-            return "value";
+            var result = await _atmServices.CardAuthorizationAsync(request);
+            return result;
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [HttpPost("change-card's-pin")]
+        public async Task<string> ChangeCardPinAsync([FromBody] ChangeCardPinRequest request)
         {
+            var result = await _atmServices.ChangeCardPinAsync(request);
+            return result;
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPost("card-amount")]
+        public async Task<string> GetCardBalanceAsync([FromBody] CardAutorizationRequest request)
         {
+            var result = await _atmServices.GetCardBalanceAsync(request);
+            return result;
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("take-many")]
+        public async Task<string> WithdrawManyFromCardAsync([FromBody] WithdrawManyFromCardRequest request)
         {
+            var result = await _atmServices.WithdrawManyFromCardAsync(request);
+            return result;
         }
+
     }
 }
 
