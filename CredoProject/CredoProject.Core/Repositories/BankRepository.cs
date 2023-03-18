@@ -1,5 +1,6 @@
 ﻿using System;
 using CredoProject.Core.Db;
+using CredoProject.Core.Models.Responses;
 using CredoProject.Core.Repositories;
 using CredoProject.Core.Db.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ namespace CredoProject.Core.Repositories
         Task AddCustomerToDbAsync(UserEntity customer);
         Task AddAccountToDbAsync(AccountEntity account);
         Task AddCardToDbAsync(CardEntity card);
-        Task<List<AccountEntity>> GetUserAccountsFromDbAsync(int id);
+        Task<List<CustomerAccountsResponse>> GetUserAccountsFromDbAsync(int id);
+        Task<List<CardsResponse>> GetUserCardsFromDbAsync(int id);
 
         Task SaveChangesAsync();
     }
@@ -28,11 +30,24 @@ namespace CredoProject.Core.Repositories
             _db = db;
         }
 
-        public async Task<List<AccountEntity>> GetUserAccountsFromDbAsync(int id)
+        public async Task<List<CustomerAccountsResponse>> GetUserAccountsFromDbAsync(int id)
         {
-            return await _db.AccountEntities
+            var result = await _db.AccountEntities
                 .Where(x => x.CustomerEntityId == id)
+                .Select(y => new CustomerAccountsResponse { AccountEntityId = y.AccountEntityId, Amount = y.Amount, Currency = y.Currency, IBAN = y.IBAN })
                 .ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CardsResponse>> GetUserCardsFromDbAsync(int id)
+        {
+            var result = await _db.CardEntities
+                .Where(x => x.AccountEntity.CustomerEntityId == id)
+                .Select(y => new CardsResponse {
+                    CardAmount = y.AccountEntity.Amount, Currency = y.AccountEntity.Currency, CardNumber = y.CardNumber, ExpiredDate = y.ExpiredDate, Status = y.Status
+                })
+                .ToListAsync();
+            return result;
         }
 
         public async Task AddCustomerToDbAsync(UserEntity customer)

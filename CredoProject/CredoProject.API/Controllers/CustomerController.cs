@@ -1,6 +1,7 @@
 ﻿using System;
 using CredoProject.Core.Db;
 using CredoProject.Core.Db.Entity;
+using CredoProject.Core.Models.Responses;
 using CredoProject.Core.Models.Requests;
 using CredoProject.Core.Services;
 using Microsoft.AspNetCore.Identity;
@@ -24,11 +25,19 @@ namespace CredoProject.API.Controllers
 
         [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpPost("get-own-accounts")]
-        public async Task<ActionResult<List<AccountEntity>>> GetUserAccounts()
+        public async Task<ActionResult<List<CustomerAccountsResponse>>> GetUserAccountsAsync()
         {
-            var test = User;
             var user = await _userManager.GetUserAsync(User);
             var accounts = await _coreServices.GetUserAccounts(user.Id);
+            return accounts;
+        }
+
+        [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        [HttpPost("get-own-cards")]
+        public async Task<ActionResult<List<CardsResponse>>> GetUserCardsAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var accounts = await _coreServices.GetUserCardsAsync(user.Id);
             return accounts;
         }
 

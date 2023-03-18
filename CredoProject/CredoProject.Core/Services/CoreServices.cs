@@ -20,7 +20,8 @@ namespace CredoProject.Core.Services
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
         Task<UserEntity> GetUserEntity(int id);
 
-        Task<List<AccountEntity>> GetUserAccounts(int id);
+        Task<List<CustomerAccountsResponse>> GetUserAccounts(int id);
+        Task<List<CardsResponse>> GetUserCardsAsync(int id);
     }
 
     public class CoreServices : ICoreServices
@@ -37,9 +38,15 @@ namespace CredoProject.Core.Services
             //_userManager = userManager;
         }
 
-        public async Task<List<AccountEntity>> GetUserAccounts(int id)
+        public async Task<List<CustomerAccountsResponse>> GetUserAccounts(int id)
         {
             var userAccounts = await _bankRepository.GetUserAccountsFromDbAsync(id);
+            return userAccounts;
+        }
+
+        public async Task<List<CardsResponse>> GetUserCardsAsync(int id)
+        {
+            var userAccounts = await _bankRepository.GetUserCardsFromDbAsync(id);
             return userAccounts;
         }
 
