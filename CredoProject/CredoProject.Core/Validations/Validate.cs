@@ -8,7 +8,7 @@ namespace CredoProject.Core.Validations
     public interface IValidate 
     {
         UserEntity ValidateCustomer(CreateCustomerRequest request);
-        AccountEntity ValidateAccount(CreateAccountRequest request);
+        bool ValidateAccount(string str);
         CardEntity ValidateCard(CreateCardRequest request);
     }
 
@@ -28,25 +28,14 @@ namespace CredoProject.Core.Validations
         }
 
 
-        public AccountEntity ValidateAccount(CreateAccountRequest request)
+        public bool ValidateAccount(string iban)
         {
-            Console.WriteLine(request.IBAN);
             var validator = new IbanValidator();
-            var iban = request.IBAN;
             var validationResult = validator.Validate(iban);
 
             if (!validationResult.IsValid)
                 throw new Exception("IBAN not valid!");
-
-            var account = new AccountEntity()
-            {
-                IBAN = iban,
-                Amount = request.Amount,
-                Currency = request.Currency,
-                CustomerEntityId = request.CustomerId,
-                CreateAt = DateTime.Now,
-            };
-            return account;
+            return true;
         }
 
         public CardEntity ValidateCard(CreateCardRequest request)

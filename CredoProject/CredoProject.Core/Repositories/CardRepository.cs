@@ -32,7 +32,7 @@ namespace CredoProject.Core.Repositories
                 .Include(x => x.AccountEntity)
                 .ThenInclude(y => y.CustomerEntity)
                 .SingleOrDefaultAsync(x => x.CardNumber == cardNumber && x.PIN == pinCode);
-            return card;
+            return card ?? throw new Exception("Card not Found inn Db");
         }
 
         public async Task AddCardToDbAsync(CardEntity card)
@@ -46,6 +46,7 @@ namespace CredoProject.Core.Repositories
             var result = await _db.AccountEntities
                 .Include(x => x.CustomerEntity)
                 .SingleOrDefaultAsync(c => c.AccountEntityId == id);
+            if (result == null) throw new Exception("Account Not Found in db!");
             var customer = GetCustomerById(result.CustomerEntityId);
             return customer.Result;
         }

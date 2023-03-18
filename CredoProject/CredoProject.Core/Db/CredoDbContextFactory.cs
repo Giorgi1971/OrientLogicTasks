@@ -16,6 +16,6 @@ namespace CredoProject.Core.Db
     }
 }   
 
-// dotnet ef migrations add Initial2 -- "Server=localhost; Database = CredoProjectDb; User Id=sa; Password=HardT0Gue\$\$Pa\$\$word; Trusted_Connection=True;integrated security=False; Encrypt=False;"
+// dotnet ef migrations add Initial -- "Server=localhost; Database = CredoProjectDb; User Id=sa; Password=HardT0Gue\$\$Pa\$\$word; Trusted_Connection=True;integrated security=False; Encrypt=False;"
 // ეს მუშაობს და ამატებს ცხრილებს:
 // dotnet ef database update -- "Server=localhost; Database = CredoProjectDb; User Id=sa; Password=HardT0Gue\$\$Pa\$\$word; Trusted_Connection=True;integrated security=False; Encrypt=False;"

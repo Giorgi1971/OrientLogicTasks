@@ -2,14 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace CredoProject.Core.Db.Entity
 {
     public class AccountEntity
     {
         public int AccountEntityId { get; set; }
-        public string? IBAN { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
+        public string IBAN { get; set; } = null!;
+        [Column(TypeName = "decimal(18,5)")]
         public decimal Amount { get; set; }
         public Currency Currency { get; set; }
         public DateTime CreateAt { get; set; }
@@ -26,8 +28,11 @@ namespace CredoProject.Core.Db.Entity
 
     public enum Currency
     {
+        [Display(Name = "Georgian Gel")]
         GEL,
+        [Display(Name = "US Dollars")]
         USD,
+        [Display(Name = "Euros")]
         EUR
     }
 }

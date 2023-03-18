@@ -35,9 +35,28 @@ namespace CredoProject.Core.Services
             var card = await _cardRepository.GetCardByNumberAndPinAsync(request.CardNumber, request.PIN);
             var account = card.AccountEntity;
             account.Amount -= request.WithdrawAmount;
+            var tran1 = new TransactionEntity()
+            {
+                AccountEntityFrom = account,
+                AccountEntityTo = account,
+                AmountTransaction = request.WithdrawAmount,
+                CreatedAt = DateTime.Now,
+                TransType = "ATM",
+                CurrencyFrom = account.Currency,
+                CurrencyTo = request.currencyWithdraw,
+                Fee = CalculateFee(),
+                AccountFromId = account.AccountEntityId,
+                AccountToId = account.AccountEntityId,
+                ExecutionAt = DateTime.Now
+            };
             await _cardRepository.SaveChangesAsync();
 
             return $"Welcome! {account.CustomerEntity.FirstName.ToString()}, Your Card Balance is {account.Amount} {account.Currency}";
+        }
+
+        private decimal CalculateFee()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<string> CardAuthorizationAsync(CardAutorizationRequest request)

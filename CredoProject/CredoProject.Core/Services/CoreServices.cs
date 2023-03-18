@@ -4,15 +4,17 @@ using CredoProject.Core.Db.Entity;
 using CredoProject.Core.Validations;
 using CredoProject.Core.Repositories;
 using CredoProject.Core.Models.Requests;
+using CredoProject.Core.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
+using IbanNet;
 
 namespace CredoProject.Core.Services
 {
     public interface ICoreServices
     {
         Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request);
-        Task<AccountEntity> RegisterAccountAsync(CreateAccountRequest request);
+        Task<AccountResponse> RegisterAccountAsync(CreateAccountRequest request);
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
         Task<UserEntity> GetUserEntity(int id);
     }
@@ -44,13 +46,31 @@ namespace CredoProject.Core.Services
             return customer;
         }
 
-        public async Task<AccountEntity> RegisterAccountAsync(CreateAccountRequest request)
+        public async Task<AccountResponse> RegisterAccountAsync(CreateAccountRequest request)
         {
-            var account = _validate.ValidateAccount(request);
-            await _bankRepository.AddAccountToDbAsync(account);
+            var result = _validate.ValidateAccount(request.IBAN);
+            var ac = new AccountEntity()
+            {
+                IBAN = request.IBAN,
+                Amount = request.Amount,
+                Currency = request.Currency,
+                CustomerEntityId = request.CustomerId,
+                CreateAt = DateTime.Now,
+            };
+            await _bankRepository.AddAccountToDbAsync(ac);
             await _bankRepository.SaveChangesAsync();
-            return account;
-        }
+            var response = new AccountResponse()
+            {
+                AccountEntityId = ac.AccountEntityId,
+                IBAN = ac.IBAN,
+                Amount = ac.Amount,
+                CardEntities = ac.CardEntities,
+                Currency = ac.Currency,
+                UserId = ac.CustomerEntityId,
+                CreateAt = ac.CreateAt.ToString("d")
+            };
+                return response;
+            }
 
         public async Task<CardEntity> RegisterCardAsync(CreateCardRequest request)
         {

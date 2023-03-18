@@ -8,8 +8,6 @@ namespace CredoProject.Core.Db.Entity
         public string LastName { get; set; } = null!;
         public string PersonalNumber { get; set; } = null!;
         public DateTime BirthDate { get; set; }
-        //public string? Email { get; set; }
-        //public string? Hash { get; set; }
 
         public ICollection<AccountEntity>? AccountEntities { get; set; }
         //public ICollection<CardEntity> CardEntities { get; set; }

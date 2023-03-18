@@ -55,6 +55,22 @@ namespace CredoProject.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "exchangeEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    currencyFrom = table.Column<int>(type: "int", nullable: false),
+                    currencyTo = table.Column<int>(type: "int", nullable: false),
+                    rate = table.Column<decimal>(type: "decimal(18,5)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_exchangeEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OperatorEntities",
                 columns: table => new
                 {
@@ -127,7 +143,7 @@ namespace CredoProject.Core.Migrations
                     AccountEntityId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IBAN = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     Currency = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CustomerEntityId = table.Column<int>(type: "int", nullable: false)
@@ -262,12 +278,15 @@ namespace CredoProject.Core.Migrations
                     AccountFromId = table.Column<int>(type: "int", nullable: false),
                     AccountToId = table.Column<int>(type: "int", nullable: false),
                     TransactionEntityId = table.Column<long>(type: "bigint", nullable: false),
-                    Currency = table.Column<int>(type: "int", nullable: false),
-                    AmountTransaction = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CurrencyFrom = table.Column<int>(type: "int", nullable: false),
+                    CurrencyTo = table.Column<int>(type: "int", nullable: false),
+                    AmountTransaction = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExecutionAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Fee = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    TransType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentRate = table.Column<decimal>(type: "decimal(18,5)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -289,10 +308,10 @@ namespace CredoProject.Core.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "d5bd56e2-18cb-43f5-bbc4-8e71eff84f30", "ApiManager", "MANAGER" },
-                    { 2, "2e767a2e-694c-4bbb-aa0a-c48fc988d4f2", "ApiUser", "CUSTOMER" },
-                    { 3, "2177c8ab-2d4b-42f3-babc-f0a7bff63892", "ApiOperator", "OPERATOR" },
-                    { 4, "a1f6f6d9-242e-4d86-9168-d0a19ef31ad3", "ApiAdmin", "ADMIN" }
+                    { 1, "a0124115-ee3e-4a56-8e9e-12fe1ac029a7", "ApiManager", "APIMANAGER" },
+                    { 2, "e5fb1b77-5a06-45cb-a53c-235097ccf918", "ApiUser", "APIUSER" },
+                    { 3, "e8c203a3-3bea-4e9d-9f00-7cbc194d5eec", "ApiOperator", "APIOPERATOR" },
+                    { 4, "a87b2718-6bf8-4888-b906-ebce233436f8", "ApiAdmin", "APIADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -300,15 +319,31 @@ namespace CredoProject.Core.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PersonalNumber", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "e722d0ac-82b6-4e16-adc9-207dba7aa926", "gio5@gmail.com", false, "Gio", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEHwd3V+B+QKgEVkeC/sxHnBBhH7tuF8QthftgAA3iK7ZH0LlRUy0olRqZm+EhMBZMQ==", "01030019697", null, false, null, false, null },
-                    { 2, 0, new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "659a3365-2b0b-4b8c-b013-953de33c0969", "nino@gmail.com", false, "Nino", "Chale", false, null, null, null, "AQAAAAEAACcQAAAAEEbDu9XpBBUD217SQzclX3ykAVh7xzJy0CEeetoU2BWy/Ol79wwcAc8wBLeHTQhkOA==", "01015003600", null, false, null, false, null },
-                    { 3, 0, new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "36f259c2-ff1f-4a7d-8682-f3bb5ae9e75c", "nikoCha@gmail.com", false, "Niko", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEBHQnBRMgMBLvbiMKn9zNEDL5/rgMO3Xw9WsWJwH9I8l1qLpD4ekRC6s69xWBK4CXQ==", "01015008765", null, false, null, false, null }
+                    { 1, 0, new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "80aa0c3b-fad2-4444-b2a4-3ba1bc39d7a9", "gio5@gmail.com", false, "Gio", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEK2SzSWaoD/4sIfey9GZwAqT8HcIEgMuFdQPN5GlnUK01eE6EGkVmR2d7GSvdjFF5A==", "01030019697", null, false, null, false, null },
+                    { 2, 0, new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "2453a6ea-9c22-4af9-bd26-0890a1d3bb68", "nino@gmail.com", false, "Nino", "Chale", false, null, null, null, "AQAAAAEAACcQAAAAEOodP0G9Vqxx/hYA3AYW/5pdD42h+Vb72zGjL1CofjPAXsaeTzNt6OcWXH0Crojj4Q==", "01015003600", null, false, null, false, null },
+                    { 3, 0, new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "a241dbf8-addc-421f-9195-642dddd7c6d8", "nikoCha@gmail.com", false, "Niko", "Mas", false, null, null, null, "AQAAAAEAACcQAAAAEEW3xwrM7NITRwb9nXLalefJ6pWsTm5kDVpioVVU9uou/kQTmHpMctecgOUSgvSZFg==", "01015008765", null, false, null, false, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "OperatorEntities",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "68a004de-c8b4-4be4-8c96-3f83c212576d", "gio2@gmail.com", false, null, false, null, null, null, null, "AQAAAAEAACcQAAAAEOr0uzjV61YE0MdFuvnw2aS+MDhsX5JXbL3x8+0zcqA43RnHdlxhUhMh3jN1pF8W2A==", null, false, null, false, "gio2@gmail.com" });
+                values: new object[] { 1, 0, "09792997-4d03-41c8-acf2-2e41ec2453ec", "gio2@gmail.com", false, null, false, null, null, null, null, "AQAAAAEAACcQAAAAEL3HrMtkHUpKaxeCyXmvCLImPRA6WsfsOxD9DrkglYQINKpMPlXmQWyIUbAGJFGTrg==", null, false, null, false, "gio2@gmail.com" });
+
+            migrationBuilder.InsertData(
+                table: "exchangeEntities",
+                columns: new[] { "Id", "currencyFrom", "currencyTo", "date", "rate" },
+                values: new object[,]
+                {
+                    { 1, 0, 0, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6810), 1m },
+                    { 2, 0, 1, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840), 0.361m },
+                    { 3, 0, 2, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840), 0.3636m },
+                    { 4, 1, 1, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840), 1m },
+                    { 5, 1, 0, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840), 2.77m },
+                    { 6, 1, 2, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850), 0.98m },
+                    { 7, 2, 2, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850), 1m },
+                    { 8, 2, 0, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850), 2.87m },
+                    { 9, 2, 1, new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850), 1.0071m }
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -399,6 +434,9 @@ namespace CredoProject.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "CardEntities");
+
+            migrationBuilder.DropTable(
+                name: "exchangeEntities");
 
             migrationBuilder.DropTable(
                 name: "OperatorEntities");

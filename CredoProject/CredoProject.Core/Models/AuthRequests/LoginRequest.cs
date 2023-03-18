@@ -1,10 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace CredoProject.Core.Models.AuthRequests
 {
     public class LoginRequest
     {
-        public int userId { get; set; }
+        public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
     }
 }

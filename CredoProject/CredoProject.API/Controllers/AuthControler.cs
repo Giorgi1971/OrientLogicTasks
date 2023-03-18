@@ -40,7 +40,7 @@ namespace CredoProject.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             // TODO:Check user credentials...
-            var user = await _userManager.FindByIdAsync(request.userId.ToString());
+            var user = await _userManager.FindByEmailAsync(request.Email.ToString());
             if (user == null)
                 return NotFound("Invalid email or password!!!");
 
@@ -79,58 +79,59 @@ namespace CredoProject.API.Controllers
             }
             // აქ არ თავიდან ბაზაში რომ არ ვეძებო უსერი, ისე აიდის ვერ გავიგებ???
             var user = await _userManager.FindByEmailAsync(request.Email);
+            // ეს თუ ვერ ჩაიწერა მომხმარებელი როლის გარეშე რჩება ჩაწერი RolBack ხომ არ მჭირდება???
             await _userManager.AddToRoleAsync(user, request.Role);
             return Ok();
         }
 
         // TODO: - I RegisterPasswordReset
-        [HttpPost("request-password-reset")]
-        public async Task<IActionResult> RequestPasswordReset([FromBody]RequestPasswordResetRequest request)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
-                return NotFound("Use Not Found");
-            // 1 Generate password reset Token
-            var token = _userManager.GeneratePasswordResetTokenAsync(user);
+        //[HttpPost("request-password-reset")]
+        //public async Task<IActionResult> RequestPasswordReset([FromBody]RequestPasswordResetRequest request)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(request.Email);
+        //    if (user == null)
+        //        return NotFound("Use Not Found");
+        //    // 1 Generate password reset Token
+        //    var token = _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // 2 Insert email into SendEmailRequest table
-            var sendEmailRequestEntity = new SendEmailRequestEntity();
-            sendEmailRequestEntity.ToAddress = request.Email;
-            sendEmailRequestEntity.Status = SendEmailRequestStatus.New;
-            sendEmailRequestEntity.CreateAt = DateTime.Now;
+        //    // 2 Insert email into SendEmailRequest table
+        //    var sendEmailRequestEntity = new SendEmailRequestEntity();
+        //    sendEmailRequestEntity.ToAddress = request.Email;
+        //    sendEmailRequestEntity.Status = SendEmailRequestStatus.New;
+        //    sendEmailRequestEntity.CreateAt = DateTime.Now;
 
-            var url = _configuration["PasswordResetUrl"]!
-                .Replace("{UserId}", user.Id.ToString())
-                // აქ ჩემთან ToStrings ითხოვს.
-                .Replace("{token}", token.ToString());
+        //    var url = _configuration["PasswordResetUrl"]!
+        //        .Replace("{UserId}", user.Id.ToString())
+        //        // აქ ჩემთან ToStrings ითხოვს.
+        //        .Replace("{token}", token.ToString());
 
-            var resetUrl = $"<a href =\"{url}\">Reset Password</a>";
-            sendEmailRequestEntity.Body = $"Plaese, Reset Your Password: {resetUrl}";
+        //    var resetUrl = $"<a href =\"{url}\">Reset Password</a>";
+        //    sendEmailRequestEntity.Body = $"Plaese, Reset Your Password: {resetUrl}";
 
-            _sendEmailRequestRepository.Insert(sendEmailRequestEntity);
-            await _sendEmailRequestRepository.SaveChangesAsync();
-            // 3 Return result
-            return Ok();
-        }
+        //    _sendEmailRequestRepository.Insert(sendEmailRequestEntity);
+        //    await _sendEmailRequestRepository.SaveChangesAsync();
+        //    // 3 Return result
+        //    return Ok();
+        //}
 
-        // TODO: - II ResetPassword
-        [HttpPost("reset-Password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
-        {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-                return NotFound("user Not Found.");
-            var resetResult = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
-            if (!resetResult.Succeeded)
-            {
-                var firstError = resetResult.Errors.First();
-                return StatusCode(500, firstError.Description);
-            }
-            // 1 validate Token
-            // 2 validate new Password
-            // 3 Reset Password
-            // 4 Return result
-            return Ok();
-        }
+        //// TODO: - II ResetPassword
+        //[HttpPost("reset-Password")]
+        //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        //{
+        //    var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+        //    if (user == null)
+        //        return NotFound("user Not Found.");
+        //    var resetResult = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+        //    if (!resetResult.Succeeded)
+        //    {
+        //        var firstError = resetResult.Errors.First();
+        //        return StatusCode(500, firstError.Description);
+        //    }
+        //    // 1 validate Token
+        //    // 2 validate new Password
+        //    // 3 Reset Password
+        //    // 4 Return result
+        //    return Ok();
+        //}
     }
 }
