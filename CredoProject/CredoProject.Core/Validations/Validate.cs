@@ -47,7 +47,7 @@ namespace CredoProject.Core.Validations
                 CVV = request.CVV,
                 AccountEntityId = request.AccountEntityId,
                 RegistrationDate = DateTime.Now,
-                ExpiredDate = DateTime.Now.AddYears(3),
+                ExpiredDate = DateTime.Now.AddYears(3).ToString("MM-yyyy"),
                 Status = Status.Active
             };
             return card;

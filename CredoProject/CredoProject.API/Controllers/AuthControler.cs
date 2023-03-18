@@ -50,7 +50,7 @@ namespace CredoProject.API.Controllers
                 return BadRequest("Invalid email or password");
             var role = _userManager.GetRolesAsync(user).Result[0];
 
-            return Ok(_tokenGenerator.Generate(user.Email.ToString(), role));
+            return Ok(_tokenGenerator.Generate(user.Id, role));
         }
 
         [HttpPost("register-customer-by-operator")]

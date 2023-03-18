@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
 
 namespace CredoProject.API.Auth
 {
@@ -15,11 +16,13 @@ namespace CredoProject.API.Auth
             _settings = settings.Value;
         }
 
-        public string Generate(string userId, string str)
+        public string Generate(int id, string str)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                //new Claim(new ClaimsIdentityOptions().UserIdClaimType, id),
+                new Claim(new ClaimsIdentityOptions().UserIdClaimType, id.ToString()),
+                //new Claim("email", email),
                 new Claim(ClaimTypes.Role, str),
                 new Claim("test type", "test value")
             };

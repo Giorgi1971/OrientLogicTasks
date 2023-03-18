@@ -47,10 +47,10 @@ namespace CredoProject.API.Auth
                 policy => policy.RequireClaim(ClaimTypes.Role, "api-manager"));
 
                 options.AddPolicy("ApiUser",
-                policy => policy.RequireClaim(ClaimTypes.Role, "ApiUser"));
+                policy => policy.RequireClaim(ClaimTypes.Role, "api-user"));
 
-                options.AddPolicy("ApiOperator",
-                    policy => policy.RequireClaim(ClaimTypes.Role, "ApiOperator"));
+            options.AddPolicy("ApiOperator",
+                    policy => policy.RequireClaim(ClaimTypes.Role, "api-operator"));
 
                 options.AddPolicy("ApiAdmin",
                     policy => policy.RequireClaim(ClaimTypes.Role, "api-admin"));

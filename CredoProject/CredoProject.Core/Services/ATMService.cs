@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 using CredoProject.Core.Models.Requests.Card;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace CredoProject.Core.Services
 {
@@ -65,7 +66,8 @@ namespace CredoProject.Core.Services
             if (card == null) return "Card Not valid. Contact bank Manager!";
             if (card.Status == Status.Blocked) return "Card Blocked. Contact bank Manager!";
             if (card.Status == Status.Expired) return "Card date expered. Contact bank Manager!";
-            if (card.ExpiredDate < DateTime.Now)
+            // ეს CultureInfo.InvariantCulture რა საჭიროა ?               ???????                                           ?????????
+            if (DateTime.ParseExact(card.ExpiredDate, "MM-yyyy", CultureInfo.InvariantCulture) < DateTime.Now)
             {
                 card.Status = Status.Expired; return "Card date expered. Contact bank Manager!";
             }
@@ -88,7 +90,7 @@ namespace CredoProject.Core.Services
             if (card == null) return "Card Not valid. Contact bank Manager!";
             if (card.Status == Status.Blocked) return "Card Blocked. Contact bank Manager!";
             if (card.Status == Status.Expired) return "Card date expered. Contact bank Manager!";
-            if (card.ExpiredDate < DateTime.Now)
+            if (DateTime.ParseExact(card.ExpiredDate, "MM-yyyy", CultureInfo.InvariantCulture) < DateTime.Now)
             {
                 card.Status = Status.Expired; return "Card date expered. Contact bank Manager!";
             }

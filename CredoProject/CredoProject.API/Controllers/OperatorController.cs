@@ -36,14 +36,6 @@ namespace CredoProject.API.Controllers
             return Ok(account);
         }
 
-        //[Authorize("ApiOperator", AuthenticationSchemes = "Bearer")]
-        [HttpPost("CreateCard-customer")]
-        public async Task<ActionResult<CardEntity>> RegisterCardAsyncCustomer([FromBody] CreateCardRequest request)
-        {
-            var account = await _coreServices.RegisterCardAsync(request);
-            return Ok(account);
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<UserEntity>> GetUserEntity(int id)
         {

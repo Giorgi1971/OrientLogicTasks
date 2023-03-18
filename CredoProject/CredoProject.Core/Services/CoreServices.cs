@@ -8,6 +8,8 @@ using CredoProject.Core.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 using IbanNet;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CredoProject.Core.Services
 {
@@ -17,17 +19,28 @@ namespace CredoProject.Core.Services
         Task<AccountResponse> RegisterAccountAsync(CreateAccountRequest request);
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
         Task<UserEntity> GetUserEntity(int id);
+
+        Task<List<AccountEntity>> GetUserAccounts(int id);
     }
 
     public class CoreServices : ICoreServices
     {
         private readonly IBankRepository _bankRepository;
         private readonly IValidate _validate;
+        //private readonly UserManager<UserEntity> _userManager;
 
-        public CoreServices(IValidate validate, IBankRepository repository)
+
+        public CoreServices(IValidate validate, IBankRepository repository, UserManager<UserEntity> userManager)
         {
             _validate = validate;
             _bankRepository = repository;
+            //_userManager = userManager;
+        }
+
+        public async Task<List<AccountEntity>> GetUserAccounts(int id)
+        {
+            var userAccounts = await _bankRepository.GetUserAccountsFromDbAsync(id);
+            return userAccounts;
         }
 
         public async Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request)
@@ -85,7 +98,7 @@ namespace CredoProject.Core.Services
                 OwnerName = customer.FirstName,
                 OwnerLastName = customer.LastName,
                 RegistrationDate = DateTime.Now,
-                ExpiredDate = DateTime.Now.AddYears(3),
+                ExpiredDate = DateTime.Now.AddYears(3).ToString("MM-yyyy"),
                 Status = Status.Active
             };
             await _bankRepository.AddCardToDbAsync(card);

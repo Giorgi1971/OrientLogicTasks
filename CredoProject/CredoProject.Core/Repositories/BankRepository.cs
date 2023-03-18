@@ -14,6 +14,7 @@ namespace CredoProject.Core.Repositories
         Task AddCustomerToDbAsync(UserEntity customer);
         Task AddAccountToDbAsync(AccountEntity account);
         Task AddCardToDbAsync(CardEntity card);
+        Task<List<AccountEntity>> GetUserAccountsFromDbAsync(int id);
 
         Task SaveChangesAsync();
     }
@@ -25,6 +26,13 @@ namespace CredoProject.Core.Repositories
         public BankRepository(CredoDbContext db)
         {
             _db = db;
+        }
+
+        public async Task<List<AccountEntity>> GetUserAccountsFromDbAsync(int id)
+        {
+            return await _db.AccountEntities
+                .Where(x => x.CustomerEntityId == id)
+                .ToListAsync();
         }
 
         public async Task AddCustomerToDbAsync(UserEntity customer)

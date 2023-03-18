@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+
 namespace CredoProject.Core.Db.Entity
 {
     public class CardEntity
@@ -11,7 +13,7 @@ namespace CredoProject.Core.Db.Entity
         public string OwnerLastName { get; set; } = null!;
         public Status Status { get; set; }
         public DateTime RegistrationDate { get; set; }
-        public DateTime ExpiredDate { get; set; }
+        public string ExpiredDate { get; set; } = null!;
 
         //public int UserId { get; set; }
         //public CustomerEntity CustomerEntity { get; set; }
@@ -27,4 +29,8 @@ namespace CredoProject.Core.Db.Entity
         Expired
     }
 }
+
+
+//string yearMonthString = "03-2023";
+//DateTime myDateTime = DateTime.ParseExact(yearMonthString, "MM-yyyy", CultureInfo.InvariantCulture);
 

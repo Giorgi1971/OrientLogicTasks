@@ -43,6 +43,7 @@ namespace CredoProject.Core.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("IBAN")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountEntityId");
@@ -50,6 +51,53 @@ namespace CredoProject.Core.Migrations
                     b.HasIndex("CustomerEntityId");
 
                     b.ToTable("AccountEntities");
+
+                    b.HasData(
+                        new
+                        {
+                            AccountEntityId = 1,
+                            Amount = 5000m,
+                            CreateAt = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6200),
+                            Currency = 0,
+                            CustomerEntityId = 2,
+                            IBAN = "AL35202111090000000001234567"
+                        },
+                        new
+                        {
+                            AccountEntityId = 2,
+                            Amount = 5000m,
+                            CreateAt = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6200),
+                            Currency = 1,
+                            CustomerEntityId = 2,
+                            IBAN = "AD1400080001001234567890"
+                        },
+                        new
+                        {
+                            AccountEntityId = 3,
+                            Amount = 5000m,
+                            CreateAt = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6210),
+                            Currency = 2,
+                            CustomerEntityId = 2,
+                            IBAN = "AT483200000012345864"
+                        },
+                        new
+                        {
+                            AccountEntityId = 4,
+                            Amount = 4000m,
+                            CreateAt = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6210),
+                            Currency = 0,
+                            CustomerEntityId = 3,
+                            IBAN = "AZ77VTBA00000000001234567890"
+                        },
+                        new
+                        {
+                            AccountEntityId = 5,
+                            Amount = 3000m,
+                            CreateAt = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6210),
+                            Currency = 1,
+                            CustomerEntityId = 3,
+                            IBAN = "BH02CITI00001077181611"
+                        });
                 });
 
             modelBuilder.Entity("CredoProject.Core.Db.Entity.CardEntity", b =>
@@ -71,8 +119,9 @@ namespace CredoProject.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ExpiredDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerLastName")
                         .IsRequired()
@@ -97,6 +146,73 @@ namespace CredoProject.Core.Migrations
                     b.HasIndex("AccountEntityId");
 
                     b.ToTable("CardEntities");
+
+                    b.HasData(
+                        new
+                        {
+                            CardEntityId = 1,
+                            AccountEntityId = 1,
+                            CVV = "321",
+                            CardNumber = "Card01",
+                            ExpiredDate = "03-2024",
+                            OwnerLastName = "LasName",
+                            OwnerName = "Name",
+                            PIN = "4444",
+                            RegistrationDate = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6220),
+                            Status = 0
+                        },
+                        new
+                        {
+                            CardEntityId = 2,
+                            AccountEntityId = 2,
+                            CVV = "321",
+                            CardNumber = "Card02",
+                            ExpiredDate = "03-2024",
+                            OwnerLastName = "LasName",
+                            OwnerName = "Name",
+                            PIN = "4444",
+                            RegistrationDate = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6220),
+                            Status = 0
+                        },
+                        new
+                        {
+                            CardEntityId = 3,
+                            AccountEntityId = 1,
+                            CVV = "321",
+                            CardNumber = "Card03",
+                            ExpiredDate = "03-2022",
+                            OwnerLastName = "LasName",
+                            OwnerName = "Name",
+                            PIN = "4444",
+                            RegistrationDate = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6230),
+                            Status = 0
+                        },
+                        new
+                        {
+                            CardEntityId = 4,
+                            AccountEntityId = 3,
+                            CVV = "321",
+                            CardNumber = "Card04",
+                            ExpiredDate = "03-2024",
+                            OwnerLastName = "LasName",
+                            OwnerName = "Name",
+                            PIN = "4444",
+                            RegistrationDate = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6230),
+                            Status = 0
+                        },
+                        new
+                        {
+                            CardEntityId = 5,
+                            AccountEntityId = 4,
+                            CVV = "321",
+                            CardNumber = "Card05",
+                            ExpiredDate = "03-2024",
+                            OwnerLastName = "LasName",
+                            OwnerName = "Name",
+                            PIN = "4444",
+                            RegistrationDate = new DateTime(2023, 3, 19, 0, 19, 27, 795, DateTimeKind.Local).AddTicks(6230),
+                            Status = 0
+                        });
                 });
 
             modelBuilder.Entity("CredoProject.Core.Db.Entity.ExchangeEntity", b =>
@@ -129,7 +245,7 @@ namespace CredoProject.Core.Migrations
                             Id = 1,
                             currencyFrom = 0,
                             currencyTo = 0,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6810),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7590),
                             rate = 1m
                         },
                         new
@@ -137,7 +253,7 @@ namespace CredoProject.Core.Migrations
                             Id = 2,
                             currencyFrom = 0,
                             currencyTo = 1,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7620),
                             rate = 0.361m
                         },
                         new
@@ -145,7 +261,7 @@ namespace CredoProject.Core.Migrations
                             Id = 3,
                             currencyFrom = 0,
                             currencyTo = 2,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7620),
                             rate = 0.3636m
                         },
                         new
@@ -153,7 +269,7 @@ namespace CredoProject.Core.Migrations
                             Id = 4,
                             currencyFrom = 1,
                             currencyTo = 1,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7630),
                             rate = 1m
                         },
                         new
@@ -161,7 +277,7 @@ namespace CredoProject.Core.Migrations
                             Id = 5,
                             currencyFrom = 1,
                             currencyTo = 0,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6840),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7630),
                             rate = 2.77m
                         },
                         new
@@ -169,7 +285,7 @@ namespace CredoProject.Core.Migrations
                             Id = 6,
                             currencyFrom = 1,
                             currencyTo = 2,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7630),
                             rate = 0.98m
                         },
                         new
@@ -177,7 +293,7 @@ namespace CredoProject.Core.Migrations
                             Id = 7,
                             currencyFrom = 2,
                             currencyTo = 2,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7630),
                             rate = 1m
                         },
                         new
@@ -185,7 +301,7 @@ namespace CredoProject.Core.Migrations
                             Id = 8,
                             currencyFrom = 2,
                             currencyTo = 0,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7630),
                             rate = 2.87m
                         },
                         new
@@ -193,7 +309,7 @@ namespace CredoProject.Core.Migrations
                             Id = 9,
                             currencyFrom = 2,
                             currencyTo = 1,
-                            date = new DateTime(2023, 3, 18, 1, 4, 37, 565, DateTimeKind.Local).AddTicks(6850),
+                            date = new DateTime(2023, 3, 19, 0, 19, 27, 788, DateTimeKind.Local).AddTicks(7640),
                             rate = 1.0071m
                         });
                 });
@@ -263,11 +379,11 @@ namespace CredoProject.Core.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09792997-4d03-41c8-acf2-2e41ec2453ec",
+                            ConcurrencyStamp = "0e9cb375-7330-434b-828d-0cd0e8941869",
                             Email = "gio2@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEL3HrMtkHUpKaxeCyXmvCLImPRA6WsfsOxD9DrkglYQINKpMPlXmQWyIUbAGJFGTrg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEItNVCRQqYROLmsN8SrncVZRD3gr3GEXgCjsh3LenYvTYrdA9HCa1vPFGNNcG5L47Q==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "gio2@gmail.com"
@@ -307,30 +423,30 @@ namespace CredoProject.Core.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "a0124115-ee3e-4a56-8e9e-12fe1ac029a7",
-                            Name = "ApiManager",
-                            NormalizedName = "APIMANAGER"
+                            ConcurrencyStamp = "3eee982c-6bf3-4e2e-be2d-1446a6902462",
+                            Name = "api-manager",
+                            NormalizedName = "API-MANAGER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "e5fb1b77-5a06-45cb-a53c-235097ccf918",
-                            Name = "ApiUser",
-                            NormalizedName = "APIUSER"
+                            ConcurrencyStamp = "3635f488-5f30-4df1-9ef7-f9149b5e0ec4",
+                            Name = "api-user",
+                            NormalizedName = "API-USER"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "e8c203a3-3bea-4e9d-9f00-7cbc194d5eec",
-                            Name = "ApiOperator",
-                            NormalizedName = "APIOPERATOR"
+                            ConcurrencyStamp = "fffd850d-2f5d-47b9-a769-92bcfb5d9ba7",
+                            Name = "api-operator",
+                            NormalizedName = "API-OPERATOR"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "a87b2718-6bf8-4888-b906-ebce233436f8",
-                            Name = "ApiAdmin",
-                            NormalizedName = "APIADMIN"
+                            ConcurrencyStamp = "a7547378-55e6-4685-89f2-25cafd1cd324",
+                            Name = "api-admin",
+                            NormalizedName = "API-ADMIN"
                         });
                 });
 
@@ -496,13 +612,14 @@ namespace CredoProject.Core.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1971, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "80aa0c3b-fad2-4444-b2a4-3ba1bc39d7a9",
+                            ConcurrencyStamp = "13cde0bc-0081-4ded-9d99-80e1550e6186",
                             Email = "gio5@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Gio",
                             LastName = "Mas",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEK2SzSWaoD/4sIfey9GZwAqT8HcIEgMuFdQPN5GlnUK01eE6EGkVmR2d7GSvdjFF5A==",
+                            NormalizedEmail = "GIO5@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAENhWYxCxC0g49PmLMo3fAEjhn7vThjLzoKke3HAELY3zvuAXcXdZ3tVxqR2RSqDO3Q==",
                             PersonalNumber = "01030019697",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false
@@ -512,13 +629,14 @@ namespace CredoProject.Core.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1978, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "2453a6ea-9c22-4af9-bd26-0890a1d3bb68",
+                            ConcurrencyStamp = "00d51627-326e-4aa0-885f-a41d78021474",
                             Email = "nino@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Nino",
                             LastName = "Chale",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEOodP0G9Vqxx/hYA3AYW/5pdD42h+Vb72zGjL1CofjPAXsaeTzNt6OcWXH0Crojj4Q==",
+                            NormalizedEmail = "NINO@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEINcu6Uw0/rcV2/W7jcC2Bxtgf3QTghkWfaqcPgkP5P/L1s5HwVJnWiFk/4Tjjtkdw==",
                             PersonalNumber = "01015003600",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false
@@ -528,13 +646,14 @@ namespace CredoProject.Core.Migrations
                             Id = 3,
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(2017, 12, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "a241dbf8-addc-421f-9195-642dddd7c6d8",
-                            Email = "nikoCha@gmail.com",
+                            ConcurrencyStamp = "f36bb702-9d9e-4973-82ad-c04eca5c0047",
+                            Email = "niko@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Niko",
                             LastName = "Mas",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEEW3xwrM7NITRwb9nXLalefJ6pWsTm5kDVpioVVU9uou/kQTmHpMctecgOUSgvSZFg==",
+                            NormalizedEmail = "NIKO@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEL6sDE43fGJsuK1lxWVT01HVZAQspUClyVlC64cKhwVm7/ymqe45psFrD654SK8Juw==",
                             PersonalNumber = "01015008765",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false
