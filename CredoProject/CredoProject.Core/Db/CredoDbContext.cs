@@ -23,7 +23,7 @@ namespace CredoProject.Core.Db
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<TransactionEntity>()
-                .HasKey(sc => new { sc.AccountFromId, sc.AccountToId });
+                .HasKey(sc => sc.TransactionEntityId);
 
             modelBuilder.Entity<TransactionEntity>()
                 .HasOne(sc => sc.AccountEntityFrom)
@@ -35,6 +35,12 @@ namespace CredoProject.Core.Db
                 .HasOne(sc => sc.AccountEntityTo)
                 .WithMany(c => c.ToTransactionEntities)
                 .HasForeignKey(sc => sc.AccountToId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<TransactionEntity>()
+                .HasOne(sc => sc.cardEntity)
+                .WithMany(c => c.TransactionEntities)
+                .HasForeignKey(sc => sc.CardId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<RoleEntity>().HasData(
@@ -56,14 +62,14 @@ namespace CredoProject.Core.Db
                 new ExchangeEntity { Id = 9, currencyFrom = Currency.EUR, currencyTo = Currency.USD, date = DateTime.Now, rate = 1.0071m }
             );
 
-
-            var userName = "gio2@gmail.com";
             var password = "pas123";
-            var operator1 = new OperatorEntity { Id = 1, Email = userName, UserName = userName };
 
-            var hasher = new PasswordHasher<OperatorEntity>();
-            operator1.PasswordHash = hasher.HashPassword(operator1, password);
-            modelBuilder.Entity<OperatorEntity>().HasData(operator1);
+            //var userName = "gio2@gmail.com";
+            //var operator1 = new OperatorEntity { Id = 1, Email = userName, UserName = userName };
+
+            //var hasher = new PasswordHasher<OperatorEntity>();
+            //operator1.PasswordHash = hasher.HashPassword(operator1, password);
+            //modelBuilder.Entity<OperatorEntity>().HasData(operator1);
 
             var hasherUser = new PasswordHasher<UserEntity>();
 
@@ -112,10 +118,10 @@ namespace CredoProject.Core.Db
             });
 
             modelBuilder.Entity<AccountEntity>().HasData(
-                new AccountEntity { AccountEntityId = 1, Currency = Currency.GEL, Amount = 5000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AL35202111090000000001234567" },
-                new AccountEntity { AccountEntityId = 2, Currency = Currency.USD, Amount = 5000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AD1400080001001234567890" },
-                new AccountEntity { AccountEntityId = 3, Currency = Currency.EUR, Amount = 5000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AT483200000012345864" },
-                new AccountEntity { AccountEntityId = 4, Currency = Currency.GEL, Amount = 4000, CreateAt = DateTime.Now, CustomerEntityId = 3, IBAN = "AZ77VTBA00000000001234567890" },
+                new AccountEntity { AccountEntityId = 1, Currency = Currency.GEL, Amount = 3000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AL35202111090000000001234567" },
+                new AccountEntity { AccountEntityId = 2, Currency = Currency.USD, Amount = 3000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AD1400080001001234567890" },
+                new AccountEntity { AccountEntityId = 3, Currency = Currency.EUR, Amount = 3000, CreateAt = DateTime.Now, CustomerEntityId = 2, IBAN = "AT483200000012345864" },
+                new AccountEntity { AccountEntityId = 4, Currency = Currency.GEL, Amount = 3000, CreateAt = DateTime.Now, CustomerEntityId = 3, IBAN = "AZ77VTBA00000000001234567890" },
                 new AccountEntity { AccountEntityId = 5, Currency = Currency.USD, Amount = 3000, CreateAt = DateTime.Now, CustomerEntityId = 3, IBAN = "BH02CITI00001077181611" }
                 );
 

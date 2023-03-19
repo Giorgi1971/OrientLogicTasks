@@ -39,7 +39,6 @@ namespace CredoProject.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            request.Email = "nino@gmail.com";
             request.Password = "pas123";
             // TODO:Check user credentials...
             var user = await _userManager.FindByEmailAsync(request.Email.ToString());
@@ -59,7 +58,6 @@ namespace CredoProject.API.Controllers
         [Authorize("ApiOperator", AuthenticationSchemes ="Bearer")]
         public async Task<IActionResult> Register([FromBody]CreateCustomerRequest request)
         {
-            request.Email = "gio4@gmail.com";
             request.Password = "pas123";
             request.PersonalNumber = "01020304057";
             // როლი უნდა შევამოწმო თუ არსებობს, რომ მერე ბაზაში უსერი როლის გარეშე არ დამრჩეს

@@ -20,6 +20,7 @@
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
     <None Remove="Models\Requests\Card\" />
     <None Remove="Models\Requests\Customer\" />
+    <None Remove="Calculates\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Db\" />
@@ -32,6 +33,7 @@
     <Folder Include="Repositories\" />
     <Folder Include="Models\Requests\Card\" />
     <Folder Include="Models\Requests\Customer\" />
+    <Folder Include="Calculates\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.14">

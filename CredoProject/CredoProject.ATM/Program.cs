@@ -2,6 +2,7 @@
 using CredoProject.Core.Repositories;
 using CredoProject.Core.Services;
 using CredoProject.Core.Validations;
+using CredoProject.Core.Calculates;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddTransient<IATMServices, ATMService>();
 builder.Services.AddTransient<IValidate, Validate>();
+builder.Services.AddTransient<ICalculate, Calculate>();
 builder.Services.AddTransient<ICardRepository, CardRepository>();
 
 // Add services to the container.

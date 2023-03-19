@@ -17,6 +17,7 @@ namespace CredoProject.Core.Db.Entity
 
         //public int UserId { get; set; }
         //public CustomerEntity CustomerEntity { get; set; }
+        public ICollection<TransactionEntity>? TransactionEntities { get; set; }
 
         public int AccountEntityId { get; set; }
         public AccountEntity AccountEntity { get; set; } = null!;
