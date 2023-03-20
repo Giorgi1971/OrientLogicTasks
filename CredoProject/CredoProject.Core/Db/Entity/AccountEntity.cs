@@ -19,11 +19,11 @@ namespace CredoProject.Core.Db.Entity
         public int CustomerEntityId { get; set; }
         public UserEntity CustomerEntity { get; set; } = null!;
 
-        public ICollection<CardEntity>? CardEntities { get; set; }
+        public List<CardEntity>? CardEntities { get; set; }
 
         // ამას რამე აზრი აქვს????
-        public ICollection<TransactionEntity>? FromTransactionEntities { get; set; }
-        public ICollection<TransactionEntity>? ToTransactionEntities { get; set; }
+        public List<TransactionEntity>? FromTransactionEntities { get; set; }
+        public List<TransactionEntity>? ToTransactionEntities { get; set; }
     }
 
     public enum Currency

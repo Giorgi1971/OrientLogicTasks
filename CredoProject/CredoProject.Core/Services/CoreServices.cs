@@ -10,6 +10,11 @@ using System.Security.Principal;
 using IbanNet;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using CredoProject.Core.Models.Requests.Customer;
+using System.Linq;
+using System.Collections.Generic;
+using System.Globalization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CredoProject.Core.Services
 {
@@ -19,6 +24,7 @@ namespace CredoProject.Core.Services
         Task<AccountResponse> RegisterAccountAsync(CreateAccountRequest request);
         Task<CardEntity> RegisterCardAsync(CreateCardRequest request);
         Task<UserEntity> GetUserEntity(int id);
+        Task<string> TransferMonnyInnerAsync(TransferRequest request, int id);
 
         Task<List<CustomerAccountsResponse>> GetUserAccounts(int id);
         Task<List<CardsResponse>> GetUserCardsAsync(int id);
@@ -28,26 +34,100 @@ namespace CredoProject.Core.Services
     {
         private readonly IBankRepository _bankRepository;
         private readonly IValidate _validate;
+        private readonly ICardRepository _cardRepository;
         //private readonly UserManager<UserEntity> _userManager;
 
-
-        public CoreServices(IValidate validate, IBankRepository repository, UserManager<UserEntity> userManager)
+        public CoreServices(IValidate validate, IBankRepository repository, UserManager<UserEntity> userManager, ICardRepository cardRepository)
         {
+            _cardRepository = cardRepository;
             _validate = validate;
             _bankRepository = repository;
             //_userManager = userManager;
         }
 
+        // კარგი იქნება თუ შეეძლება თავისი აიბანებიდან ამოარჩიოს გასაგზავნის და მისაღებიც.
+        public async Task<string> TransferMonnyInnerAsync(TransferRequest request, int id)
+        {
+            AccountEntity aFrom;
+            AccountEntity aTo;
+            //var id = 2;
+            //List<string> checkAccounts = await _bankRepository.GetAccountsById(id);
+            //if (!checkAccounts.Contains(request.AccountFrom.IBAN) || !checkAccounts.Contains(request.AccountTo.IBAN))
+            try {
+                aFrom = await _bankRepository.GetAccountByIBAN(request.AccountFrom);
+                aTo = await _bankRepository.GetAccountByIBAN(request.AccountTo);
+            }
+            catch
+            {
+                return "IBAN is not Correct";
+            }
+            if (aFrom.CustomerEntityId != id) return "This is not account number!";
+            var rate = _cardRepository.CalculateRate(aFrom.Currency, aTo.Currency).Result;
+            var fee = 0m;
+            var feeProcent = 0m;
+            var amount = request.TransferAmount;
+            if (request.TransType == TransType.Outer)
+            {
+                feeProcent = 1;
+                fee = request.TransferAmount * feeProcent / 100 + 0.5m;
+            }
+            // ვნახულობთ თუ აქვს საკმარისი თანხა
+            if (request.TransferAmount + fee > aFrom.Amount) return "You don't have enough money";
+            // ანგარიშის თანხას ვაკლებთ გამოსატან თანხას და საკომისიოს
+            aFrom.Amount -= (request.TransferAmount + fee);
+            aTo.Amount += request.TransferAmount * rate;
+            var transaction1 = new TransactionEntity()
+            {
+                AccountEntityFrom = aFrom,
+                AccountEntityTo = aTo,
+                AmountTransaction = request.TransferAmount,
+                CreatedAt = DateTime.Now,
+                TransType = request.TransType,
+                CurrencyFrom = aFrom.Currency,
+                CurrencyTo = aTo.Currency,
+                // საკომისიოს ვინახავთ ლარებში
+                Fee = fee * rate,
+                AccountFromId = aFrom.AccountEntityId,
+                AccountToId = aTo.AccountEntityId,
+                ExecutionAt = DateTime.Now,
+                CurrentRate = rate,
+            };
+            await _cardRepository.AddTransactionInDb(transaction1);
+            await _cardRepository.SaveChangesAsync();
+
+            return $"Welcome! Your Account ({aFrom.IBAN}) Balance is {aFrom.Amount} {aFrom.Currency}";
+        }
+
         public async Task<List<CustomerAccountsResponse>> GetUserAccounts(int id)
         {
-            var userAccounts = await _bankRepository.GetUserAccountsFromDbAsync(id);
+            var userAccounts = await _bankRepository
+                .GetUserAccountsFromDbAsync(id);
             return userAccounts;
         }
 
         public async Task<List<CardsResponse>> GetUserCardsAsync(int id)
         {
-            var userAccounts = await _bankRepository.GetUserCardsFromDbAsync(id);
-            return userAccounts;
+            var userCards = await _bankRepository.GetUserCardsFromDbAsync(id);
+            List<CardsResponse> result = new List<CardsResponse>() { };
+            foreach (var card in userCards)
+            {
+                var expDate = DateTime.ParseExact(card.ExpiredDate, "MM-yyyy", CultureInfo.InvariantCulture);
+                var cardResponse = new CardsResponse()
+                {
+                    CardAmount = card.AccountEntity.Amount,
+                    Currency = card.AccountEntity.Currency,
+                    CardNumber = card.CardNumber,
+                    ExpiredDate = card.ExpiredDate,
+                    Status = card.Status,
+                    //info = "Welcome"
+                };
+                if (expDate < DateTime.Now)
+                    cardResponse.info = $"Your card has expired";
+                else if (expDate < DateTime.Now.AddMonths(3))
+                    cardResponse.info = $"Your card expires in {(expDate - DateTime.Now).Days} a days";
+                result.Add(cardResponse);
+            }
+            return result;
         }
 
         public async Task<UserEntity> RegisterCustomerAsync(CreateCustomerRequest request)
@@ -111,7 +191,6 @@ namespace CredoProject.Core.Services
             await _bankRepository.AddCardToDbAsync(card);
             await _bankRepository.SaveChangesAsync();
             return card;
-
         }
 
         public async Task<UserEntity> GetUserEntity(int id)

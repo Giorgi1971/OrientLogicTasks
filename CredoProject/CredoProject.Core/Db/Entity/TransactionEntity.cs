@@ -18,7 +18,7 @@ namespace CredoProject.Core.Db.Entity
         public DateTime ExecutionAt { get; set; }
         [Column(TypeName = "decimal(18,5)")]
         public decimal Fee { get; set; }
-        public string? TransType { get; set; }
+        public TransType? TransType { get; set; }
         [Column(TypeName = "decimal(18,5)")]
         public decimal CurrentRate { get; set; }
 
@@ -31,5 +31,14 @@ namespace CredoProject.Core.Db.Entity
         public int AccountToId { get; set; }
         public AccountEntity? AccountEntityTo { get; set; } = null!;
     }
+
+
+    public enum TransType
+    {
+        AMT,
+        Inner,
+        Outer
+    }
+
 }
 

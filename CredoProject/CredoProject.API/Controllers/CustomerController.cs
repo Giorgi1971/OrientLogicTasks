@@ -3,6 +3,7 @@ using CredoProject.Core.Db;
 using CredoProject.Core.Db.Entity;
 using CredoProject.Core.Models.Responses;
 using CredoProject.Core.Models.Requests;
+using CredoProject.Core.Models.Requests.Customer;
 using CredoProject.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,31 +17,40 @@ namespace CredoProject.API.Controllers
         private readonly ICoreServices _coreServices;
         private readonly UserManager<UserEntity> _userManager;
 
-
         public CustomerController(ICoreServices coreServices, UserManager<UserEntity> userManager)
         {
             _coreServices = coreServices;
             _userManager = userManager;
         }
 
-        [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpPost("get-own-accounts")]
+        //[Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        [HttpGet("get-own-accounts")]
         public async Task<ActionResult<List<CustomerAccountsResponse>>> GetUserAccountsAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var accounts = await _coreServices.GetUserAccounts(user.Id);
+            //var user = await _userManager.GetUserAsync(User);
+            // user.AccountEntities.Where(x => x.Amount == 0);  //ასე ბაზასაც ვწვდები?????????????????
+            var accounts = await _coreServices.GetUserAccounts(2);
+            //var accounts = await _coreServices.GetUserAccounts(user.Id);
             return accounts;
         }
 
         [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpPost("get-own-cards")]
+        [HttpGet("get-own-cards")]
         public async Task<ActionResult<List<CardsResponse>>> GetUserCardsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            var accounts = await _coreServices.GetUserCardsAsync(user.Id);
+            var accounts = await _coreServices.GetUserCardsAsync(2);
             return accounts;
         }
 
-
+        [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
+        [HttpPost("transfer-money")]
+        public async Task<ActionResult<string>> TransferMonnyInnerAsync([FromBody]TransferRequest request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var result = await _coreServices.TransferMonnyInnerAsync(request, user.Id);
+            var accounts = await _coreServices.GetUserCardsAsync(user.Id);
+            return result;
+        }
     }
 }

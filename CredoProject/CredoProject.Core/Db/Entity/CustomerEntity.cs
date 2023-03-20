@@ -9,7 +9,7 @@ namespace CredoProject.Core.Db.Entity
         public string PersonalNumber { get; set; } = null!;
         public DateTime BirthDate { get; set; }
 
-        public ICollection<AccountEntity>? AccountEntities { get; set; }
+        public List<AccountEntity>? AccountEntities { get; set; }
         //public ICollection<CardEntity> CardEntities { get; set; }
     }
 }

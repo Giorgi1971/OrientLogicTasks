@@ -11,13 +11,14 @@ namespace CredoProject.Core.Repositories
     {
         Task<UserEntity> GetUserByIdAsync(int id);
         Task<AccountEntity> GetAccountById(int id);
+        Task<AccountEntity> GetAccountByIBAN(string str);
         Task<CardEntity> GetCardById(int id);
         Task AddCustomerToDbAsync(UserEntity customer);
         Task AddAccountToDbAsync(AccountEntity account);
         Task AddCardToDbAsync(CardEntity card);
         Task<List<CustomerAccountsResponse>> GetUserAccountsFromDbAsync(int id);
-        Task<List<CardsResponse>> GetUserCardsFromDbAsync(int id);
-
+        Task<List<CardEntity>> GetUserCardsFromDbAsync(int id);
+        Task<List<string>> GetAccountsById(int id);
         Task SaveChangesAsync();
     }
 
@@ -30,22 +31,30 @@ namespace CredoProject.Core.Repositories
             _db = db;
         }
 
-        public async Task<List<CustomerAccountsResponse>> GetUserAccountsFromDbAsync(int id)
+        public async Task<List<string>> GetAccountsById(int id)
         {
             var result = await _db.AccountEntities
                 .Where(x => x.CustomerEntityId == id)
-                .Select(y => new CustomerAccountsResponse { AccountEntityId = y.AccountEntityId, Amount = y.Amount, Currency = y.Currency, IBAN = y.IBAN })
+                .Select(s => s.IBAN)
                 .ToListAsync();
             return result;
         }
 
-        public async Task<List<CardsResponse>> GetUserCardsFromDbAsync(int id)
+        public async Task<List<CustomerAccountsResponse>> GetUserAccountsFromDbAsync(int id)
+        {
+            var result = await _db.AccountEntities
+                .Where(x => x.CustomerEntityId == id)
+                .Include(sc => sc.FromTransactionEntities)
+                .Select(y => new CustomerAccountsResponse { AccountEntityId = y.AccountEntityId, Amount = y.Amount, Currency = y.Currency, IBAN = y.IBAN, Transactionss = y.FromTransactionEntities })
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CardEntity>> GetUserCardsFromDbAsync(int id)
         {
             var result = await _db.CardEntities
                 .Where(x => x.AccountEntity.CustomerEntityId == id)
-                .Select(y => new CardsResponse {
-                    CardAmount = y.AccountEntity.Amount, Currency = y.AccountEntity.Currency, CardNumber = y.CardNumber, ExpiredDate = y.ExpiredDate, Status = y.Status
-                })
+                .Include(x => x.AccountEntity)
                 .ToListAsync();
             return result;
         }
@@ -75,6 +84,12 @@ namespace CredoProject.Core.Repositories
         {
             var account = await _db.AccountEntities.SingleOrDefaultAsync(x => x.AccountEntityId == id);
             return account ?? throw new Exception("Account Not Found!");
+        }
+
+        public async Task<AccountEntity> GetAccountByIBAN(string str)
+        {
+            var account = await _db.AccountEntities.SingleOrDefaultAsync(x => x.IBAN == str);
+            return account ?? throw new Exception("Iban Not Found!");
         }
 
         public async Task<CardEntity> GetCardById(int id)

@@ -10,6 +10,7 @@ namespace CredoProject.Core.Models.Responses
         public string ExpiredDate { get; set; } = null!;
         public decimal CardAmount { get; set; }
         public Currency Currency { get; set; }
+        public string? info { get; set; }
     }
 }
 

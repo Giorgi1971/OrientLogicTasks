@@ -29,6 +29,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddTransient<ISendEmailRequestRepository, SendEmailRequestRepository>();
 builder.Services.AddTransient<ICoreServices, CoreServices>();
+builder.Services.AddTransient<ICardRepository, CardRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<IBankRepository, BankRepository>();
 //builder.Services.AddScoped<Validate>();

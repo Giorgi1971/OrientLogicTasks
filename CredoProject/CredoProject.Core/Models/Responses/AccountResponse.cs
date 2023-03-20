@@ -13,6 +13,8 @@ namespace CredoProject.Core.Models.Responses
         [Column(TypeName = "decimal(18,5)")]
         public decimal Amount { get; set; }
         public Currency Currency { get; set; }
+
+        public ICollection<TransactionEntity>? Transactionss { get; set; }
     }
 }
 

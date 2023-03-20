@@ -26,14 +26,14 @@ namespace CredoProject.Core.Services
         private readonly ICardRepository _cardRepository;
         private readonly ICalculate _calculate;
         private readonly IValidate _validate;
-        private readonly int _atmLimit24;
+        private readonly int _ATMLimit24;
 
         public ATMService(IValidate validate, ICardRepository repository, ICalculate calculate)
         {
             _validate = validate;
             _calculate = calculate;
             _cardRepository = repository;
-            _atmLimit24 = 2000;
+            _ATMLimit24 = 2000;
         }
 
         // Tanxis gamotana baraTidan თანხის გამოტანა ბარათიდან
@@ -55,7 +55,7 @@ namespace CredoProject.Core.Services
             // ვნახულობთ თუ აქვს საკმარისი თანხა
             if (request.WithdrawAmount+fee > account.Amount) return "You don't have enough money";
             // ვნახულობთ ლარში ხომ არ არის 2000 ლარზე მეტი გამოსატან თანხასთან ერთად
-            if ((getAccountLast24+request.WithdrawAmount)*rate > _atmLimit24) return "You have limit 2000 gel in last 24 hours";
+            if ((getAccountLast24+request.WithdrawAmount)*rate > _ATMLimit24) return "You have limit 2000 gel in last 24 hours";
             // ანგარიშის თანხას ვაკლებთ გამოსატან თანხას და საკომისიოს
             account.Amount -= (request.WithdrawAmount + fee);
             var transaction1 = new TransactionEntity()
@@ -64,7 +64,7 @@ namespace CredoProject.Core.Services
                 AccountEntityTo = account,
                 AmountTransaction = request.WithdrawAmount,
                 CreatedAt = DateTime.Now,
-                TransType = "ATM",
+                TransType = TransType.AMT,
                 CurrencyFrom = account.Currency,
                 CurrencyTo = account.Currency,
                 // საკომისიოს ვინახავთ ლარებში
