@@ -20,12 +20,10 @@ namespace CredoProject.Core.Services
 {
     public interface IReportsService
     {
-        Task<List<JsonUserStatisticResponse>> ViewRegistredCustomersStatistic(); //+
-        Task<List<CountTransRespoce>> CountTransactionsAsync();
-        
-
-
         Task<List<SumFeesTransactionsResponse>> SumFeesTransactionsAsync();
+        Task<List<JsonUserStatisticResponse>> ViewRegistredCustomersStatistic();
+        Task<List<CountTransRespoce>> CountTransactionsAsync();
+        Task<List<TransFeesAverageResponse>> AverageFeeByTransactionsAsync();
     }
 
     public class ReportsService : IReportsService
@@ -37,16 +35,65 @@ namespace CredoProject.Core.Services
             _reportsRepository = repository;
         }
 
-        public async Task<List<CountTransRespoce>> CountTransactionsAsync() //+
+        public async Task<List<TransFeesAverageResponse>> AverageFeeByTransactionsAsync()
+        {
+            var transactions = await _reportsRepository.GetTransactionsAsync();
+            List<TransFeesAverageResponse> result = new List<TransFeesAverageResponse>();
+            foreach (TransType transType in Enum.GetValues(typeof(TransType)))
+            {
+                var res = new TransFeesAverageResponse();
+                res.TransactionType = Enum.GetName(typeof(TransType), transType);
+                res.DataByPeriod = new List<DataByPeriodAverage>();
+
+                var currentResultAll = transactions
+                    .Where(x => x.TransType == transType)
+                    .Average(s => s.Fee);
+                var rrAll = new DataByPeriodAverage()
+                {
+                    AverageOfFees = currentResultAll,
+                    Currency = "AllInGel"
+                };
+                res.DataByPeriod.Add(rrAll);
+
+                foreach (Currency currency in Enum.GetValues(typeof(Currency)))
+                {
+                    var currentResult = transactions
+                        .Where(x => x.TransType == transType)
+                        .Where(y => y.CurrencyFrom == currency)
+                        .Average(s => s.Fee);
+                    var rr = new DataByPeriodAverage()
+                    {
+                        AverageOfFees = currentResult,
+                        Currency = Enum.GetName(typeof(Currency), currency)
+                    };
+                    res.DataByPeriod.Add(rr);
+                }
+                result.Add(res);
+            }
+            return result;
+        }
+
+
+        public async Task<List<CountTransRespoce>> CountTransactionsAsync()
         {
             var transactions = await _reportsRepository.GetTransactionsAsync();
             List<CountTransRespoce> result = new List<CountTransRespoce>();
             foreach (DatePeriod3 value in Enum.GetValues(typeof(DatePeriod3)).Cast<TransType>().OrderBy(v => (int)v))
             {
                 var res = new CountTransRespoce();
-                List<DataByPeriodCount> dbp = new List<DataByPeriodCount>();
                 res.DatePeriod = Enum.GetName(typeof(DatePeriod), value);
                 res.DataByPeriod = new List<DataByPeriodCount>();
+                var currentResultAll = transactions
+                    .Where(x => x.CreatedAt > DateTime.Now.AddMonths(-(int)value))
+                    .Count();
+
+                var rrAll = new DataByPeriodCount()
+                {
+                    TransactionsType = "All",
+                    TransactionsQuantity = currentResultAll
+                };
+                res.DataByPeriod.Add(rrAll);
+
                 foreach (TransType transType in Enum.GetValues(typeof(TransType)))
                 {
                     var currentResult = transactions
@@ -65,7 +112,6 @@ namespace CredoProject.Core.Services
             return result;
         }
 
-
         public async Task<List<SumFeesTransactionsResponse>> SumFeesTransactionsAsync()
         {
             var transactions = await _reportsRepository.GetTransactionsAsync();
@@ -73,9 +119,20 @@ namespace CredoProject.Core.Services
             foreach (DatePeriod value in Enum.GetValues(typeof(DatePeriod)))
             {
                 var res = new SumFeesTransactionsResponse();
-                List<DataByPeriod> dbp = new List<DataByPeriod>();
+                //List<DataByPeriod> dbp = new List<DataByPeriod>();
                 res.DatePeriod = Enum.GetName(typeof(DatePeriod), value);
                 res.DataByPeriod = new List<DataByPeriod>();
+
+                var currentResultAll = transactions
+                    .Where(x => x.CreatedAt > DateTime.Now.AddMonths(-(int)value))
+                    .Sum(s => s.Fee);
+                var rrAll = new DataByPeriod()
+                {
+                    Currency = "AllInGel",
+                    sumOfFees = currentResultAll
+                };
+                res.DataByPeriod.Add(rrAll);
+
                 foreach (Currency currency in Enum.GetValues(typeof(Currency)))
                 {
                     var currentResult = transactions
@@ -94,7 +151,6 @@ namespace CredoProject.Core.Services
             return result;
         }
 
-        // სტატისტიკა 1 
         public async Task<List<JsonUserStatisticResponse>> ViewRegistredCustomersStatistic()
         {
             int DaysBeforeNewYear = (DateTime.Now - (new DateTime(DateTime.Now.Year, 1, 1))).Days;
@@ -114,37 +170,5 @@ namespace CredoProject.Core.Services
             }
             return result;
         }
-
-        //public async Task<List<CountTransactionsResponse>> JsonCountTtransactionsStatisticAsync()
-        //{
-        //    List<CountTransactionsResponse> result = new List<CountTransactionsResponse>();
-        //    var transactions = await _reportsRepository.GetTransactionsAsync();
-
-        //    foreach (DatePeriod value in Enum.GetValues(typeof(DatePeriod)).Cast<DatePeriod>().OrderBy(v => (int)v))
-        //    {
-        //        CountTransactionsResponse countT = new CountTransactionsResponse();
-        //        countT.DatePeriod = value;
-        //        countT.DataByPeriod = new DataByPeriod();
-
-        //        foreach (TransType trans in Enum.GetValues(typeof(TransType)).Cast<TransType>().OrderBy(v => (int)v))
-        //        {
-        //            countT.DataByPeriod.TransType = trans;
-        //            countT.DataByPeriod.DataByType = new DataByType();
-        //            foreach (Currency currency in Enum.GetValues(typeof(Currency)).Cast<TransType>().OrderBy(v => (int)v))
-        //            {
-        //                countT.DataByPeriod.DataByType.Currency = currency;
-        //                countT.DataByPeriod.DataByType.DataByCurency.countData = transactions
-        //                    .Where(x => x.CreatedAt > DateTime.Now.AddMonths(-20))
-        //                    //.Where(x => x.CurrencyFrom == currency)
-        //                    //.Where(x => x.TransType == trans)
-        //                    .Count();
-        //            }
-        //        }
-        //        result.Add(countT);
-        //    }
-        //    return result;
-        //}
-
-
     }
 }

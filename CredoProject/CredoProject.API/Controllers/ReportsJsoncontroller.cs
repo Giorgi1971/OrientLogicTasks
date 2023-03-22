@@ -42,10 +42,18 @@ namespace CredoProject.API.Controllers
         }
 
         //[Authorize("ApiManager", AuthenticationSchemes = "Bearer")]
-        [HttpGet("get-bank-fees-from-transaction-by-period")]
+        [HttpGet("sum-bank-fees-by-period")]
         public async Task<ActionResult> SumFeesTransactionsAsync()
         {
             var transactions = await _reportsService.SumFeesTransactionsAsync();
+            return new JsonResult(transactions); ;
+        }
+
+        //[Authorize("ApiManager", AuthenticationSchemes = "Bearer")]
+        [HttpGet("Average-fee-by-transactions")]
+        public async Task<ActionResult> AverageFeeByTransactionsAsync()
+        {
+            var transactions = await _reportsService.AverageFeeByTransactionsAsync();
             return new JsonResult(transactions); ;
         }
     }
