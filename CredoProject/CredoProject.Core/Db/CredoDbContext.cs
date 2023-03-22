@@ -81,7 +81,8 @@ namespace CredoProject.Core.Db
                 NormalizedEmail = "GIO5@GMAIL.COM",
                 BirthDate = DateTime.Parse("1971-11-26"),
                 Email = "gio5@gmail.com",
-                PersonalNumber = "01030019697"
+                PersonalNumber = "01030019697",
+                RegisteredAt = DateTime.Now.AddMonths(-15)
             };
             cust1.PasswordHash = hasherUser.HashPassword(cust1, password);
 
@@ -93,7 +94,9 @@ namespace CredoProject.Core.Db
                 NormalizedEmail = "NINO@GMAIL.COM",
                 BirthDate = DateTime.Parse("1978-03-31"),
                 Email = "nino@gmail.com",
-                PersonalNumber = "01015003600"
+                PersonalNumber = "01015003600",
+                RegisteredAt = DateTime.Now.AddMonths(-11)
+
             };
             cust2.PasswordHash = hasherUser.HashPassword(cust2, password);
 
@@ -105,7 +108,8 @@ namespace CredoProject.Core.Db
                 NormalizedEmail = "NIKO@GMAIL.COM",
                 BirthDate = DateTime.Parse("2017-12-09"),
                 Email = "niko@gmail.com",
-                PersonalNumber = "01015008765"
+                PersonalNumber = "01015008765",
+                RegisteredAt = DateTime.Now.AddMonths(-1)
             };
             cust3.PasswordHash = hasherUser.HashPassword(cust3, password);
 

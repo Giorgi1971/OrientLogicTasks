@@ -21,7 +21,6 @@ namespace CredoProject.Core.Db.Entity
 
         public List<CardEntity>? CardEntities { get; set; }
 
-        // ამას რამე აზრი აქვს????
         public List<TransactionEntity>? FromTransactionEntities { get; set; }
         public List<TransactionEntity>? ToTransactionEntities { get; set; }
     }

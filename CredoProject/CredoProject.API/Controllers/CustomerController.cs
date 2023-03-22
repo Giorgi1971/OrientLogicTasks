@@ -24,18 +24,16 @@ namespace CredoProject.API.Controllers
         }
 
         [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpGet("get-own-accounts")]
+        [HttpGet("view-your-accounts")]
         public async Task<ActionResult<List<CustomerAccountsResponse>>> GetUserAccountsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            // user.AccountEntities.Where(x => x.Amount == 0);  //ასე ბაზასაც ვწვდები?????????????????
-            //var accounts = await _coreServices.GetUserAccounts(2);
             var accounts = await _coreServices.GetUserAccounts(user.Id);
             return accounts;
         }
 
         [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpGet("get-own-cards")]
+        [HttpGet("view-your-cards")]
         public async Task<ActionResult<List<CardsResponse>>> GetUserCardsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -44,7 +42,7 @@ namespace CredoProject.API.Controllers
         }
 
         [Authorize("ApiUser", AuthenticationSchemes = "Bearer")]
-        [HttpPost("transfer-money")]
+        [HttpPost("transfer-money-atm")]
         public async Task<ActionResult<string>> TransferMonnyInnerAsync([FromBody]TransferRequest request)
         {
             var user = await _userManager.GetUserAsync(User);

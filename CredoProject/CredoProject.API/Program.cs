@@ -12,7 +12,10 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IReportsService, ReportsService>();
+// ამას რა უნდა?????????????????????????????????????????????????
 AuthConfigurator.Configure(builder);
 
 
@@ -28,6 +31,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddTransient<ISendEmailRequestRepository, SendEmailRequestRepository>();
+builder.Services.AddTransient<IReportsRepository, ReportsRepository>();
 builder.Services.AddTransient<ICoreServices, CoreServices>();
 builder.Services.AddTransient<ICardRepository, CardRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
