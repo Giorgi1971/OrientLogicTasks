@@ -38,7 +38,7 @@ namespace CredoProject.API.Controllers
         public async Task<ActionResult> CountTransactionsAsync()
         {
             var transactions = await _reportsService.CountTransactionsAsync();
-            return new JsonResult(transactions); ;
+            return new JsonResult(transactions);
         }
 
         //[Authorize("ApiManager", AuthenticationSchemes = "Bearer")]
@@ -46,7 +46,7 @@ namespace CredoProject.API.Controllers
         public async Task<ActionResult> SumFeesTransactionsAsync()
         {
             var transactions = await _reportsService.SumFeesTransactionsAsync();
-            return new JsonResult(transactions); ;
+            return new JsonResult(transactions);
         }
 
         //[Authorize("ApiManager", AuthenticationSchemes = "Bearer")]
@@ -54,7 +54,21 @@ namespace CredoProject.API.Controllers
         public async Task<ActionResult> AverageFeeByTransactionsAsync()
         {
             var transactions = await _reportsService.AverageFeeByTransactionsAsync();
-            return new JsonResult(transactions); ;
+            return new JsonResult(transactions);
+        }
+
+        [HttpGet("ATM-total-sum")]
+        public async Task<ActionResult> ATMTotalSum()
+        {
+            var transactions = await _reportsService.ATMTotalSum();
+            return new JsonResult(transactions);
+        }
+
+        [HttpGet("Last-30-day-count-transactions")]
+        public async Task<ActionResult> LastMonthTransactions()
+        {
+            var transactions = await _reportsService.LastMonthTransactions();
+            return new JsonResult(transactions);
         }
     }
 }

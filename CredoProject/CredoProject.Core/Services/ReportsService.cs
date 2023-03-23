@@ -1,20 +1,19 @@
-﻿using CredoProject.Core.Calculates;
-using CredoProject.Core.Models.Requests.Card;
-using CredoProject.Core.Repositories;
-using CredoProject.Core.Models.Responses;
-using CredoProject.Core.Models.Responses.ReportsResponce;
-using CredoProject.Core.Validations;
-using System;
-using CredoProject.Core.Db;
+﻿using CredoProject.Core.Db;
 using CredoProject.Core.Db.Entity;
+using CredoProject.Core.Calculates;
+using CredoProject.Core.Validations;
+using CredoProject.Core.Repositories;
 using CredoProject.Core.Models.Requests;
+using CredoProject.Core.Models.Responses;
+using CredoProject.Core.Models.Requests.Card;
+using CredoProject.Core.Models.Responses.ReportsResponce;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Runtime.Intrinsics.Arm;
 using System.ComponentModel.DataAnnotations;
-
+using System.Collections.Generic;
 
 namespace CredoProject.Core.Services
 {
@@ -24,6 +23,8 @@ namespace CredoProject.Core.Services
         Task<List<JsonUserStatisticResponse>> ViewRegistredCustomersStatistic();
         Task<List<CountTransRespoce>> CountTransactionsAsync();
         Task<List<TransFeesAverageResponse>> AverageFeeByTransactionsAsync();
+        Task<ATMTotal> ATMTotalSum();
+        Task<List<LastMonthTransactionsResponse>> LastMonthTransactions();
     }
 
     public class ReportsService : IReportsService
@@ -35,38 +36,75 @@ namespace CredoProject.Core.Services
             _reportsRepository = repository;
         }
 
+        public async Task<List<LastMonthTransactionsResponse>> LastMonthTransactions()
+        {
+            var transactions = await _reportsRepository.GetTransactionsAsync();
+            var result = new List<LastMonthTransactionsResponse>();
+            for (int i = 0; i < 30; i++)
+            {
+                var curresult = transactions
+                    .Where(x => x.CreatedAt == DateTime.Now.AddDays(-(i)))
+                    .Count();
+                var countTransInDay = new LastMonthTransactionsResponse()
+                {
+                    Day = $"{i} days ago",
+                    result = $"{curresult} transaction"
+                };
+                result.Add(countTransInDay);
+            }
+            return result;
+        }
+
+        public async Task<ATMTotal> ATMTotalSum()
+        {
+            var transactions = await _reportsRepository.GetTransactionsAsync();
+            decimal SubTotal = 0;
+            foreach (Currency currency in Enum.GetValues(typeof(Currency)))
+            {
+                decimal total = transactions
+                    .Where(t => t.TransType == TransType.AMT)
+                    .Where(t => t.CurrencyFrom == currency)
+                    .Sum(t => t.AmountTransaction * t.CurrentRate);
+                SubTotal += total;
+            }
+            var atmTotal = new ATMTotal() { AllATMTransactoinsSum = SubTotal };
+            return atmTotal;
+        }
+
         public async Task<List<TransFeesAverageResponse>> AverageFeeByTransactionsAsync()
         {
             var transactions = await _reportsRepository.GetTransactionsAsync();
             List<TransFeesAverageResponse> result = new List<TransFeesAverageResponse>();
             foreach (TransType transType in Enum.GetValues(typeof(TransType)))
             {
+                if(Enum.GetName(typeof(TransType), transType) == "Inner")
+                    continue;
                 var res = new TransFeesAverageResponse();
                 res.TransactionType = Enum.GetName(typeof(TransType), transType);
-                res.DataByPeriod = new List<DataByPeriodAverage>();
+                res.DataByTransTypeAverage = new List<DataByTransTypeAverage>();
 
                 var currentResultAll = transactions
                     .Where(x => x.TransType == transType)
                     .Average(s => s.Fee);
-                var rrAll = new DataByPeriodAverage()
+                var rrAll = new DataByTransTypeAverage()
                 {
                     AverageOfFees = currentResultAll,
                     Currency = "AllInGel"
                 };
-                res.DataByPeriod.Add(rrAll);
+                res.DataByTransTypeAverage.Add(rrAll);
 
                 foreach (Currency currency in Enum.GetValues(typeof(Currency)))
                 {
+                    var rr = new DataByTransTypeAverage();
                     var currentResult = transactions
                         .Where(x => x.TransType == transType)
-                        .Where(y => y.CurrencyFrom == currency)
-                        .Average(s => s.Fee);
-                    var rr = new DataByPeriodAverage()
-                    {
-                        AverageOfFees = currentResult,
-                        Currency = Enum.GetName(typeof(Currency), currency)
-                    };
-                    res.DataByPeriod.Add(rr);
+                        .Where(y => y.CurrencyFrom == currency);
+                    if(currentResult.Count() == 0)
+                        rr.AverageOfFees = null;
+                    else
+                        rr.AverageOfFees = currentResult.Average(x => x.Fee);
+                    rr.Currency = Enum.GetName(typeof(Currency), currency);
+                    res.DataByTransTypeAverage.Add(rr);
                 }
                 result.Add(res);
             }
