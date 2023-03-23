@@ -43,7 +43,7 @@ namespace CredoProject.Core.Services
             for (int i = 0; i < 30; i++)
             {
                 var curresult = transactions
-                    .Where(x => x.CreatedAt == DateTime.Now.AddDays(-(i)))
+                    .Where(x => x.CreatedAt.DayOfYear == DateTime.Now.AddDays(-i).DayOfYear)
                     .Count();
                 var countTransInDay = new LastMonthTransactionsResponse()
                 {
@@ -110,7 +110,6 @@ namespace CredoProject.Core.Services
             }
             return result;
         }
-
 
         public async Task<List<CountTransRespoce>> CountTransactionsAsync()
         {
