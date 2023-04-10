@@ -14,12 +14,12 @@ using Newtonsoft.Json;
 namespace CredoProject.API.Controllers
 {
     [Route("api/[controller]")]
-    public class ReportsJsonController : ControllerBase
+    public class ReportsController : ControllerBase
     {
         private readonly IReportsService _reportsService;
         private readonly UserManager<UserEntity> _userManager;
 
-        public ReportsJsonController(IReportsService reportsService, UserManager<UserEntity> userManager)
+        public ReportsController(IReportsService reportsService, UserManager<UserEntity> userManager)
         {
             _reportsService = reportsService;
             _userManager = userManager;

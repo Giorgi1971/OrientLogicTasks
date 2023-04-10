@@ -59,12 +59,11 @@ namespace CredoProject.API.Auth
             builder.Services
             .AddIdentity<UserEntity, RoleEntity>(o =>
             {
-                o.Password.RequireDigit = false;
-                o.Password.RequireLowercase = false;
+                o.Password.RequireDigit = true;
+                o.Password.RequireLowercase = true;
                 o.Password.RequireUppercase = false;
                 o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 4;
-                //o.Tokens.
+                o.Password.RequiredLength = 6;
             })
             .AddEntityFrameworkStores<CredoDbContext>()
             .AddDefaultTokenProviders();

@@ -19,13 +19,13 @@ namespace CredoProject.Core.Repositories
 
         private readonly CredoDbContext _db;
         private readonly UserManager<UserEntity> _userManager;
-        private readonly IEnumerable<UserEntity> _usersRoleApiUser;
+        //private readonly IEnumerable<UserEntity> _usersRoleApiUser;
 
         public ReportsRepository (CredoDbContext db, UserManager<UserEntity> userManager)
         {
             _db = db;
             _userManager = userManager;
-            _usersRoleApiUser = _userManager.GetUsersInRoleAsync("api-user").Result;
+            //_usersRoleApiUser = _userManager.GetUsersInRoleAsync("api-user").Result;
         }
 
         public async Task<IEnumerable<UserEntity>> GetUsersInRoleUserAsync()

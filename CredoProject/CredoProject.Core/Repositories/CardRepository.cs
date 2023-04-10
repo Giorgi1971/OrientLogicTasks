@@ -16,6 +16,7 @@ namespace CredoProject.Core.Repositories
         Task<bool> UpdateCardPinAsync(string cardNumber, string newPinCode);
         Task SaveChangesAsync();
         Task<decimal> CalculateRate(Currency CurrencyFrom, Currency CurrencyTo);
+        Task<ExchangeEntity> GetExchangeAsync(Currency CurrencyFrom, Currency CurrencyTo);
         Task AddTransactionInDb(TransactionEntity tran1);
         Task<decimal> withdraw24Db(CardEntity card);
     }
@@ -59,6 +60,15 @@ namespace CredoProject.Core.Repositories
                 .SingleOrDefaultAsync(x => x.currencyFrom == CurrencyFrom && x.currencyTo == CurrencyTo);
             if (rate == null) throw new Exception("Not Found rate fom these currences!");
             return rate.rate;              
+        }
+
+
+        public async Task<ExchangeEntity> GetExchangeAsync(Currency CurrencyFrom, Currency CurrencyTo)
+        {
+            var rate = await _db.exchangeEntities
+                .SingleOrDefaultAsync(x => x.currencyFrom == CurrencyFrom && x.currencyTo == CurrencyTo);
+            if (rate == null) throw new Exception("Not Found rate fom these currences!");
+            return rate;
         }
 
         public async Task<CardEntity?> GetCardByNumberAndPinAsync(string cardNumber, string pinCode)

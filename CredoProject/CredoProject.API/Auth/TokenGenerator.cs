@@ -20,9 +20,7 @@ namespace CredoProject.API.Auth
         {
             var claims = new List<Claim>
             {
-                //new Claim(new ClaimsIdentityOptions().UserIdClaimType, id),
                 new Claim(new ClaimsIdentityOptions().UserIdClaimType, id.ToString()),
-                //new Claim("email", email),
                 new Claim(ClaimTypes.Role, str),
                 new Claim("test type", "test value")
             };
@@ -40,7 +38,6 @@ namespace CredoProject.API.Auth
             var tokenGenerator = new JwtSecurityTokenHandler();
             var jwtString = tokenGenerator.WriteToken(token);
             return jwtString;
-            //return "";
         }
     }
 }

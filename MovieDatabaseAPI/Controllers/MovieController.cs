@@ -46,6 +46,7 @@ namespace MovieDatabaseAPI.Controllers
             }
             catch (Exception ex)
             {
+                return BadRequest("es BadRequest requestisaa");
                 throw new Exception("aq ratom ar Semodis??");
                 //return StatusCode(StatusCodes.Status500InternalServerError);
             }

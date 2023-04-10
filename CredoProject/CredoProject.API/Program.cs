@@ -3,7 +3,6 @@ using CredoProject.Core.Db;
 using CredoProject.Core.Services;
 using CredoProject.Core.Validations;
 using CredoProject.Core.Repositories;
-using System;
 using System.Text.Json.Serialization;
 using CredoProject.API.Auth;
 using Microsoft.OpenApi.Models;
@@ -12,40 +11,29 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddTransient<IReportsService, ReportsService>();
-// ამას რა უნდა?????????????????????????????????????????????????
 AuthConfigurator.Configure(builder);
-
-
-// Add services to the container.
-builder.Services.AddDbContext<CredoDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("CredoDbContext")));
-
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
 });
+builder.Services.AddDbContext<CredoDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("CredoDbContext")));
 
-builder.Services.AddTransient<ISendEmailRequestRepository, SendEmailRequestRepository>();
-builder.Services.AddTransient<IReportsRepository, ReportsRepository>();
-builder.Services.AddTransient<ICoreServices, CoreServices>();
-builder.Services.AddTransient<ICardRepository, CardRepository>();
-builder.Services.AddTransient<IValidate, Validate>();
-builder.Services.AddTransient<IBankRepository, BankRepository>();
-//builder.Services.AddScoped<Validate>();
-
-// ეს სწორია თუ არა არ ვიცი, ჩათჯპტ-დან არის:
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//        .AddEntityFrameworkStores<CredoDbContext>()
-//        .AddDefaultTokenProviders();
+builder.Services
+    .AddTransient<IAuthService, AuthService>()
+    .AddTransient<IReportsService, ReportsService>()
+    .AddTransient<ISendEmailRequestRepository, SendEmailRequestRepository>()
+    .AddTransient<IReportsRepository, ReportsRepository>()
+    .AddTransient<ICoreServices, CoreServices>()
+    .AddTransient<ICardRepository, CardRepository>()
+    .AddTransient<IValidate, Validate>()
+    .AddTransient<IBankRepository, BankRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -63,17 +51,18 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                {
-                    new OpenApiSecurityScheme {
-                        Reference = new OpenApiReference {
-                            Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
                 }
-                });
+            },
+            new string[] {}
+        }
+    });
 });
 
 var app = builder.Build();

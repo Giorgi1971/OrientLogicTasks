@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieDatabaseAPI.ErrorSaver
 {
-    public class ErrorLog
+    public class ErrorLog 
     {
         [Key]
         public int ErrorLogId { get; set; }
