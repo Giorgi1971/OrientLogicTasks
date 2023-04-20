@@ -22,6 +22,8 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        decimal USD;
+        decimal EUR;
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -31,8 +33,8 @@ public class Worker : BackgroundService
                     var response = await client.GetStringAsync("https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json");
 
                     List<ExchangeRate> exchangeRates = JsonConvert.DeserializeObject<List<ExchangeRate>>(response);
-                    decimal USD = 1;
-                    decimal EUR =1;
+                    USD = 1;
+                    EUR = 1;
 
                     foreach (Currencies currency in exchangeRates[0].currencies)
                     {
@@ -42,6 +44,7 @@ public class Worker : BackgroundService
                             USD = currency.rate;
                         _logger.LogInformation($"{currency.code}: {currency.rate}");
                     }
+                    if (EUR != 1 && USD != 1) 
                     await RenewExchangeAsync(EUR, USD);
                 }
             }

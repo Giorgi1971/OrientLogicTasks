@@ -1,27 +1,34 @@
-﻿using System;
-using MovieDatabaseAPI.Data;
+﻿using MovieDatabaseAPI.Data;
 using System.Text;
+using Serilog;
 using Newtonsoft.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MovieDatabaseAPI.ErrorSaver
 {
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        public ErrorHandlerMiddleware(RequestDelegate next)
+
+    public ErrorHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File("myapp.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
         }
 
         public async Task InvokeAsync(HttpContext httpContext, AppDbContext Db)
         {
             try
             {
+
                 await _next(httpContext);
             }
             catch (Exception ex)
             {
+                Log.Error(ex, ex.Message);
+                Log.CloseAndFlush();
                 LogError(ex, Db);
                 LogErrorInConsole(ex);
                 var error = new { message = ex.Message };
@@ -55,36 +62,4 @@ namespace MovieDatabaseAPI.ErrorSaver
         public static IApplicationBuilder UseExceptionHandlerMiddleware(this IApplicationBuilder builder)
         { return builder.UseMiddleware<ErrorHandlerMiddleware>(); }
     }
-
-
-    //public class ExceptionHandlerMiddleware
-    //{
-    //    private readonly RequestDelegate _next;
-
-    //    public ExceptionHandlerMiddleware(RequestDelegate next)
-    //    {            _next = next;        }
-
-    //    public async Task Invoke(HttpContext context)
-    //    {
-    //        try            {                await _next(context);          }
-    //        catch (Exception ex)
-    //        {                Console.WriteLine($"GGGIiiioooorgi {DateTime.Now:dd-MM-yyyy HH:mm:ss} [error] {ex}");
-    //            // Log the exception using a logging library of your choice
-    //            LogException(ex);
-    //            // Re-throw the exception so that it can be handled by the
-    //            // global exception handler in Startup.cs
-    //            throw; } }
-
-    //    private void LogException(Exception ex)
-    //    {
-    //        // Implement logging logic here
-    //        // e.g. using Microsoft.Extensions.Logging
-    //    }
-    //}
-
-    //public static class ExceptionHandlerMiddlewareExtensions
-    //{
-    //    public static IApplicationBuilder UseExceptionHandlerMiddleware(this IApplicationBuilder builder)
-    //    {            return builder.UseMiddleware<ExceptionHandlerMiddleware>();        }
-    //}
 }

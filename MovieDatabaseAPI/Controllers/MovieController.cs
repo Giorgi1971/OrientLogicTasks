@@ -20,22 +20,21 @@ namespace MovieDatabaseAPI.Controllers
     public class MovieController: ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
+        private readonly ILogger<MovieController> _logger;
         private readonly ICalculate _service;
         private readonly AppDbContext _db;
 
-        public MovieController(IMovieRepository movieRepository, ICalculate service, AppDbContext db)
+        public MovieController(IMovieRepository movieRepository, ILogger<MovieController> logger, ICalculate service, AppDbContext db)
         {
             _movieRepository = movieRepository;
+            _logger = logger;
             _service = service;
             _db = db;
         }
 
-
-        // !!!!! თუ id-ს ინტზე დიდ ციფრს მივცემ, მიბუნებს სტატუსს 400-ს. აქ მიწერია 500 დააბრუნეო.
         [HttpGet("/{id}/Any")]
         public async Task<ActionResult> ListGanreByMovieId(int id)
         {
-            throw new Exception("frfrfrf");
             try
             {
             var result = await _db.Genres
@@ -67,9 +66,9 @@ namespace MovieDatabaseAPI.Controllers
             }
             var createdMovie = await _movieRepository.AddMovieAsync(request);
             await _movieRepository.SaveChangesAsync();
+            _logger.LogInformation($"Created movie {createdMovie.Title} with id - {createdMovie.Id}");
             return Ok(createdMovie);
         }
-
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Movie>> GetMovieAsync(int id)
@@ -78,7 +77,6 @@ namespace MovieDatabaseAPI.Controllers
                 if (result == null) return NotFound($"Movie with Id - {id} Not found, Message from Controller!");
                 return result;
         }
-
 
         [HttpDelete("{id:int}/delete")]
         public async Task<ActionResult<Movie>> DeleteMovieAsync(int id)
@@ -93,7 +91,6 @@ namespace MovieDatabaseAPI.Controllers
             return Ok($"Movie {movieToDelete.Title} Deleted");
         }
 
-
         [HttpPut("{id:int}/update")]
         public async Task<ActionResult<Movie>> UpdateMovieAsync([FromBody] UpdateMovieRequest request)
         {
@@ -105,7 +102,6 @@ namespace MovieDatabaseAPI.Controllers
             await _movieRepository.SaveChangesAsync();
             return updatedMovie;
         }
-
 
         [HttpGet("search-movies-with-pageIndex")]
         public async Task<ActionResult<IEnumerable<Movie>>> SearchMoviesWithPageIndexAsync([FromQuery]GetSearchedMoviesRequest request)

@@ -19,7 +19,6 @@ namespace MovieDatabaseAPI.Service
             _movieRepository = movieRepository;
         }
 
-
         public Task<List<string>> OneMovieJanresString(int id)
         {
             var data = _movieRepository.OneMovieJanresString(id);

@@ -151,8 +151,7 @@ namespace MovieDatabaseAPI.Repositories
             }
             catch (Exception ex)
             {
-                ErrorLogHelper2.LogError(ex, _db);
-                return null;
+                throw new Exception("Error founding Genre");
             }
         }
 
