@@ -14,7 +14,7 @@ namespace GPACalculatorAPI.Repositoreis
     {
         Task<GradeEntity> CreateGradeAsync(int id, CreateGradeRequest request);
         Task SaveChangesAsync();
-        Task<List<GradeEntity>> GetStudentGrades(int id);
+        Task<List<GradeEntity>> GetStudentGradesAsync(int id);
         Task<double> GetStudentGPAAsync(int studentId);
         Task<List<SubjectEntity>> GetTop3Subject();
         Task<List<SubjectEntity>> GetBottom3Subject();
@@ -41,8 +41,7 @@ namespace GPACalculatorAPI.Repositoreis
             return grade;
         }
 
-        // აქ ასინქრონულობას ითხოვს და ავეითი ვერსად ჩავტენე, თუ ასინქს მოვუხსნი აწითლებს???
-        public async Task<List<GradeEntity>> GetStudentGrades(int id)
+        public async Task<List<GradeEntity>> GetStudentGradesAsync(int id)
         {
             var scores = await _db.Grades
                 .Where(g => g.StudentId == id)
@@ -71,11 +70,12 @@ namespace GPACalculatorAPI.Repositoreis
 
         public async Task<List<SubjectEntity>> GetBottom3Subject()
         {
-            var top3 = _db.Grades
+            var top3 = await _db.Grades
                 .GroupBy(x => x.SubjectId)
                 .Select(x => new { Subject = x.Key, AverageSubject = x.Average(y => y.Score) })
                 .OrderBy(x => x.AverageSubject)
-                .Take(3);
+                .Take(3)
+                .ToListAsync();
             List<SubjectEntity> Top3Subjects = new List<SubjectEntity>();
 
             foreach (var item in top3)

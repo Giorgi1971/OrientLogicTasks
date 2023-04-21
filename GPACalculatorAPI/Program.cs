@@ -1,5 +1,6 @@
 ﻿using GPACalculatorAPI.Db;
 using GPACalculatorAPI.Repositoreis;
+using GPACalculatorAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IStudentRepositor, StudentRepositor>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<IGradeRepository, GradeRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

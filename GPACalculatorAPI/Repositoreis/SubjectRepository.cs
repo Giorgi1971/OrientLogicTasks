@@ -5,12 +5,10 @@ using GPACalculatorAPI.Models.Requests;
 
 namespace GPACalculatorAPI.Repositoreis
 {
-
     public interface ISubjectRepository
     {
         Task<SubjectEntity> CreateSubjectAsync(CreateSubjectRequest request);
         Task SaveChangesAsync();
-
     }
 
     public class SubjectRepository :ISubjectRepository
@@ -24,11 +22,8 @@ namespace GPACalculatorAPI.Repositoreis
 
         public async Task<SubjectEntity> CreateSubjectAsync(CreateSubjectRequest request)
         {
-            var subject = new SubjectEntity();
-            subject.Name = request.Name;
-            subject.Credit = (int)request.Credit;
+            var subject = new SubjectEntity() { Name = request.Name, Credit = request.Credit };
             await _db.Subjects.AddAsync(subject);
-
             return subject;
         }
 
