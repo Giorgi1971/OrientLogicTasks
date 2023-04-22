@@ -22,7 +22,7 @@ namespace GPACalculatorAPI.Controllers
             _subjectRepositor = subjectRepository;
         }
 
-        [HttpPost("Subject")]
+        [HttpPost]
         public async Task<ActionResult> CreateSubject([FromBody] CreateSubjectRequest request)
         {
             var createStudent = _subjectRepositor.CreateSubjectAsync(request);

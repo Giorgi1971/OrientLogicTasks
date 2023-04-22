@@ -25,7 +25,7 @@ namespace GPACalculatorAPI.Services
             {
                 var subject = await _studentRepositor.GetSubject(grade.SubjectId);
 
-                if (grade.Score > 90 && grade.Score <= 100)
+                if (grade.Score > 90)
                 {
                     gp = 4;
                 }
@@ -47,7 +47,7 @@ namespace GPACalculatorAPI.Services
                 }
                 else
                     continue;
-                total = gp * subject.Credit;
+                total += gp * subject.Credit;
                 totalGrade += subject.Credit;
             }
             return total / totalGrade;
@@ -59,7 +59,7 @@ namespace GPACalculatorAPI.Services
             return grades;
         }
 
-        public async Task<StudentEntity> CreateStudenAsync(CreateStudentRequest request)
+        public async Task<StudentEntity> CreateStudentAsync(CreateStudentRequest request)
         {
             validateRequest(request);
             StudentEntity student = CreateStudent(request);

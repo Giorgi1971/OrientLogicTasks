@@ -28,7 +28,7 @@ namespace GPACalculatorAPI.Controllers
         [HttpPost()]
         public async Task<ActionResult> CreateStudentAsync([FromBody] CreateStudentRequest request)
         {
-            var createStudent = await _studentService.CreateStudenAsync(request);
+            var createStudent = await _studentService.CreateStudentAsync(request);
             await _studentService.SaveChangesAsync();
             return Ok(createStudent);
         }
