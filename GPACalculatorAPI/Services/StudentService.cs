@@ -14,7 +14,6 @@ namespace GPACalculatorAPI.Services
             _studentRepositor = studentRepositor;
         }
 
-
         public async Task<decimal> GetStudentGPAAsync(int studentId)
         {
             var studentGrades = GetStudentGradesAsync(studentId).Result;

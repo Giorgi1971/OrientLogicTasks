@@ -19,6 +19,7 @@ namespace GPACalculatorAPI.Repositoreis
         Task<List<SubjectEntity>> GetTop3Subject();
         Task<List<SubjectEntity>> GetBottom3Subject();
         Task<List<StudentEntity>> GetTop10StudentByGPA();
+        Task<List<string>> GetTop3SubjectAsync();
     }
 
     public class GradeRepository :IGradeRepository
@@ -28,6 +29,19 @@ namespace GPACalculatorAPI.Repositoreis
         public GradeRepository(AppDbContext db)
         {
             _db = db;
+        }
+
+        public async Task<List<string>> GetTop3SubjectAsync()
+        {
+                var result = _db.Grades
+                    .Join(_db.Subjects, grade => grade.SubjectId, subject => subject.Id, (grade, subject) => new { grade, subject })
+                    .GroupBy(x => x.subject.Name)
+                    .Select(x => new { Name = x.Key, AverageScore = x.Average(y => y.grade.Score) })
+                    .OrderByDescending(x => x.AverageScore)
+                    .Take(3)
+                    .ToList();
+                var tt = result;
+            return new List<string> { "gio", "nino" };
         }
 
         public async Task<GradeEntity> CreateGradeAsync(int id, CreateGradeRequest request)
@@ -55,14 +69,14 @@ namespace GPACalculatorAPI.Repositoreis
         {
             var top3 = _db.Grades
                 .GroupBy(x => x.SubjectId)
-                .Select(x => new { Subject = x.Key, AverageSubject = x.Average(y => y.Score) })
+                .Select(x => new { SubjectId = x.Key, AverageSubject = x.Average(y => y.Score) })
                 .OrderByDescending(x => x.AverageSubject)
                 .Take(3);
             List<SubjectEntity> Top3Subjects = new List<SubjectEntity>();
 
             foreach (var item in top3)
             {
-                Top3Subjects.Add(_db.Subjects.FirstOrDefault(x => x.Id == item.Subject));
+                Top3Subjects.Add(_db.Subjects.FirstOrDefault(x => x.Id == item.SubjectId));
             }
 
             return Top3Subjects;
